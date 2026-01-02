@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"fmt"
 	"sync"
+	"time"
 
 	"github.com/titpetric/atkins-ci/colors"
 )
@@ -19,11 +19,12 @@ const (
 
 // TreeNode represents a node in the execution tree
 type TreeNode struct {
-	Name     string
-	Status   NodeStatus
-	Spinner  string
-	Children []*TreeNode
-	mu       sync.Mutex
+	Name      string
+	Status    NodeStatus
+	UpdatedAt time.Time
+	Spinner   string
+	Children  []*TreeNode
+	mu        sync.Mutex
 }
 
 // ExecutionTree holds the entire execution tree
@@ -75,6 +76,7 @@ func (node *TreeNode) SetStatus(status NodeStatus) {
 	node.mu.Lock()
 	defer node.mu.Unlock()
 	node.Status = status
+	node.UpdatedAt = time.Now()
 }
 
 // SetSpinner updates the spinner display
@@ -90,7 +92,7 @@ func (et *ExecutionTree) RenderTree() string {
 	defer et.mu.Unlock()
 
 	output := colors.BrightGreen(et.Root.Name) + "\n"
-	for i, job := range et.Root.Children {
+	for i, job := range sortChildrenByStatus(et.Root.Children) {
 		isLast := i == len(et.Root.Children)-1
 		output += renderNode(job, "", isLast)
 	}
@@ -156,7 +158,7 @@ func renderNode(node *TreeNode, prefix string, isLast bool) string {
 	}
 	output += "\n"
 
-	// Render children
+	// Render children (sorted by completion status)
 	if len(node.Children) > 0 {
 		// Determine continuation character
 		continuation := "│  "
@@ -164,8 +166,11 @@ func renderNode(node *TreeNode, prefix string, isLast bool) string {
 			continuation = "   "
 		}
 
-		for j, child := range node.Children {
-			childIsLast := j == len(node.Children)-1
+		// Sort children by status: completed first, then running, then pending
+		sortedChildren := sortChildrenByStatus(node.Children)
+
+		for j, child := range sortedChildren {
+			childIsLast := j == len(sortedChildren)-1
 			output += renderNode(child, prefix+continuation, childIsLast)
 		}
 	}
@@ -173,29 +178,44 @@ func renderNode(node *TreeNode, prefix string, isLast bool) string {
 	return output
 }
 
-// FinishPipeline marks the pipeline as passed or failed and renders final tree
-func (et *ExecutionTree) FinishPipeline(passed bool, stepCount int) string {
-	et.mu.Lock()
-	defer et.mu.Unlock()
+// sortChildrenByStatus reorders children so completed items appear first
+// Order: Passed, Failed, Running, Pending
+func sortChildrenByStatus(children []*TreeNode) []*TreeNode {
+	sorted := make([]*TreeNode, len(children))
+	copy(sorted, children)
 
-	if passed {
-		et.Root.Status = StatusPassed
-	} else {
-		et.Root.Status = StatusFailed
+	// Stable sort to maintain order within each status group
+	// Use bubble sort (stable) to sort by status priority
+	for i := 0; i < len(sorted); i++ {
+		for j := 0; j < len(sorted)-1-i; j++ {
+			if sorted[j].Status != sorted[j+1].Status {
+				if statusPriority(sorted[j].Status) < statusPriority(sorted[j+1].Status) {
+					sorted[j], sorted[j+1] = sorted[j+1], sorted[j]
+				}
+				continue
+			}
+			a, b := time.Since(sorted[j].UpdatedAt), time.Since(sorted[j+1].UpdatedAt)
+			if a < b {
+				sorted[j], sorted[j+1] = sorted[j+1], sorted[j]
+			}
+		}
 	}
 
-	output := colors.BrightGreen(et.Root.Name) + "\n"
-	for i, job := range et.Root.Children {
-		isLast := i == len(et.Root.Children)-1
-		output += renderNode(job, "", isLast)
-	}
+	return sorted
+}
 
-	// Add final status line
-	if passed {
-		output += colors.BrightGreen(fmt.Sprintf("✓ PASS (%d steps passing)", stepCount)) + "\n"
-	} else {
-		output += colors.BrightRed("✗ FAIL") + "\n"
+// statusPriority returns a priority number for sorting (higher = comes first)
+func statusPriority(status NodeStatus) int {
+	switch status {
+	case StatusPassed:
+		return 4
+	case StatusFailed:
+		return 3
+	case StatusRunning:
+		return 2
+	case StatusPending:
+		return 1
+	default:
+		return 0
 	}
-
-	return output
 }

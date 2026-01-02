@@ -1,5 +1,7 @@
 package model
 
+import "context"
+
 // Pipeline represents the root structure of an atkins.yml file
 type Pipeline struct {
 	Name  string          `yaml:"name"`
@@ -21,19 +23,23 @@ type Job struct {
 	Vars      map[string]interface{} `yaml:"vars"`
 	Env       map[string]string      `yaml:"env"`
 	Matrix    map[string]interface{} `yaml:"matrix"`
+	Detach    bool                   `yaml:"detach"`
+	DependsOn interface{}            `yaml:"depends_on"` // string or []string
+	Timeout   string                 `yaml:"timeout"`    // e.g., "10m", "300s"
 }
 
 // Step represents a step within a job
 type Step struct {
-	Name string                 `yaml:"name"`
-	Desc string                 `yaml:"desc"`
-	Run  string                 `yaml:"run"`
-	Cmd  string                 `yaml:"cmd"`
-	Cmds []string               `yaml:"cmds"`
-	If   string                 `yaml:"if"`
-	Env  map[string]string      `yaml:"env"`
-	Uses string                 `yaml:"uses"`
-	With map[string]interface{} `yaml:"with"`
+	Name   string                 `yaml:"name"`
+	Desc   string                 `yaml:"desc"`
+	Run    string                 `yaml:"run"`
+	Cmd    string                 `yaml:"cmd"`
+	Cmds   []string               `yaml:"cmds"`
+	If     string                 `yaml:"if"`
+	Env    map[string]string      `yaml:"env"`
+	Uses   string                 `yaml:"uses"`
+	With   map[string]interface{} `yaml:"with"`
+	Detach bool                   `yaml:"detach"`
 }
 
 // Service represents a service (e.g., Docker container) used in a job
@@ -51,16 +57,17 @@ type ExecutionContext struct {
 	Variables   map[string]interface{}
 	Env         map[string]string
 	Results     map[string]interface{}
-	QuietMode   int         // 0 = normal, 1 = quiet (no stdout), 2 = very quiet (no stdout/stderr)
-	Pipeline    string      // Current pipeline name
-	Job         string      // Current job name
-	JobDesc     string      // Current job description
-	Step        string      // Current step name
-	Depth       int         // Nesting depth for indentation
-	StepsCount  int         // Total number of steps executed
-	StepsPassed int         // Number of steps that passed
-	Tree        interface{} // *ExecutionTree (avoid circular import)
-	CurrentJob  interface{} // *TreeNode for current job
-	CurrentStep interface{} // *TreeNode for current step
-	Renderer    interface{} // *TreeRenderer for in-place rendering
+	QuietMode   int             // 0 = normal, 1 = quiet (no stdout), 2 = very quiet (no stdout/stderr)
+	Pipeline    string          // Current pipeline name
+	Job         string          // Current job name
+	JobDesc     string          // Current job description
+	Step        string          // Current step name
+	Depth       int             // Nesting depth for indentation
+	StepsCount  int             // Total number of steps executed
+	StepsPassed int             // Number of steps that passed
+	Tree        interface{}     // *ExecutionTree (avoid circular import)
+	CurrentJob  interface{}     // *TreeNode for current job
+	CurrentStep interface{}     // *TreeNode for current step
+	Renderer    interface{}     // *TreeRenderer for in-place rendering
+	Context     context.Context // Context for timeout and cancellation
 }

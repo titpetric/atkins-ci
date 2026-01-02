@@ -2,7 +2,7 @@
 
 ## Demo
 
-![Atkins CI Pipeline Demo](./atkins_demo.gif)
+![Atkins CI Pipeline Demo](./atkins.gif)
 
 ---
 

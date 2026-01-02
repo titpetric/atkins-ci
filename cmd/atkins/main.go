@@ -1,16 +1,19 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/titpetric/atkins-ci/colors"
 	"github.com/titpetric/atkins-ci/model"
 	"github.com/titpetric/atkins-ci/runner"
+	"golang.org/x/sync/errgroup"
 )
 
 func fatalf(message string, args ...any) {
@@ -25,27 +28,10 @@ func fatal(message string) {
 func main() {
 	var pipelineFile string
 	var job string
-	var quiet bool
-	var veryQuiet bool
-	var verbose bool
 
 	flag.StringVar(&pipelineFile, "file", "atkins.yml", "Path to pipeline file")
 	flag.StringVar(&job, "job", "", "Specific job to run (optional, runs default if empty)")
-	flag.BoolVar(&quiet, "q", false, "Quiet mode (suppress stdout from executed statements)")
-	flag.BoolVar(&veryQuiet, "qq", false, "Very quiet mode (suppress stdout and stderr from executed statements)")
-	flag.BoolVar(&verbose, "v", false, "Verbose mode (print command output)")
 	flag.Parse()
-
-	// Determine quiet mode level
-	quietMode := 0
-	if veryQuiet {
-		quietMode = 2
-	} else if quiet {
-		quietMode = 1
-	} else if !verbose {
-		// Default: buffer output, don't print it
-		quietMode = 1
-	}
 
 	// Resolve absolute path
 	absPath, err := filepath.Abs(pipelineFile)
@@ -63,8 +49,9 @@ func main() {
 	wg.Add(len(pipelines))
 	var exitCode int
 	var failedPipeline string
+	fmt.Printf("Found %d pipelines\n", len(pipelines))
 	for _, pipeline := range pipelines {
-		if err := runPipeline(&wg, pipeline, job, quietMode); err != nil {
+		if err := runPipeline(&wg, pipeline, job); err != nil {
 			exitCode = 1
 			failedPipeline = pipeline.Name
 		}
@@ -92,8 +79,11 @@ func main() {
 	}
 }
 
-func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string, quietMode int) error {
+func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string) error {
 	defer wg.Done()
+
+	// Create a root context for the pipeline
+	rootCtx := context.Background()
 
 	// Create execution tree
 	tree := runner.NewExecutionTree(pipeline.Name)
@@ -106,11 +96,12 @@ func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string, quiet
 		Variables: make(map[string]interface{}),
 		Env:       make(map[string]string),
 		Results:   make(map[string]interface{}),
-		QuietMode: quietMode,
+		QuietMode: 0,
 		Pipeline:  pipeline.Name,
 		Depth:     0,
 		Tree:      tree,
 		Renderer:  renderer,
+		Context:   rootCtx,
 	}
 
 	// Copy environment variables
@@ -147,12 +138,45 @@ func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string, quiet
 			jobLabel = jobName + " - " + jobDef.Desc
 		}
 		jobNode := tree.AddJob(jobLabel)
+
+		// Populate children
+		for _, step := range jobDef.Steps {
+			pendingNode := &runner.TreeNode{
+				Name:      step.Name,
+				Status:    runner.StatusPending,
+				UpdatedAt: time.Now(),
+				Children:  make([]*runner.TreeNode, 0),
+			}
+			jobNode.Children = append(jobNode.Children, pendingNode)
+		}
+
 		jobNodes[jobName] = jobNode
 	}
 	renderer.Render(tree)
 
 	executor := runner.NewExecutor()
-	for jobName, jobDef := range jobsToRun {
+
+	// Track job completion status
+	jobCompleted := make(map[string]bool)
+	jobResults := make(map[string]*model.ExecutionContext)
+	var jobMutex sync.Mutex
+
+	// Helper to execute a job (with dependency checking)
+	executeJobWithDeps := func(jobName string, jobDef *model.Job) error {
+		// Wait for dependencies if any
+		deps := parseDependencies(jobDef.DependsOn)
+		for _, dep := range deps {
+			for {
+				jobMutex.Lock()
+				if jobCompleted[dep] {
+					jobMutex.Unlock()
+					break
+				}
+				jobMutex.Unlock()
+				time.Sleep(100 * time.Millisecond)
+			}
+		}
+
 		jobCtx := *ctx
 		jobCtx.Job = jobName
 		jobCtx.JobDesc = jobDef.Desc
@@ -164,13 +188,65 @@ func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string, quiet
 		jobCtx.CurrentJob = jobNode
 		renderer.Render(tree)
 
-		// Pending jobs are shown in gray in the pre-rendered tree above
+		if err := executor.ExecuteJob(rootCtx, &jobCtx, jobName, jobDef); err != nil {
+			jobMutex.Lock()
+			jobCompleted[jobName] = true
+			jobMutex.Unlock()
+			return err
+		}
 
-		if err := executor.ExecuteJob(&jobCtx, jobName, jobDef); err != nil {
+		// Mark job as passed
+		jobNode.SetStatus(runner.StatusPassed)
+		renderer.Render(tree)
+
+		// Store results
+		jobMutex.Lock()
+		jobCompleted[jobName] = true
+		jobResults[jobName] = &jobCtx
+		jobMutex.Unlock()
+
+		return nil
+	}
+
+	eg := new(errgroup.Group)
+	detached := 0
+	count := 0
+
+	for name, job := range jobsToRun {
+		if job.Detach {
+			detached++
+			count++
+			eg.Go(func() error {
+				return executeJobWithDeps(name, jobsToRun[name])
+			})
+			continue
+		}
+
+		if err := executeJobWithDeps(name, jobsToRun[name]); err != nil {
 			// Mark pipeline as failed
 			tree.Root.Status = runner.StatusFailed
+			tree.Root.UpdatedAt = time.Now()
 			// Render final tree
 			renderer.Render(tree)
+			fmt.Println(colors.BrightRed("✗ FAIL"))
+			// Print stderr if there's any error output
+			if ctx.QuietMode > 0 && runner.ErrorLog.Len() > 0 {
+				fmt.Println(colors.BrightRed("Error output:"))
+				fmt.Print(runner.ErrorLog.String())
+			}
+			return err
+		}
+		count++
+	}
+
+	// Wait for all detached jobs
+	if detached > 0 {
+		if err := eg.Wait(); err != nil {
+			// Mark pipeline as failed
+			tree.Root.Status = runner.StatusFailed
+			tree.Root.UpdatedAt = time.Now()
+			renderer.Render(tree)
+
 			fmt.Println(colors.BrightRed("✗ FAIL"))
 			// Print stderr if there's any error output
 			if runner.ErrorLog.Len() > 0 {
@@ -179,22 +255,14 @@ func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string, quiet
 			}
 			return err
 		}
-
-		// Mark job as passed
-		jobNode.SetStatus(runner.StatusPassed)
-
-		// Render tree after job completes
-		renderer.Render(tree)
-
-		// Update parent context with step counts
-		ctx.StepsCount += jobCtx.StepsCount
-		ctx.StepsPassed += jobCtx.StepsPassed
 	}
 
 	// Mark pipeline as passed and render final tree
 	tree.Root.Status = runner.StatusPassed
+	tree.Root.UpdatedAt = time.Now()
 	renderer.Render(tree)
-	fmt.Print(colors.BrightGreen(fmt.Sprintf("✓ PASS (%d steps passing)\n", ctx.StepsPassed)))
+
+	fmt.Print(colors.BrightGreen(fmt.Sprintf("✓ PASS (%d jobs passing)\n", count)))
 	return nil
 }
 
@@ -220,4 +288,28 @@ func parseEnv(env string) (string, string) {
 		}
 	}
 	return "", ""
+}
+
+// parseDependencies converts depends_on field (string or []string) to a slice of job names
+func parseDependencies(dependsOn interface{}) []string {
+	if dependsOn == nil {
+		return []string{}
+	}
+
+	switch v := dependsOn.(type) {
+	case string:
+		return []string{v}
+	case []interface{}:
+		result := make([]string, 0, len(v))
+		for _, item := range v {
+			if str, ok := item.(string); ok {
+				result = append(result, str)
+			}
+		}
+		return result
+	case []string:
+		return v
+	default:
+		return []string{}
+	}
 }

@@ -39,17 +39,6 @@ func ExecuteCommandWithQuietAndCapture(cmdStr string, quietMode int) (string, er
 	// Inherit current process environment
 	cmd.Env = os.Environ()
 
-	if quietMode == 2 {
-		// Very quiet: suppress all output to stderr too
-		cmd.Stdout = nil
-		cmd.Stderr = nil
-		err := cmd.Run()
-		if err != nil {
-			return "", fmt.Errorf("command failed: %w", err)
-		}
-		return "", nil
-	}
-
 	// Capture stdout and stderr separately
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
@@ -76,7 +65,7 @@ func ExecuteCommandWithQuietAndCapture(cmdStr string, quietMode int) (string, er
 		return stdoutStr, fmt.Errorf("command failed: %w", err)
 	}
 
-	return stdoutStr, nil
+	return "", nil
 }
 
 // ExecuteCommandWithEnv executes a shell command with custom environment
