@@ -1,0 +1,10 @@
+name: Matrix Test
+
+jobs:
+  matrix_test:
+    matrix:
+      goarch: ["amd64", "arm64"]
+    steps:
+      - name: "Print arch"
+        run: |
+          echo "Architecture: ${goarch}"

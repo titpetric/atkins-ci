@@ -1,0 +1,18 @@
+---
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - goimports -w .
+      - go mod tidy
+      - go fmt ./...
+      - task: install
+      - task: test
+
+  install: go install ./cmd/...
+
+  test:
+    cmds:
+      - go test -v ./...
+      - ./atkins -file test/pipelines/atkins.yml
