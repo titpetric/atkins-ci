@@ -30,10 +30,9 @@ type ExecutionContext struct {
 	StepsCount  int // Total number of steps executed
 	StepsPassed int // Number of steps that passed
 
-	Tree *treeview.ExecutionTree // *ExecutionTree (avoid circular import)
+	CurrentJob  *treeview.TreeNode
+	CurrentStep *treeview.Node
 
-	CurrentJob  *treeview.TreeNode // *TreeNode for current job
-	CurrentStep *treeview.Node     // *TreeNode for current step
-
-	Renderer *treeview.Renderer // *TreeRenderer for in-place rendering
+	Display *treeview.Display
+	Builder *treeview.Builder
 }

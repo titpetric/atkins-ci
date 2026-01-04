@@ -269,7 +269,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 	}
 
 	// Render tree with expanded iterations
-	execCtx.Renderer.Render(execCtx.CurrentStep)
+	execCtx.Display.Render(execCtx.CurrentStep)
 
 	// Execute each iteration
 	var lastErr error
@@ -284,10 +284,9 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 			Job:         execCtx.Job,
 			Step:        execCtx.Step,
 			Depth:       execCtx.Depth,
-			Tree:        execCtx.Tree,
+			Builder:     execCtx.Builder,
 			CurrentJob:  execCtx.CurrentJob,
 			CurrentStep: execCtx.CurrentStep,
-			Renderer:    execCtx.Renderer,
 			Context:     jobCtx,
 		}
 
@@ -353,8 +352,6 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 	tickerTicker := time.NewTicker(100 * time.Millisecond)
 	defer tickerTicker.Stop()
 
-	display := treeview.NewDisplay()
-
 	for {
 		select {
 		case err := <-cmdDone:
@@ -375,14 +372,14 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 			}
 
 			// Render tree with final state
-			display.Render(stepCtx.Tree.Root.Node)
+			stepCtx.Display.Render(stepCtx.Builder.Root())
 			return nil
 
 		case <-tickerTicker.C:
 			if stepNode != nil {
 				stepNode.SetSpinner(s.String())
 
-				display.Render(stepCtx.Tree.Root.Node)
+				stepCtx.Display.Render(stepCtx.Builder.Root())
 			}
 		}
 	}

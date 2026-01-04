@@ -17,9 +17,10 @@ import (
 func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeline, job string) error {
 	defer wg.Done()
 
-	tree := treeview.NewExecutionTree(pipeline.Name)
-	renderer := treeview.NewRenderer()
+	tree := treeview.NewBuilder(pipeline.Name)
+	root := tree.Root()
 
+	display := treeview.NewDisplay()
 	pipelineCtx := &ExecutionContext{
 		Variables: make(map[string]interface{}),
 		Env:       make(map[string]string),
@@ -27,8 +28,8 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 		QuietMode: 0,
 		Pipeline:  pipeline.Name,
 		Depth:     0,
-		Tree:      tree,
-		Renderer:  renderer,
+		Builder:   tree,
+		Display:   display,
 		Context:   ctx,
 	}
 
@@ -41,7 +42,7 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 	}
 
 	// Initial tree render
-	renderer.Render(tree.Root.Node)
+	display.Render(root)
 
 	// Resolve jobs to run
 	allJobs := pipeline.Jobs
@@ -66,12 +67,8 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 
 		// Get job dependencies
 		deps := GetDependencies(job.DependsOn)
-		var jobNode *treeview.TreeNode
-		if len(deps) > 0 {
-			jobNode = tree.AddJobWithDeps(jobLabel, deps)
-		} else {
-			jobNode = tree.AddJob(job)
-		}
+
+		jobNode := tree.AddJob(jobLabel, job, deps)
 
 		// Populate children
 		for _, step := range job.Steps {
@@ -92,12 +89,12 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 					Children:  make([]*treeview.Node, 0),
 				}
 			}
-			jobNode.Node.Children = append(jobNode.Node.Children, stepNode)
+			jobNode.AddChild(stepNode)
 		}
 
 		jobNodes[jobName] = jobNode
 	}
-	renderer.Render(tree.Root.Node)
+	display.Render(root)
 
 	executor := NewExecutor()
 
@@ -130,7 +127,8 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 		jobNode := jobNodes[jobName]
 		jobNode.SetStatus(treeview.StatusRunning)
 		jobCtx.CurrentJob = jobNode
-		renderer.Render(tree.Root.Node)
+
+		display.Render(root)
 
 		if err := executor.ExecuteJob(ctx, &jobCtx, jobName, job); err != nil {
 			jobMutex.Lock()
@@ -141,7 +139,7 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 
 		// Mark job as passed
 		jobNode.SetStatus(treeview.StatusPassed)
-		renderer.Render(tree.Root.Node)
+		display.Render(root)
 
 		// Store results
 		jobMutex.Lock()
@@ -173,12 +171,13 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 		}
 
 		if err := executeJobWithDeps(name, job); err != nil {
-			// Mark pipeline as failed
-			tree.Root.Status = treeview.StatusFailed
-			tree.Root.UpdatedAt = time.Now()
-			// Render final tree
-			renderer.Render(tree.Root.Node)
+			root.Status = treeview.StatusFailed
+			root.UpdatedAt = time.Now()
+
+			display.Render(root)
+
 			fmt.Println(colors.BrightRed("✗ FAIL"))
+
 			// Print stderr if there's any error output
 			if pipelineCtx.QuietMode > 0 && ErrorLog.Len() > 0 {
 				fmt.Println(colors.BrightRed("Error output:"))
@@ -193,9 +192,9 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 	if detached > 0 {
 		if err := eg.Wait(); err != nil {
 			// Mark pipeline as failed
-			tree.Root.Status = treeview.StatusFailed
-			tree.Root.UpdatedAt = time.Now()
-			renderer.Render(tree.Root.Node)
+			root.Status = treeview.StatusFailed
+			root.UpdatedAt = time.Now()
+			display.Render(root)
 
 			fmt.Println(colors.BrightRed("✗ FAIL"))
 			// Print stderr if there's any error output
@@ -208,9 +207,9 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 	}
 
 	// Mark pipeline as passed and render final tree
-	tree.Root.Status = treeview.StatusPassed
-	tree.Root.UpdatedAt = time.Now()
-	renderer.Render(tree.Root.Node)
+	root.Status = treeview.StatusPassed
+	root.UpdatedAt = time.Now()
+	display.Render(root)
 
 	//	fmt.Print(colors.BrightGreen(fmt.Sprintf("✓ PASS (%d jobs passing)\n", count)))
 	return nil

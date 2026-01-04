@@ -24,7 +24,7 @@ func (b *Builder) Root() *Node {
 }
 
 // AddJob adds a job node to the tree with all its steps
-func (b *Builder) AddJob(jobName string, job *model.Job, deps []string) {
+func (b *Builder) AddJob(jobName string, job *model.Job, deps []string) *TreeNode {
 	// Create job node
 	jobNode := NewJobNode(jobName, job.Nested)
 	jobNode.Dependencies = deps
@@ -36,6 +36,10 @@ func (b *Builder) AddJob(jobName string, job *model.Job, deps []string) {
 	}
 
 	b.root.AddChild(jobNode)
+
+	return &TreeNode{
+		Node: jobNode,
+	}
 }
 
 // buildStepNode constructs a step node from a step definition
