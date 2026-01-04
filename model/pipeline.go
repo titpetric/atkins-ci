@@ -1,6 +1,11 @@
 package model
 
-import "context"
+import (
+	"context"
+	"fmt"
+
+	"gopkg.in/yaml.v3"
+)
 
 // Pipeline represents the root structure of an atkins.yml file
 type Pipeline struct {
@@ -36,10 +41,34 @@ type Step struct {
 	Cmd    string                 `yaml:"cmd"`
 	Cmds   []string               `yaml:"cmds"`
 	If     string                 `yaml:"if"`
+	For    string                 `yaml:"for"`
 	Env    map[string]string      `yaml:"env"`
 	Uses   string                 `yaml:"uses"`
 	With   map[string]interface{} `yaml:"with"`
-	Detach bool                   `yaml:"detach"`
+	Detach   bool                   `yaml:"detach"`
+	Defer    string                 `yaml:"defer"`
+	Deferred bool                   `yaml:"deferred"`
+}
+
+// UnmarshalYAML implements custom unmarshalling for Step to support various formats
+func (s *Step) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode {
+		// Simple string step - treat as a Run command
+		s.Run = node.Value
+		s.Name = node.Value
+		return nil
+	}
+
+	if node.Kind == yaml.MappingNode {
+		// Object step - use default unmarshalling
+		type rawStep Step
+		if err := node.Decode((*rawStep)(s)); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return fmt.Errorf("invalid step format: expected string or object, got %v", node.Kind)
 }
 
 // Service represents a service (e.g., Docker container) used in a job

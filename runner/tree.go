@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"strings"
 	"sync"
 	"time"
 
@@ -19,12 +20,14 @@ const (
 
 // TreeNode represents a node in the execution tree
 type TreeNode struct {
-	Name      string
-	Status    NodeStatus
-	UpdatedAt time.Time
-	Spinner   string
-	Children  []*TreeNode
-	mu        sync.Mutex
+	Name         string
+	Status       NodeStatus
+	UpdatedAt    time.Time
+	Spinner      string
+	Children     []*TreeNode
+	Dependencies []string
+	Deferred     bool
+	mu           sync.Mutex
 }
 
 // ExecutionTree holds the entire execution tree
@@ -50,9 +53,25 @@ func (et *ExecutionTree) AddJob(jobName string) *TreeNode {
 	defer et.mu.Unlock()
 
 	node := &TreeNode{
-		Name:     jobName,
-		Status:   StatusPending,
-		Children: make([]*TreeNode, 0),
+		Name:         jobName,
+		Status:       StatusPending,
+		Children:     make([]*TreeNode, 0),
+		Dependencies: make([]string, 0),
+	}
+	et.Root.Children = append(et.Root.Children, node)
+	return node
+}
+
+// AddJobWithDeps adds a job node to the tree with dependencies
+func (et *ExecutionTree) AddJobWithDeps(jobName string, deps []string) *TreeNode {
+	et.mu.Lock()
+	defer et.mu.Unlock()
+
+	node := &TreeNode{
+		Name:         jobName,
+		Status:       StatusPending,
+		Children:     make([]*TreeNode, 0),
+		Dependencies: deps,
 	}
 	et.Root.Children = append(et.Root.Children, node)
 	return node
@@ -66,6 +85,20 @@ func (job *TreeNode) AddStep(stepName string) *TreeNode {
 	node := &TreeNode{
 		Name:   stepName,
 		Status: StatusRunning,
+	}
+	job.Children = append(job.Children, node)
+	return node
+}
+
+// AddStepDeferred adds a deferred step node to a job
+func (job *TreeNode) AddStepDeferred(stepName string) *TreeNode {
+	job.mu.Lock()
+	defer job.mu.Unlock()
+
+	node := &TreeNode{
+		Name:     stepName,
+		Status:   StatusRunning,
+		Deferred: true,
 	}
 	job.Children = append(job.Children, node)
 	return node
@@ -131,15 +164,27 @@ func renderNode(node *TreeNode, prefix string, isLast bool) string {
 	// Determine status indicator and color
 	var status string
 	var nameColor string
+	isJob := len(node.Children) > 0
+	
 	switch node.Status {
 	case StatusPassed:
 		status = colors.BrightGreen("✓")
-		nameColor = colors.BrightWhite(node.Name)
+		if isJob {
+			nameColor = colors.BrightGreen(node.Name)
+		} else {
+			nameColor = colors.BrightGreen(node.Name)
+		}
 	case StatusFailed:
 		status = colors.BrightRed("✗")
 		nameColor = colors.BrightRed(node.Name)
 	case StatusRunning:
-		nameColor = colors.BrightYellow(node.Name)
+		if isJob {
+			// Job in orange
+			nameColor = colors.BrightOrange(node.Name)
+		} else {
+			// Step in white
+			nameColor = colors.White(node.Name)
+		}
 		if node.Spinner != "" {
 			status = node.Spinner
 		} else {
@@ -151,8 +196,22 @@ func renderNode(node *TreeNode, prefix string, isLast bool) string {
 		status = ""
 	}
 
+	// Build the node label with dependencies and deferred info
+	nodeLabel := nameColor
+	if isJob && len(node.Dependencies) > 0 {
+		depItems := make([]string, len(node.Dependencies))
+		for j, dep := range node.Dependencies {
+			depItems[j] = colors.BrightOrange(dep)
+		}
+		depsStr := colors.BrightWhite(" (depends_on: ") + colors.White(strings.Join(depItems, ", ")) + colors.BrightWhite(")")
+		nodeLabel = nodeLabel + depsStr
+	}
+	if node.Deferred {
+		nodeLabel = nodeLabel + " " + colors.BrightCyan("(deferred)")
+	}
+
 	// Render this node
-	output += prefix + branch + nameColor
+	output += prefix + branch + nodeLabel
 	if status != "" {
 		output += " " + status
 	}

@@ -28,10 +28,24 @@ func fatal(message string) {
 func main() {
 	var pipelineFile string
 	var job string
+	var listFlag bool
+	var lintFlag bool
 
 	flag.StringVar(&pipelineFile, "file", "atkins.yml", "Path to pipeline file")
-	flag.StringVar(&job, "job", "", "Specific job to run (optional, runs default if empty)")
+	flag.StringVar(&job, "job", "", "Specific job to run (optional)")
+	flag.BoolVar(&listFlag, "l", false, "List pipeline jobs and dependencies")
+	flag.BoolVar(&lintFlag, "lint", false, "Lint pipeline for errors")
 	flag.Parse()
+
+	// Handle positional argument as job name
+	args := flag.Args()
+	if len(args) > 0 {
+		if args[0] == "lint" {
+			lintFlag = true
+		} else {
+			job = args[0]
+		}
+	}
 
 	// Resolve absolute path
 	absPath, err := filepath.Abs(pipelineFile)
@@ -45,6 +59,45 @@ func main() {
 		fatalf("%s %s\n", colors.BrightRed("ERROR:"), err)
 	}
 
+	if len(pipelines) == 0 {
+		fatalf("%s No pipelines found\n", colors.BrightRed("ERROR:"))
+	}
+
+	// Handle lint mode
+	if lintFlag {
+		for _, pipeline := range pipelines {
+			linter := runner.NewLinter(pipeline)
+			errors := linter.Lint()
+			if len(errors) > 0 {
+				fmt.Printf("%s Pipeline '%s' has errors:\n", colors.BrightRed("✗"), pipeline.Name)
+				for _, lintErr := range errors {
+					fmt.Printf("  %s: %s\n", lintErr.Job, lintErr.Detail)
+				}
+				os.Exit(1)
+			}
+		}
+		fmt.Printf("%s Pipeline '%s' is valid\n", colors.BrightGreen("✓"), pipelines[0].Name)
+		return
+	}
+
+	// Handle list mode
+	if listFlag {
+		for _, pipeline := range pipelines {
+			linter := runner.NewLinter(pipeline)
+			errors := linter.Lint()
+			if len(errors) > 0 {
+				fmt.Printf("%s Pipeline '%s' has dependency errors:\n", colors.BrightRed("✗"), pipeline.Name)
+				for _, lintErr := range errors {
+					fmt.Printf("  %s: %s\n", lintErr.Job, lintErr.Detail)
+				}
+				os.Exit(1)
+			}
+			runner.ListPipeline(pipeline)
+		}
+		return
+	}
+
+	// Run pipeline(s)
 	var wg sync.WaitGroup
 	wg.Add(len(pipelines))
 	var exitCode int
@@ -115,19 +168,20 @@ func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string) error
 	// Initial tree render
 	renderer.Render(tree)
 
-	// Execute jobs
-	var jobsToRun map[string]*model.Job
-	if job != "" {
-		j, ok := pipeline.Jobs[job]
-		if !ok {
-			fatalf("%s Job '%s' not found\n", colors.BrightRed("ERROR:"), job)
-		}
-		jobsToRun = map[string]*model.Job{job: j}
-	} else {
-		jobsToRun = pipeline.Jobs
-		if len(jobsToRun) == 0 {
-			jobsToRun = pipeline.Tasks
-		}
+	// Resolve jobs to run
+	allJobs := pipeline.Jobs
+	if len(allJobs) == 0 {
+		allJobs = pipeline.Tasks
+	}
+
+	jobOrder, err := runner.ResolveJobDependencies(allJobs, job)
+	if err != nil {
+		fatalf("%s %s\n", colors.BrightRed("ERROR:"), err)
+	}
+
+	jobsToRun := make(map[string]*model.Job)
+	for _, jobName := range jobOrder {
+		jobsToRun[jobName] = allJobs[jobName]
 	}
 
 	// Pre-populate all jobs as pending
@@ -137,15 +191,34 @@ func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string) error
 		if jobDef.Desc != "" {
 			jobLabel = jobName + " - " + jobDef.Desc
 		}
-		jobNode := tree.AddJob(jobLabel)
+		
+		// Get job dependencies
+		deps := runner.GetDependencies(jobDef.DependsOn)
+		var jobNode *runner.TreeNode
+		if len(deps) > 0 {
+			jobNode = tree.AddJobWithDeps(jobLabel, deps)
+		} else {
+			jobNode = tree.AddJob(jobLabel)
+		}
 
 		// Populate children
 		for _, step := range jobDef.Steps {
-			pendingNode := &runner.TreeNode{
-				Name:      step.Name,
-				Status:    runner.StatusPending,
-				UpdatedAt: time.Now(),
-				Children:  make([]*runner.TreeNode, 0),
+			var pendingNode *runner.TreeNode
+			if step.Deferred {
+				pendingNode = &runner.TreeNode{
+					Name:      step.Name,
+					Status:    runner.StatusPending,
+					UpdatedAt: time.Now(),
+					Children:  make([]*runner.TreeNode, 0),
+					Deferred:  true,
+				}
+			} else {
+				pendingNode = &runner.TreeNode{
+					Name:      step.Name,
+					Status:    runner.StatusPending,
+					UpdatedAt: time.Now(),
+					Children:  make([]*runner.TreeNode, 0),
+				}
 			}
 			jobNode.Children = append(jobNode.Children, pendingNode)
 		}
@@ -164,7 +237,7 @@ func runPipeline(wg *sync.WaitGroup, pipeline *model.Pipeline, job string) error
 	// Helper to execute a job (with dependency checking)
 	executeJobWithDeps := func(jobName string, jobDef *model.Job) error {
 		// Wait for dependencies if any
-		deps := parseDependencies(jobDef.DependsOn)
+		deps := runner.GetDependencies(jobDef.DependsOn)
 		for _, dep := range deps {
 			for {
 				jobMutex.Lock()
@@ -288,28 +361,4 @@ func parseEnv(env string) (string, string) {
 		}
 	}
 	return "", ""
-}
-
-// parseDependencies converts depends_on field (string or []string) to a slice of job names
-func parseDependencies(dependsOn interface{}) []string {
-	if dependsOn == nil {
-		return []string{}
-	}
-
-	switch v := dependsOn.(type) {
-	case string:
-		return []string{v}
-	case []interface{}:
-		result := make([]string, 0, len(v))
-		for _, item := range v {
-			if str, ok := item.(string); ok {
-				result = append(result, str)
-			}
-		}
-		return result
-	case []string:
-		return v
-	default:
-		return []string{}
-	}
 }

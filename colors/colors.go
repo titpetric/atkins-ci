@@ -9,6 +9,7 @@ const (
 	colorDim     = "\033[2m"
 	colorGreen   = "\033[32m"
 	colorYellow  = "\033[33m"
+	colorOrange  = "\033[38;5;208m"
 	colorCyan    = "\033[36m"
 	colorMagenta = "\033[35m"
 	colorRed     = "\033[31m"
@@ -26,6 +27,10 @@ func BrightGreen(text string) string {
 
 func BrightYellow(text string) string {
 	return colorBright + colorYellow + text + colorReset
+}
+
+func BrightOrange(text string) string {
+	return colorOrange + text + colorReset
 }
 
 func BrightCyan(text string) string {
@@ -46,6 +51,10 @@ func Dim(text string) string {
 
 func BrightWhite(text string) string {
 	return colorBright + colorWhite + text + colorReset
+}
+
+func White(text string) string {
+	return colorWhite + text + colorReset
 }
 
 func Gray(text string) string {

@@ -157,7 +157,7 @@ func (e *Executor) ExecuteJob(parentCtx context.Context, ctx *model.ExecutionCon
 	return nil
 }
 
-// executeSteps runs a sequence of steps
+// executeSteps runs a sequence of steps (deferred steps are already at the end of the list)
 func (e *Executor) executeSteps(jobCtx context.Context, execCtx *model.ExecutionContext, steps []model.Step) error {
 	eg := new(errgroup.Group)
 	detached := 0
