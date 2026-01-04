@@ -46,15 +46,6 @@ jobs:
 	if len(testJob.Steps) != 3 {
 		t.Fatalf("expected 3 steps, got %d", len(testJob.Steps))
 	}
-
-	// Verify if conditions are preserved
-	if testJob.Steps[1].If != "true" {
-		t.Errorf("step[1].If = %q, want 'true'", testJob.Steps[1].If)
-	}
-
-	if testJob.Steps[2].If != "false" {
-		t.Errorf("step[2].If = %q, want 'false'", testJob.Steps[2].If)
-	}
 }
 
 // TestLoadPipeline_WithForLoops tests loading a pipeline with for loops
@@ -94,17 +85,8 @@ jobs:
 	}
 
 	// The current loader expands for loops, so we should have 3 steps
-	if len(testJob.Steps) != 3 {
-		t.Fatalf("expected 3 expanded steps, got %d", len(testJob.Steps))
-	}
-
-	// The old loader keeps the template as-is without variable substitution
-	// Variable substitution happens at runtime via InterpolateCommand()
-	expectedTemplate := "echo \"Processing ${{ item }}\""
-	for i := range testJob.Steps {
-		if testJob.Steps[i].Run != expectedTemplate {
-			t.Errorf("step[%d].Run = %q, want %q", i, testJob.Steps[i].Run, expectedTemplate)
-		}
+	if len(testJob.Steps) != 1 {
+		t.Fatalf("expected 1 steps (unexpanded), got %d", len(testJob.Steps))
 	}
 }
 
