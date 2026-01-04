@@ -58,6 +58,14 @@ func (n *Node) AddChildren(children ...*Node) {
 	n.Children = append(n.Children, children...)
 }
 
+// HasChildren returns true or false if the node has children.
+func (n *Node) HasChildren() bool {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+
+	return len(n.Children) > 0
+}
+
 // GetChildren returns a copy of the children slice (thread-safe)
 func (n *Node) GetChildren() []*Node {
 	n.mu.Lock()

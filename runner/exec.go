@@ -2,34 +2,44 @@ package runner
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-	"sync"
 )
 
-// ErrorLog captures stderr output from failed commands
-var ErrorLog bytes.Buffer
-var ErrorLogMutex sync.Mutex
+type ExecError struct {
+	Message      string
+	ErrorLog     string
+	LastExitCode int
+}
 
-// LastExitCode stores the last exit code from a failed command
-var LastExitCode int
+func (r ExecError) Error() string {
+	return r.Message
+}
 
-// ExecuteCommand executes a shell command using bash -c
-func ExecuteCommand(cmdStr string) (string, error) {
-	return ExecuteCommandWithQuiet(cmdStr, 2)
+func (r ExecError) Len() int {
+	return len(r.Message)
+}
+
+type Exec struct{}
+
+func NewExec() *Exec {
+	return &Exec{}
+}
+
+// ExecuteCommand will run the command quietly.
+func (e *Exec) ExecuteCommand(cmdStr string) (string, error) {
+	return e.ExecuteCommandWithQuiet(cmdStr, false)
 }
 
 // ExecuteCommandWithQuiet executes a shell command with quiet mode
-// quietMode: 0 = normal, 1 = suppress stdout, 2 = suppress stdout and stderr
-func ExecuteCommandWithQuiet(cmdStr string, quietMode int) (string, error) {
-	return ExecuteCommandWithQuietAndCapture(cmdStr, quietMode)
+func (e *Exec) ExecuteCommandWithQuiet(cmdStr string, verbose bool) (string, error) {
+	return e.ExecuteCommandWithQuietAndCapture(cmdStr, verbose)
 }
 
 // ExecuteCommandWithQuietAndCapture executes a shell command with quiet mode and captures stderr
 // Returns (stdout, error). If error occurs, stderr is logged to the global buffer.
-func ExecuteCommandWithQuietAndCapture(cmdStr string, quietMode int) (string, error) {
+func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (string, error) {
 	if cmdStr == "" {
 		return "", nil
 	}
@@ -54,62 +64,20 @@ func ExecuteCommandWithQuietAndCapture(cmdStr string, quietMode int) (string, er
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			exitCode = exitErr.ExitCode()
 		}
-		LastExitCode = exitCode
 
-		// Log stderr to global error buffer if there's an error
-		if stderrStr != "" {
-			ErrorLogMutex.Lock()
-			ErrorLog.WriteString(stderrStr)
-			ErrorLogMutex.Unlock()
+		resErr := ExecError{
+			Message:      "failed to run command",
+			LastExitCode: exitCode,
+			ErrorLog:     stderrStr,
 		}
-		return stdoutStr, fmt.Errorf("command failed: %w", err)
+		if resErr.ErrorLog == "" {
+			resErr.ErrorLog = err.Error()
+		}
+
+		return stdoutStr, resErr
 	}
 
 	return stdoutStr, nil
-}
-
-// ExecuteCommandWithEnv executes a shell command with custom environment
-func ExecuteCommandWithEnv(cmdStr string, env map[string]string) (string, error) {
-	return ExecuteCommandWithEnvAndQuiet(cmdStr, env, 0)
-}
-
-// ExecuteCommandWithEnvAndQuiet executes a shell command with custom environment and quiet mode
-// quietMode: 0 = normal, 1 = suppress stdout, 2 = suppress stdout and stderr
-func ExecuteCommandWithEnvAndQuiet(cmdStr string, env map[string]string, quietMode int) (string, error) {
-	if cmdStr == "" {
-		return "", nil
-	}
-
-	cmd := exec.Command("bash", "-c", cmdStr)
-
-	// Build environment slice
-	envList := os.Environ()
-	for k, v := range env {
-		// Remove existing key if present
-		envList = removeEnvKey(envList, k)
-		// Add new value
-		envList = append(envList, k+"="+v)
-	}
-	cmd.Env = envList
-
-	if quietMode == 2 {
-		// Very quiet: suppress all output to stderr too
-		cmd.Stdout = nil
-		cmd.Stderr = nil
-		err := cmd.Run()
-		if err != nil {
-			return "", fmt.Errorf("command failed: %w", err)
-		}
-		return "", nil
-	}
-
-	// Capture output
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return string(output), fmt.Errorf("command failed: %w", err)
-	}
-
-	return string(output), nil
 }
 
 // removeEnvKey removes a key from environment variable list

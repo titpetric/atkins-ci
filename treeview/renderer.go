@@ -20,6 +20,10 @@ func NewRenderer() *Renderer {
 
 // Render converts a node to a string representation
 func (r *Renderer) Render(root *Node) string {
+	return r.RenderStatic(root)
+}
+
+func (r *Renderer) Render_old(root *Node) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -37,7 +41,45 @@ func (r *Renderer) RenderStatic(root *Node) string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	return r.renderStaticNode(root, "", true)
+	output := colors.BrightGreen(root.Name) + "\n"
+
+	//return output + r.renderNode(root, "", true)
+	return output + r.renderStaticNode(root, "", true)
+}
+
+func statusBadge(node *Node) (string, string) {
+	var badge string
+	var nameColor string
+
+	name, nameColor := node.Name, node.Name
+
+	switch node.Status {
+	case StatusRunning, StatusPending:
+		if node.HasChildren() {
+			nameColor = colors.BrightOrange(name)
+		} else {
+			nameColor = colors.White(name)
+		}
+		if node.Spinner != "" {
+			badge = node.Spinner
+		} else {
+			badge = ""
+		}
+	case StatusPassed:
+		badge = colors.BrightGreen("✓")
+		nameColor = colors.BrightGreen(name)
+	case StatusFailed:
+		badge = colors.BrightRed("✗")
+		nameColor = colors.BrightRed(name)
+	case StatusSkipped:
+		badge = colors.BrightYellow("⊘")
+		nameColor = colors.BrightYellow(name)
+	case StatusConditional:
+		badge = colors.BrightYellow("~")
+		nameColor = colors.BrightYellow(name)
+	default:
+	}
+	return badge, nameColor
 }
 
 // renderNode renders a single node in the tree (used for execution views with spinners)
@@ -50,40 +92,9 @@ func (r *Renderer) renderNode(node *Node, prefix string, isLast bool) string {
 		branch = "└─ "
 	}
 
-	// Determine status indicator and color
-	var status string
-	var nameColor string
-	isJob := len(node.GetChildren()) > 0
+	status, nameColor := statusBadge(node)
 
-	switch node.Status {
-	case StatusPassed:
-		status = colors.BrightGreen("✓")
-		nameColor = colors.BrightGreen(node.Name)
-	case StatusConditional:
-		status = colors.BrightYellow("?")
-		nameColor = colors.Gray(node.Name)
-	case StatusFailed:
-		status = colors.BrightRed("✗")
-		nameColor = colors.BrightRed(node.Name)
-	case StatusSkipped:
-		status = colors.BrightYellow("⊘")
-		nameColor = colors.BrightYellow(node.Name)
-	case StatusRunning:
-		if isJob {
-			nameColor = colors.BrightOrange(node.Name)
-		} else {
-			nameColor = colors.White(node.Name)
-		}
-		if node.Spinner != "" {
-			status = node.Spinner
-		} else {
-			status = ""
-		}
-	default:
-		// Pending/future items
-		nameColor = colors.Gray(node.Name)
-		status = ""
-	}
+	isJob := len(node.GetChildren()) > 0
 
 	// Build the node label with dependencies and deferred info
 	nodeLabel := nameColor
@@ -137,35 +148,11 @@ func (r *Renderer) renderStaticNode(node *Node, prefix string, isLast bool) stri
 		branch = "└─ "
 	}
 
-	// Determine status indicator and color
-	var status string
-	var nameColor string
-	isJob := len(node.GetChildren()) > 0
-
-	switch node.Status {
-	case StatusConditional:
-		status = colors.BrightYellow("?")
-		nameColor = colors.Gray(node.Name)
-	case StatusRunning:
-		// For static view, running steps show as running (no spinner)
-		if isJob {
-			nameColor = colors.BrightOrange(node.Name)
-		} else {
-			nameColor = colors.White(node.Name)
-		}
-		status = ""
-	default:
-		if isJob {
-			nameColor = colors.BrightOrange(node.Name)
-		} else {
-			nameColor = colors.White(node.Name)
-		}
-		status = ""
-	}
+	status, nameColor := statusBadge(node)
 
 	// Build the node label with dependencies and deferred info
 	nodeLabel := nameColor
-	if isJob && len(node.Dependencies) > 0 {
+	if node.HasChildren() && len(node.Dependencies) > 0 {
 		depItems := make([]string, len(node.Dependencies))
 		for j, dep := range node.Dependencies {
 			depItems[j] = colors.BrightOrange(dep)

@@ -46,7 +46,7 @@ func InterpolateString(s string, ctx *ExecutionContext) (string, error) {
 		cmd := commandExecRegex.FindStringSubmatch(match)[1]
 		cmd = strings.TrimSpace(cmd)
 
-		output, err := ExecuteCommand(cmd)
+		output, err := NewExec().ExecuteCommand(cmd)
 		if err != nil {
 			// Return original on error
 			return match

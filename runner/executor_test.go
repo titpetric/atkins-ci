@@ -168,10 +168,9 @@ func TestForLoopStepExecution(t *testing.T) {
 			Variables: map[string]interface{}{
 				"items": []interface{}{"one", "two", "three"},
 			},
-			Step:      step,
-			Env:       make(map[string]string),
-			Results:   make(map[string]interface{}),
-			QuietMode: 1, // quiet mode to not print output
+			Step:    step,
+			Env:     make(map[string]string),
+			Results: make(map[string]interface{}),
 		}
 
 		// Mock execute function for testing

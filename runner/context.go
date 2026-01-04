@@ -20,11 +20,11 @@ type ExecutionContext struct {
 	Env       map[string]string
 	Results   map[string]interface{}
 
-	QuietMode int    // 0 = normal, 1 = quiet (no stdout), 2 = very quiet (no stdout/stderr)
-	Pipeline  string // Current pipeline name
+	Verbose bool
 
-	Job  *model.Job
-	Step *model.Step
+	Pipeline *model.Pipeline
+	Job      *model.Job
+	Step     *model.Step
 
 	Depth       int // Nesting depth for indentation
 	StepsCount  int // Total number of steps executed

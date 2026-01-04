@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/titpetric/atkins-ci/model"
@@ -12,28 +11,6 @@ import (
 	"github.com/titpetric/atkins-ci/treeview"
 	"golang.org/x/sync/errgroup"
 )
-
-// TreeRenderer manages in-place tree rendering with ANSI cursor control
-// Kept for backward compatibility, wraps treeview.Display
-type TreeRenderer struct {
-	display *treeview.Display
-	mu      sync.Mutex
-}
-
-// NewTreeRenderer creates a new tree renderer
-func NewTreeRenderer() *TreeRenderer {
-	return &TreeRenderer{
-		display: treeview.NewDisplay(),
-	}
-}
-
-// Render outputs the tree, updating in-place if previously rendered
-func (tr *TreeRenderer) Render(tree *treeview.ExecutionTree) {
-	tr.mu.Lock()
-	defer tr.mu.Unlock()
-
-	tr.display.Render(tree.Root.Node)
-}
 
 // Options provides configuration for the executor
 type Options struct {
@@ -166,7 +143,7 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 		Variables: execCtx.Variables,
 		Env:       make(map[string]string),
 		Results:   execCtx.Results,
-		QuietMode: execCtx.QuietMode,
+		Verbose:   execCtx.Verbose,
 		Pipeline:  execCtx.Pipeline,
 		Job:       execCtx.Job,
 		Step:      step,
@@ -236,7 +213,7 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 // Each iteration becomes a separate execution with iteration variables overlaid on context
 func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, _ int, stepNode *treeview.Node) error {
 	// Expand the for loop to get all iterations
-	iterations, err := ExpandFor(execCtx, ExecuteCommand)
+	iterations, err := ExpandFor(execCtx, NewExec().ExecuteCommand)
 	if err != nil {
 		if stepNode != nil {
 			stepNode.SetStatus(treeview.StatusFailed)
@@ -279,7 +256,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 			Variables:   copyVariables(execCtx.Variables),
 			Env:         execCtx.Env,
 			Results:     execCtx.Results,
-			QuietMode:   execCtx.QuietMode,
+			Verbose:     execCtx.Verbose,
 			Pipeline:    execCtx.Pipeline,
 			Job:         execCtx.Job,
 			Step:        execCtx.Step,
@@ -365,10 +342,6 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 					return err
 				}
 				stepNode.SetStatus(treeview.StatusPassed)
-				// Clear error log on successful step
-				ErrorLogMutex.Lock()
-				ErrorLog.Reset()
-				ErrorLogMutex.Unlock()
 			}
 
 			// Render tree with final state
@@ -423,13 +396,13 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 	}
 
 	// Execute the command via bash with quiet mode
-	output, err := ExecuteCommandWithQuiet(interpolated, execCtx.QuietMode)
+	output, err := NewExec().ExecuteCommandWithQuiet(interpolated, execCtx.Verbose)
 	if err != nil {
 		return fmt.Errorf("command execution failed: %w", err)
 	}
 
 	// Only print output if not in quiet mode (quiet mode 1 = suppress output)
-	if execCtx.QuietMode == 0 && output != "" {
+	if execCtx.Verbose && output != "" {
 		fmt.Print(output)
 	}
 

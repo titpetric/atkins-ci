@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/titpetric/atkins-ci/colors"
 	"github.com/titpetric/atkins-ci/runner"
@@ -31,7 +31,7 @@ func main() {
 	var debug bool
 
 	flag.StringVar(&pipelineFile, "file", "atkins.yml", "Path to pipeline file")
-	flag.StringVar(&job, "job", "", "Specific job to run (optional)")
+	flag.StringVar(&job, "job", "", "Specific job to run")
 	flag.BoolVar(&listFlag, "l", false, "List pipeline jobs and dependencies")
 	flag.BoolVar(&lintFlag, "lint", false, "Lint pipeline for errors")
 	flag.BoolVar(&debug, "debug", false, "Print debug data")
@@ -98,44 +98,45 @@ func main() {
 				fmt.Printf("%s\n", string(b))
 			}
 
-			runner.ListPipeline(pipeline)
+			if err := runner.ListPipeline(pipeline); err != nil {
+				fmt.Printf("%s %s\n", "ERROR:", err)
+				os.Exit(1)
+			}
 		}
 		return
 	}
 
 	// Run pipeline(s)
-	var wg sync.WaitGroup
-	wg.Add(len(pipelines))
 	var exitCode int
 	var failedPipeline string
 
 	ctx := context.TODO()
 
 	for _, pipeline := range pipelines {
-		if err := runner.RunPipeline(ctx, &wg, pipeline, job); err != nil {
+		err := runner.RunPipeline(ctx, pipeline, job)
+		if err != nil {
 			exitCode = 1
 			failedPipeline = pipeline.Name
-		}
-	}
-	wg.Wait()
 
-	// Print any captured error output with formatting
-	runner.ErrorLogMutex.Lock()
-	if runner.ErrorLog.Len() > 0 {
-		fmt.Fprintf(os.Stderr, "\nAn error occurred in %q pipeline:\n\n", failedPipeline)
-		fmt.Fprintf(os.Stderr, "  Exit code: %d\n", runner.LastExitCode)
-		fmt.Fprintf(os.Stderr, "  Error output:\n")
-		// Indent the error output
-		for _, line := range strings.Split(runner.ErrorLog.String(), "\n") {
-			if line != "" {
-				fmt.Fprintf(os.Stderr, "    %s\n", line)
+			var errorLog runner.ExecError
+			if errors.As(err, &errorLog) && errorLog.Len() > 0 {
+				fmt.Fprintf(os.Stderr, "\nAn error occurred in %q pipeline:\n\n", failedPipeline)
+				fmt.Fprintf(os.Stderr, "  Exit code: %d\n", errorLog.LastExitCode)
+				fmt.Fprintf(os.Stderr, "  Error output:\n")
+				// Indent the error output
+				for _, line := range strings.Split(errorLog.ErrorLog, "\n") {
+					if line != "" {
+						fmt.Fprintf(os.Stderr, "    %s\n", line)
+					}
+				}
+				fmt.Fprintf(os.Stderr, "\n")
+				exitCode = errorLog.LastExitCode
+			}
+
+			if exitCode != 0 {
+				os.Exit(exitCode)
 			}
 		}
-		fmt.Fprintf(os.Stderr, "\n")
 	}
-	runner.ErrorLogMutex.Unlock()
 
-	if exitCode != 0 {
-		os.Exit(exitCode)
-	}
 }

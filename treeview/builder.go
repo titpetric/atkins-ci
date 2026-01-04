@@ -84,27 +84,24 @@ func (b *Builder) getStepCommand(step *model.Step) string {
 // BuildFromPipeline constructs a complete tree from a pipeline
 // Returns the root node ready to be rendered
 func BuildFromPipeline(pipeline *model.Pipeline, resolveDeps func(map[string]*model.Job, string) ([]string, error)) (*Node, error) {
-	allJobs := pipeline.Jobs
-	if len(allJobs) == 0 {
-		allJobs = pipeline.Tasks
+	jobs := pipeline.Jobs
+	if len(jobs) == 0 {
+		jobs = pipeline.Tasks
 	}
 
 	builder := NewBuilder(pipeline.Name)
 
 	// Get jobs in dependency order
-	jobOrder, err := resolveDeps(allJobs, "")
+	jobOrder, err := resolveDeps(jobs, "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve job dependencies: %w", err)
 	}
 
 	// Build tree structure for static display
 	for _, jobName := range jobOrder {
-		job := allJobs[jobName]
+		job := jobs[jobName]
 
-		// Add dependencies (will be handled by resolveDeps function caller)
-		deps := make([]string, 0)
-
-		builder.AddJob(jobName, job, deps)
+		builder.AddJob(jobName, job, job.DependsOn)
 	}
 
 	return builder.Root(), nil

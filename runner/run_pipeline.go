@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -14,9 +15,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeline, job string) error {
-	defer wg.Done()
-
+func RunPipeline(ctx context.Context, pipeline *model.Pipeline, job string) error {
 	tree := treeview.NewBuilder(pipeline.Name)
 	root := tree.Root()
 
@@ -25,8 +24,7 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 		Variables: make(map[string]interface{}),
 		Env:       make(map[string]string),
 		Results:   make(map[string]interface{}),
-		QuietMode: 0,
-		Pipeline:  pipeline.Name,
+		Pipeline:  pipeline,
 		Depth:     0,
 		Builder:   tree,
 		Display:   display,
@@ -40,9 +38,6 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 			pipelineCtx.Env[k] = v
 		}
 	}
-
-	// Initial tree render
-	display.Render(root)
 
 	// Resolve jobs to run
 	allJobs := pipeline.Jobs
@@ -178,10 +173,12 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 
 			fmt.Println(colors.BrightRed("✗ FAIL"))
 
-			// Print stderr if there's any error output
-			if pipelineCtx.QuietMode > 0 && ErrorLog.Len() > 0 {
-				fmt.Println(colors.BrightRed("Error output:"))
-				fmt.Print(ErrorLog.String())
+			var errorLog ExecError
+			if errors.As(err, &errorLog) {
+				if errorLog.Len() > 0 {
+					fmt.Println(colors.BrightRed("Error: " + errorLog.Message))
+					fmt.Print(errorLog.ErrorLog)
+				}
 			}
 			return err
 		}
@@ -198,9 +195,12 @@ func RunPipeline(ctx context.Context, wg *sync.WaitGroup, pipeline *model.Pipeli
 
 			fmt.Println(colors.BrightRed("✗ FAIL"))
 			// Print stderr if there's any error output
-			if ErrorLog.Len() > 0 {
-				fmt.Println(colors.BrightRed("Error output:"))
-				fmt.Print(ErrorLog.String())
+			var errorLog ExecError
+			if errors.As(err, &errorLog) {
+				if errorLog.Len() > 0 {
+					fmt.Println(colors.BrightRed("Error: " + errorLog.Message))
+					fmt.Print(errorLog.ErrorLog)
+				}
 			}
 			return err
 		}

@@ -27,8 +27,8 @@ type Job struct {
 	Vars      map[string]interface{} `yaml:"vars,omitempty"`
 	Env       map[string]string      `yaml:"env,omitempty"`
 	Detach    bool                   `yaml:"detach,omitempty"`
-	DependsOn interface{}            `yaml:"depends_on,omitempty"` // string or []string
-	Timeout   string                 `yaml:"timeout,omitempty"`    // e.g., "10m", "300s"
+	DependsOn Dependencies           `yaml:"depends_on,omitempty"`
+	Timeout   string                 `yaml:"timeout,omitempty"` // e.g., "10m", "300s"
 
 	Name   string `yaml:"-"`
 	Nested bool   `yaml:"-"`
@@ -49,6 +49,25 @@ type Step struct {
 	Detach   bool                   `yaml:"detach,omitempty"`
 	Defer    string                 `yaml:"defer,omitempty"`
 	Deferred bool                   `yaml:"deferred,omitempty"`
+	Verbose  bool                   `yaml:"verbose,omitempty"`
+}
+
+type Dependencies []string
+
+// UnmarshalYAML implements custom unmarshalling for `depends_on`,
+// taking a string value, or a slice of strings.
+func (s *Dependencies) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode {
+		*s = Dependencies([]string{node.Value})
+		return nil
+	}
+
+	var deps []string
+	if err := node.Decode(&deps); err != nil {
+		return err
+	}
+	*s = Dependencies(deps)
+	return nil
 }
 
 // UnmarshalYAML implements custom unmarshalling for Step to support various formats
