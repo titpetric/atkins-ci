@@ -16,28 +16,28 @@ func TestSingleBraceInterpolation(t *testing.T) {
 	}{
 		{
 			name:        "single brace variable interpolation",
-			cmd:         "echo ${ item }",
+			cmd:         "echo ${{ item }}",
 			variables:   map[string]interface{}{"item": "apple"},
 			expected:    "echo apple",
 			expectError: false,
 		},
 		{
 			name:        "single brace without spaces",
-			cmd:         "echo ${item}",
+			cmd:         "echo ${{item}}",
 			variables:   map[string]interface{}{"item": "banana"},
 			expected:    "echo banana",
 			expectError: false,
 		},
 		{
 			name:        "multiple single brace interpolations",
-			cmd:         "${ cmd } ${ arg }",
+			cmd:         "${{ cmd }} ${{ arg }}",
 			variables:   map[string]interface{}{"cmd": "ls", "arg": "-la"},
 			expected:    "ls -la",
 			expectError: false,
 		},
 		{
 			name: "single brace with path notation",
-			cmd:  "echo ${ user.name }",
+			cmd:  "echo ${{ user.name }}",
 			variables: map[string]interface{}{
 				"user": map[string]interface{}{"name": "alice"},
 			},
@@ -46,9 +46,9 @@ func TestSingleBraceInterpolation(t *testing.T) {
 		},
 		{
 			name:        "missing variable",
-			cmd:         "echo ${ missing }",
+			cmd:         "echo ${{ missing }}",
 			variables:   map[string]interface{}{},
-			expected:    "echo ${ missing }",
+			expected:    "echo ${{ missing }}",
 			expectError: false,
 		},
 	}

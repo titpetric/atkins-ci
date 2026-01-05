@@ -7,13 +7,14 @@ import (
 )
 
 var (
-	// Matches ${ variable_name }
-	interpolationRegex = regexp.MustCompile(`\$\{\s*([^}]+?)\s*\}`)
+	// Matches ${{ variable_name }}
+	interpolationRegex = regexp.MustCompile(`\$\{\{\s*([^}]+?)\s*\}\}`)
+
 	// Matches $(command)
 	commandExecRegex = regexp.MustCompile(`\$\(([^)]+)\)`)
 )
 
-// InterpolateString replaces ${ variable } with values from context
+// InterpolateString replaces ${ variable } with values from context.
 func InterpolateString(s string, ctx *ExecutionContext) (string, error) {
 	result := s
 
@@ -57,8 +58,8 @@ func InterpolateString(s string, ctx *ExecutionContext) (string, error) {
 	return result, nil
 }
 
-// InterpolateMap recursively interpolates all string values in a map
-func InterpolateMap(m map[string]interface{}, ctx *ExecutionContext) error {
+// InterpolateMap recursively interpolates all string values in a map.
+func InterpolateMap(ctx *ExecutionContext, m map[string]interface{}) error {
 	for k, v := range m {
 		switch val := v.(type) {
 		case string:
@@ -68,7 +69,7 @@ func InterpolateMap(m map[string]interface{}, ctx *ExecutionContext) error {
 			}
 			m[k] = interpolated
 		case map[string]interface{}:
-			if err := InterpolateMap(val, ctx); err != nil {
+			if err := InterpolateMap(ctx, val); err != nil {
 				return err
 			}
 		case []interface{}:
@@ -86,7 +87,7 @@ func InterpolateMap(m map[string]interface{}, ctx *ExecutionContext) error {
 	return nil
 }
 
-// InterpolateCommand interpolates a command string
+// InterpolateCommand interpolates a command string.
 func InterpolateCommand(cmd string, ctx *ExecutionContext) (string, error) {
 	return InterpolateString(cmd, ctx)
 }
