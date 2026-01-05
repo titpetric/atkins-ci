@@ -36,51 +36,40 @@ type Job struct {
 
 // Step represents a step within a job.
 type Step struct {
-	Name    string                 `yaml:"name,omitempty"`
-	Desc    string                 `yaml:"desc,omitempty"`
-	Run     string                 `yaml:"run,omitempty"`
-	Cmd     string                 `yaml:"cmd,omitempty"`
-	Cmds    []string               `yaml:"cmds,omitempty"`
-	Task    string                 `yaml:"task,omitempty"` // Task/job name to invoke
-	If      string                 `yaml:"if,omitempty"`
-	For     string                 `yaml:"for,omitempty"`
-	Env     map[string]string      `yaml:"env,omitempty"`
-	Uses    string                 `yaml:"uses,omitempty"`
-	With    map[string]interface{} `yaml:"with,omitempty"`
-	Detach  bool                   `yaml:"detach,omitempty"`
-	Defer   yaml.Node              `yaml:"defer,omitempty"`
-	Verbose bool                   `yaml:"verbose,omitempty"`
+	Name     string                 `yaml:"name,omitempty"`
+	Desc     string                 `yaml:"desc,omitempty"`
+	Run      string                 `yaml:"run,omitempty"`
+	Cmd      string                 `yaml:"cmd,omitempty"`
+	Cmds     []string               `yaml:"cmds,omitempty"`
+	Task     string                 `yaml:"task,omitempty"` // Task/job name to invoke
+	If       string                 `yaml:"if,omitempty"`
+	For      string                 `yaml:"for,omitempty"`
+	Env      map[string]string      `yaml:"env,omitempty"`
+	Uses     string                 `yaml:"uses,omitempty"`
+	With     map[string]interface{} `yaml:"with,omitempty"`
+	Detach   bool                   `yaml:"detach,omitempty"`
+	Deferred bool                   `yaml:"deferred,omitempty"`
+	Verbose  bool                   `yaml:"verbose,omitempty"`
 }
 
-// IsDeferred returns true if defer is filled.
+type DeferredStep struct {
+	Defer *Step `yaml:"defer,omitempty"`
+}
+
+// IsDeferred returns true if deferred is filled.
 func (s *Step) IsDeferred() bool {
-	_, err := s.DeferStep()
-	return err == nil
-}
-
-// DeferStep returns a *Step by decodidng s.Defer.
-// If no defer is defined, it returns nil, nil.
-func (s *Step) DeferStep() (*Step, error) {
-	var step Step
-	if err := s.Defer.Decode(&step); err != nil {
-		return nil, err
-	}
-	return &step, nil
+	return s.Deferred
 }
 
 func (s *Step) String() string {
-	deferStep, err := s.DeferStep()
-	if deferStep != nil && err == nil {
-		// Deferred step - show the defer command
-		return deferStep.Run
-	} else if s.Task != "" {
-		// Task invocation - show as "task: <task-name>"
-		return "task: " + s.Task
-	} else if s.Run != "" {
+	switch {
+	case s.Task != "":
+		return s.Task
+	case s.Run != "":
 		return s.Run
-	} else if s.Cmd != "" {
+	case s.Cmd != "":
 		return s.Cmd
-	} else if len(s.Cmds) > 0 {
+	case len(s.Cmds) > 0:
 		// For cmds array, just show the first one as a placeholder
 		return s.Cmds[0]
 	}
@@ -97,11 +86,29 @@ func (s *Step) UnmarshalYAML(node *yaml.Node) error {
 	}
 
 	if node.Kind == yaml.MappingNode {
-		// Object step - use default unmarshalling
 		type rawStep Step
 		if err := node.Decode((*rawStep)(s)); err != nil {
 			return err
 		}
+
+		var ds DeferredStep
+		if err := node.Decode(&ds); err != nil {
+			return err
+		}
+
+		if ds.Defer != nil {
+			if s.Run != "" {
+				return fmt.Errorf("Error processing step: step has run %s, and defer %s. Should use {defer} or {run, deferred=true}.", s.Run, ds.Defer.Run)
+			}
+
+			*s = *ds.Defer
+			s.Deferred = true
+
+			fmt.Printf("step: %#v\n", s.String())
+
+			return nil
+		}
+
 		return nil
 	}
 

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -60,8 +61,9 @@ func TestStepUnmarshalYAML_ObjectStep(t *testing.T) {
 		yaml       string
 		wantRun    string
 		wantName   string
-		wantDefer  string
+		wantDefer  bool
 		wantDetach bool
+		wantError  bool
 	}{
 		{
 			name: "simple object step",
@@ -75,10 +77,18 @@ name: "test step"
 		{
 			name: "step with defer",
 			yaml: `
-defer: "cleanup cmd"
+defer: cleanup cmd
 run: "main task"
 `,
-			wantDefer: "cleanup cmd",
+			wantError: true,
+		},
+		{
+			name: "step with deferred",
+			yaml: `
+deferred: true
+run: "main task"
+`,
+			wantDefer: true,
 			wantRun:   "main task",
 		},
 		{
@@ -91,42 +101,39 @@ detach: true
 			wantDetach: true,
 		},
 		{
+			name: "defer-only step with referred",
+			yaml: `
+run: "docker compose down"
+deferred: true
+`,
+			wantDefer: true,
+			wantRun:   "docker compose down",
+		},
+		{
 			name: "defer-only step",
 			yaml: `
 run: "docker compose down"
-defer: "cleanup"
+defer: cleanup
 `,
-			wantDefer: "cleanup",
-			wantRun:   "docker compose down",
+			wantError: true,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for index, tt := range tests {
+		t.Run(fmt.Sprintf("%d/%s", index, tt.name), func(t *testing.T) {
 			var step Step
 			err := yaml.Unmarshal([]byte(tt.yaml), &step)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+
+			if tt.wantError {
+				assert.Error(t, err)
+				return
 			}
 
-			if step.Run != tt.wantRun {
-				t.Errorf("Run = %q, want %q", step.Run, tt.wantRun)
-			}
-			if step.Name != tt.wantName {
-				t.Errorf("Name = %q, want %q", step.Name, tt.wantName)
-			}
-
-			assert.NotNil(t, step.Defer)
-
-			deferStep, err := step.DeferStep()
 			assert.NoError(t, err)
-			assert.NotNil(t, deferStep)
-
-			assert.Equal(t, tt.wantDefer, deferStep.Run)
-
-			if step.Detach != tt.wantDetach {
-				t.Errorf("Detach = %v, want %v", step.Detach, tt.wantDetach)
-			}
+			assert.Equal(t, tt.wantRun, step.Run)
+			assert.Equal(t, tt.wantName, step.Name)
+			assert.Equal(t, tt.wantDefer, step.IsDeferred())
+			assert.Equal(t, tt.wantDetach, step.Detach)
 		})
 	}
 }
@@ -161,9 +168,6 @@ func TestStepsSliceUnmarshal(t *testing.T) {
 	if steps[1].Run != "echo world" || steps[1].Name != "named step" {
 		t.Errorf("step[1]: Run=%q Name=%q, want Run='echo world' Name='named step'", steps[1].Run, steps[1].Name)
 	}
-
-	// Third step: defer only
-	assert.Equal(t, "cleanup", steps[2].Defer.Value)
 
 	// Fourth step: detached
 	if steps[3].Run != "test" || !steps[3].Detach {
@@ -202,6 +206,4 @@ steps:
 	if job.Steps[1].Run != "go test ./..." {
 		t.Errorf("steps[1].Run = %q, want 'go test ./...'", job.Steps[1].Run)
 	}
-
-	assert.Equal(t, "docker compose down", job.Steps[2].Defer.Value)
 }
