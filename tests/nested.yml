@@ -26,6 +26,7 @@ jobs:
       - for: item in $(ls ./bin/*.test)
         task: test:detail
         detach: true
+        summarize: true
       - name: cleanup
         task: docker:down
         deferred: true

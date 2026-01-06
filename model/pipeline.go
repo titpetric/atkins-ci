@@ -60,20 +60,21 @@ func (j *Job) ShouldShow() bool {
 
 // Step represents a step within a job.
 type Step struct {
-	Name     string                 `yaml:"name,omitempty"`
-	Desc     string                 `yaml:"desc,omitempty"`
-	Run      string                 `yaml:"run,omitempty"`
-	Cmd      string                 `yaml:"cmd,omitempty"`
-	Cmds     []string               `yaml:"cmds,omitempty"`
-	Task     string                 `yaml:"task,omitempty"` // Task/job name to invoke
-	If       string                 `yaml:"if,omitempty"`
-	For      string                 `yaml:"for,omitempty"`
-	Env      map[string]string      `yaml:"env,omitempty"`
-	Uses     string                 `yaml:"uses,omitempty"`
-	With     map[string]interface{} `yaml:"with,omitempty"`
-	Detach   bool                   `yaml:"detach,omitempty"`
-	Deferred bool                   `yaml:"deferred,omitempty"`
-	Verbose  bool                   `yaml:"verbose,omitempty"`
+	Name      string                 `yaml:"name,omitempty"`
+	Desc      string                 `yaml:"desc,omitempty"`
+	Run       string                 `yaml:"run,omitempty"`
+	Cmd       string                 `yaml:"cmd,omitempty"`
+	Cmds      []string               `yaml:"cmds,omitempty"`
+	Task      string                 `yaml:"task,omitempty"` // Task/job name to invoke
+	If        string                 `yaml:"if,omitempty"`
+	For       string                 `yaml:"for,omitempty"`
+	Env       map[string]string      `yaml:"env,omitempty"`
+	Uses      string                 `yaml:"uses,omitempty"`
+	With      map[string]interface{} `yaml:"with,omitempty"`
+	Detach    bool                   `yaml:"detach,omitempty"`
+	Deferred  bool                   `yaml:"deferred,omitempty"`
+	Verbose   bool                   `yaml:"verbose,omitempty"`
+	Summarize bool                   `yaml:"summarize,omitempty"`
 }
 
 type DeferredStep struct {

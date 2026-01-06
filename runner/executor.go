@@ -386,6 +386,8 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 // executeStepWithForLoop handles for loop expansion and execution
 // Each iteration becomes a separate execution with iteration variables overlaid on context
 func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepIndex int, stepNode *treeview.Node) error {
+	defer execCtx.Render()
+
 	// Expand the for loop to get all iterations
 	iterations, err := ExpandFor(execCtx, NewExec().ExecuteCommand)
 	if err != nil {
@@ -463,7 +465,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 	}
 
 	// Render tree with expanded iterations
-	execCtx.Display.Render(execCtx.Builder.Root())
+	execCtx.Render()
 
 	// Execute each iteration
 	var lastErr error
@@ -517,9 +519,6 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 	if lastErr != nil {
 		return lastErr
 	}
-
-	// Render final state after all iterations complete
-	execCtx.Display.Render(execCtx.Builder.Root())
 
 	execCtx.StepsCount++
 	execCtx.StepsPassed++

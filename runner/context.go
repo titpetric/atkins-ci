@@ -66,6 +66,11 @@ func (e *ExecutionContext) Copy() *ExecutionContext {
 	}
 }
 
+// Render() will refresh the treeview.
+func (e *ExecutionContext) Render() {
+	e.Display.Render(e.Builder.Root())
+}
+
 // NextStepIndex returns the next sequential step index for this job execution.
 // This ensures each step/iteration gets a unique number.
 func (e *ExecutionContext) NextStepIndex() int {
