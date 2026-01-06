@@ -8,7 +8,6 @@ import (
 
 	"github.com/titpetric/atkins-ci/colors"
 	"github.com/titpetric/atkins-ci/model"
-	"github.com/titpetric/atkins-ci/spinner"
 	"github.com/titpetric/atkins-ci/treeview"
 	"golang.org/x/sync/errgroup"
 )
@@ -555,12 +554,9 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 	// Mark step as running and render immediately to show state transition
 	if stepNode != nil {
 		stepNode.SetStatus(treeview.StatusRunning)
+		stepNode.SetSpinner(colors.BrightOrange("●"))
 		stepCtx.Display.Render(stepCtx.Builder.Root())
 	}
-
-	// Start spinner and execute command
-	s := spinner.New()
-	s.Start()
 
 	// Channel to signal command completion
 	cmdDone := make(chan error)
@@ -569,57 +565,32 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 		close(cmdDone)
 	}()
 
-	// Update spinner in tree while command runs
-	tickerTicker := time.NewTicker(100 * time.Millisecond)
-	defer tickerTicker.Stop()
+	err := <-cmdDone
 
-	for {
-		select {
-		case err := <-cmdDone:
-			s.Stop()
-			tickerTicker.Stop()
+	// Calculate duration in milliseconds
+	duration := time.Since(startTime).Milliseconds()
 
-			// Calculate duration in milliseconds
-			duration := time.Since(startTime).Milliseconds()
-
-			// Update tree node status and log result
-			if stepNode != nil {
-				if err != nil {
-					stepNode.SetStatus(treeview.StatusFailed)
-					if stepCtx.Logger != nil {
-						stepCtx.Logger.LogFail(jobName, seqIndex, stepName, err, duration)
-					}
-					return err
-				}
-				stepNode.SetStatus(treeview.StatusPassed)
-				if stepCtx.Logger != nil {
-					stepCtx.Logger.LogPass(jobName, seqIndex, stepName, duration)
-				}
-			} else {
-				// No node, still log the result
-				if err != nil {
-					if stepCtx.Logger != nil {
-						stepCtx.Logger.LogFail(jobName, seqIndex, stepName, err, duration)
-					}
-					return err
-				}
-				if stepCtx.Logger != nil {
-					stepCtx.Logger.LogPass(jobName, seqIndex, stepName, duration)
-				}
-			}
-
-			// Render tree with final state
-			stepCtx.Display.Render(stepCtx.Builder.Root())
-			return nil
-
-		case <-tickerTicker.C:
-			if stepNode != nil {
-				stepNode.SetSpinner(s.String())
-
-				stepCtx.Display.Render(stepCtx.Builder.Root())
-			}
+	// Update tree node status and log result
+	if stepNode != nil {
+		if err != nil {
+			stepNode.SetStatus(treeview.StatusFailed)
 		}
+		stepNode.SetStatus(treeview.StatusPassed)
 	}
+
+	if err != nil {
+		if stepCtx.Logger != nil {
+			stepCtx.Logger.LogFail(jobName, seqIndex, stepName, err, duration)
+		}
+		return err
+	}
+	if stepCtx.Logger != nil {
+		stepCtx.Logger.LogPass(jobName, seqIndex, stepName, duration)
+	}
+
+	// Render tree with final state
+	stepCtx.Display.Render(stepCtx.Builder.Root())
+	return nil
 }
 
 // executeTaskStep executes a task/job from within a step
