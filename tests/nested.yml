@@ -26,7 +26,6 @@ jobs:
       - for: item in $(ls ./bin/*.test)
         task: test:detail
         detach: true
-        summarize: true
       - name: cleanup
         task: docker:down
         deferred: true
@@ -34,9 +33,9 @@ jobs:
   test:detail:
     dest: "Collect per-function test runs"
     requires: [item]
-    show: false
     steps:
       - for: funcName in $(${{ item }} -test.list .)
+        summarize: true
         run: ${{ item }} -test.run "^${{ funcName }}$"
 
   docker:up:

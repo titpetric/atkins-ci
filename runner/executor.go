@@ -371,6 +371,7 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 			stepNode.SetStatus(treeview.StatusFailed)
 			return err
 		}
+		return nil
 	}
 
 	// Determine which command to run

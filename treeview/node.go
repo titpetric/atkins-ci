@@ -1,7 +1,6 @@
 package treeview
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -23,10 +22,11 @@ func (n *Node) StatusColor() string {
 
 func (n *Node) Label() string {
 	var (
-		name         = fmt.Sprintf("%s, [summarize %v]", n.Name, n.Summarize)
 		haveChildren = n.HasChildren()
 		haveDeps     = len(n.Dependencies) > 0
 	)
+
+	name := n.Name //        = fmt.Sprintf("%s, [summarize %v]", n.Name, n.Summarize)
 
 	switch n.Status {
 	case StatusRunning:
