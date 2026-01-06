@@ -8,6 +8,66 @@ see which jobs are running, and run jobs and steps in parallel.
 
 See pipeline examples in [./tests](./tests).
 
+## Install
+
+Use the following command to install, needs the latest version of Go:
+
+```bash
+go install github.com/titpetric/atkins-ci@latest
+```
+
+```text
+$ atkins-ci --help
+Usage of atkins-ci:
+  -debug
+    	Print debug data
+  -file string
+    	Path to pipeline file (default "atkins.yml")
+  -job string
+    	Specific job to run
+  -l	List pipeline jobs and dependencies
+  -lint
+    	Lint pipeline for errors
+  -log string
+    	Log file path for command execution (e.g., atkins.log)
+```
+
+To set up in your workspace, you'd:
+
+- provide `atkins.yml` and invoke `atkins-ci` or
+- provide several configurations and invoke `atkins-ci -file ${{ config }}`.
+
+You can use `atkins-ci -l` in a project to view the projects pipeline:
+
+```text
+$ atkins-ci -l
+Vuego CI pipeline
+├─ fmt ●
+│  ├─ run: goimports -w .
+│  ├─ run: go fmt ./...
+│  └─ run: go mod tidy
+├─ test (depends_on: fmt) ●
+│  ├─ task: test:build
+│  └─ task: test:run
+├─ docker:down ⊘
+│  └─ run: docker compose down
+├─ docker:up ⊘
+│  └─ run: docker compose up -d --wait --remove-orphans
+├─ test:build ⊘
+│  └─ run: go-fsck test -cover -coverpkg=./... -c -o bin/ ./...
+├─ test:detail ⊘
+│  ├─ run: mkdir -p coverage/${{item}}
+│  └─ run: ./bin/${{ item }} -test.coverprofile "./coverage/${{item}}/${{ funcName }}.cov" -test.run "^${{ funcName }}$"  (0/0)
+└─ test:run ⊘
+   ├─ task: docker:up
+   ├─ run: rm -rf coverage
+   ├─ task: test:detail
+   └─ task: docker:down
+```
+
+This example is from [titpetric/vuego/atkins.yml](https://github.com/titpetric/vuego/blob/main/atkins.yml).
+Since the pipeline doesn't have a `default` job, the list shows which root tasks would be run on start.
+
 ## Design
 
 The design was heavily influenced by [Taskfile](https://taskfile.dev)

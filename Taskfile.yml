@@ -10,7 +10,7 @@ tasks:
   install:
     cmds:
       - task: fmt
-      - go install -trimpath ./cmd/...
+      - go install -trimpath .
 
   fmt:
     silent: true
