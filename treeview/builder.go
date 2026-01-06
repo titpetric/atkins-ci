@@ -2,6 +2,7 @@ package treeview
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/titpetric/atkins-ci/model"
 )
@@ -88,11 +89,28 @@ func BuildFromPipeline(pipeline *model.Pipeline, resolveDeps func(map[string]*mo
 		return nil, fmt.Errorf("failed to resolve job dependencies: %w", err)
 	}
 
-	// Build tree structure for static display
+	// Convert jobOrder to a set for quick lookup
+	willRun := make(map[string]bool)
 	for _, jobName := range jobOrder {
-		job := jobs[jobName]
+		willRun[jobName] = true
+	}
 
-		builder.AddJob(job, job.DependsOn, jobName)
+	// Build tree structure for static display - include all jobs
+	// Sort job names for consistent display
+	var jobNames []string
+	for jobName := range jobs {
+		jobNames = append(jobNames, jobName)
+	}
+	slices.Sort(jobNames)
+
+	for _, jobName := range jobNames {
+		job := jobs[jobName]
+		jobNode := builder.AddJob(job, job.DependsOn, jobName)
+
+		// Mark jobs that won't be executed
+		if !willRun[jobName] {
+			jobNode.Node.Status = StatusSkipped
+		}
 	}
 
 	return builder.Root(), nil

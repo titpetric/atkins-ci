@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"maps"
 	"slices"
-	"strings"
 
 	"github.com/titpetric/atkins-ci/model"
 )
@@ -80,6 +79,8 @@ func GetDependencies(dependsOn interface{}) []string {
 		return result
 	case []string:
 		return v
+	case model.Dependencies:
+		return []string(v)
 	default:
 		return []string{}
 	}
@@ -101,8 +102,12 @@ func ResolveJobDependencies(jobs map[string]*model.Job, startingJob string) ([]s
 	}
 
 	// Otherwise, resolve root jobs (those without ':' in name)
+	// Mark nested jobs so they won't be executed directly
 	for name, job := range jobs {
-		if strings.Contains(name, ":") {
+		if job.Name == "" {
+			job.Name = name
+		}
+		if !job.IsRootLevel() {
 			job.Nested = true
 		}
 	}
@@ -153,6 +158,8 @@ func resolveDependencyChain(jobs map[string]*model.Job, jobName string) ([]strin
 }
 
 // resolveJobs returns all jobs in dependency order (topological sort)
+// When called without a specific job, only root jobs are traversed as starting points,
+// but their nested dependencies are included in the result.
 func resolveJobs(jobs map[string]*model.Job) ([]string, error) {
 	resolved := make([]string, 0)
 	visited := make(map[string]bool)
@@ -182,8 +189,17 @@ func resolveJobs(jobs map[string]*model.Job) ([]string, error) {
 		return nil
 	}
 
+	// Only start traversal from root jobs
+	// This ensures nested jobs are only included if they're dependencies of root jobs
 	names := slices.Sorted(maps.Keys(jobs))
 	for _, jobName := range names {
+		job := jobs[jobName]
+		if job.Name == "" {
+			job.Name = jobName
+		}
+		if !job.IsRootLevel() {
+			continue // Skip nested jobs as starting points
+		}
 		if err := visit(jobName); err != nil {
 			return nil, err
 		}

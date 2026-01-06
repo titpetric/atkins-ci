@@ -1,0 +1,23 @@
+id: "root_jobs"
+name: "Test case for root jobs"
+
+tasks:
+  job1:
+    desc: "First job"
+    steps:
+      - sleep 1
+
+  job2:
+    desc: "Second job"
+    steps:
+      - sleep 2
+
+  job3:
+    desc: "Third job"
+    steps:
+      - sleep 3
+
+  nested:error:
+    desc: "Nested job that should never run"
+    steps:
+      - exit 1

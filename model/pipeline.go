@@ -34,6 +34,17 @@ type Job struct {
 	Nested bool   `yaml:"-"`
 }
 
+// IsRootLevel returns true if the job is a root-level job (no ':' in name).
+func (j *Job) IsRootLevel() bool {
+	// A job is root-level if it doesn't contain ':' in its name
+	for _, ch := range j.Name {
+		if ch == ':' {
+			return false
+		}
+	}
+	return true
+}
+
 // Step represents a step within a job.
 type Step struct {
 	Name     string                 `yaml:"name,omitempty"`

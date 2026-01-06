@@ -164,17 +164,22 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 
 	eg := new(errgroup.Group)
 	detached := 0
+	parallel := 0
 	count := 0
 
 	for _, name := range jobOrder {
 		job := allJobs[name]
 
-		if job.Nested {
-			continue
-		}
+		// Check if job has no dependencies - can run in parallel
+		deps := GetDependencies(job.DependsOn)
+		canParallel := len(deps) == 0
 
-		if job.Detach {
-			detached++
+		if job.Detach || canParallel {
+			if job.Detach {
+				detached++
+			} else {
+				parallel++
+			}
 			count++
 			eg.Go(func() error {
 				return executeJobWithDeps(name, job)
@@ -190,8 +195,8 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		count++
 	}
 
-	// Wait for all detached jobs
-	if detached > 0 {
+	// Wait for all parallel and detached jobs
+	if detached > 0 || parallel > 0 {
 		if err := eg.Wait(); err != nil {
 			// Mark pipeline as failed
 			root.SetStatus(treeview.StatusFailed)

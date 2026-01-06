@@ -13,6 +13,7 @@ tasks:
       - go install ./cmd/...
 
   fmt:
+    silent: true
     cmds:
       - goimports -w .
       - go mod tidy
@@ -27,7 +28,7 @@ tasks:
     cmds:
       - task: install
       - rm -f atkins.cast atkins.gif
-      - asciinema rec --cols 80 --rows 30 -t "Atkins CI runner example" -c "task run" atkins.cast
+      - asciinema rec --cols 80 --rows 30 -t "Atkins CI runner example" -c "task test:fixtures" atkins.cast
       - task: record:gif
 
   record:gif:
@@ -51,3 +52,5 @@ tasks:
       - atkins -file tests/detach.yml
       - atkins -file tests/depends_on.yml -l
       - atkins -file tests/depends_on.yml
+      - atkins -file tests/root_jobs.yml -l
+      - atkins -file tests/root_jobs.yml
