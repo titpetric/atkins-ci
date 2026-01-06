@@ -201,6 +201,72 @@ func TestAddJob_WithSteps(t *testing.T) {
 		assert.NotNil(t, treeNode)
 		assert.False(t, treeNode.Node.HasChildren())
 	})
+
+	t.Run("job with task invocation steps", func(t *testing.T) {
+		builder := NewBuilder("test-pipeline")
+		job := &model.Job{
+			Desc: "Test job with task steps",
+			Steps: []*model.Step{
+				{Task: "build", Name: "build step"},
+				{Task: "test", Name: "test step"},
+				{Run: "echo cleanup", Name: "cleanup step"},
+			},
+		}
+
+		treeNode := builder.AddJob(job, []string{}, "test")
+		assert.NotNil(t, treeNode)
+
+		children := treeNode.Node.GetChildren()
+		assert.Equal(t, 3, len(children))
+
+		// Verify that task steps are properly converted to node names
+		assert.Equal(t, "build", children[0].Name)
+		assert.Equal(t, "test", children[1].Name)
+		assert.Equal(t, "echo cleanup", children[2].Name)
+	})
+
+	t.Run("job with summarized step", func(t *testing.T) {
+		builder := NewBuilder("test-pipeline")
+		job := &model.Job{
+			Desc: "Test job with summarized steps",
+			Steps: []*model.Step{
+				{Run: "echo iteration1", Name: "iter 1"},
+				{Run: "echo iteration2", Name: "iter 2", Summarize: true},
+				{Run: "echo iteration3", Name: "iter 3"},
+			},
+		}
+
+		treeNode := builder.AddJob(job, []string{}, "test")
+		assert.NotNil(t, treeNode)
+
+		children := treeNode.Node.GetChildren()
+		assert.Equal(t, 3, len(children))
+
+		// Verify that Summarize flag is copied to the step node
+		assert.False(t, children[0].Summarize)
+		assert.True(t, children[1].Summarize)
+		assert.False(t, children[2].Summarize)
+	})
+
+	t.Run("job with deferred and summarized step", func(t *testing.T) {
+		builder := NewBuilder("test-pipeline")
+		job := &model.Job{
+			Desc: "Test job with deferred and summarized step",
+			Steps: []*model.Step{
+				{Run: "echo main", Name: "main step"},
+				{Run: "echo cleanup", Name: "cleanup", Deferred: true, Summarize: true},
+			},
+		}
+
+		treeNode := builder.AddJob(job, []string{}, "test")
+		children := treeNode.Node.GetChildren()
+		assert.Equal(t, 2, len(children))
+
+		// Verify both flags are copied
+		cleanupStep := children[1]
+		assert.True(t, cleanupStep.Deferred)
+		assert.True(t, cleanupStep.Summarize)
+	})
 }
 
 // TestAddJobWithoutSteps tests the AddJobWithoutSteps method
@@ -252,6 +318,93 @@ func TestBuildFromPipeline_ConsistentOrdering(t *testing.T) {
 			assert.Equal(t, children1[i].Name, children2[i].Name)
 			assert.Equal(t, children1[i].Name, children3[i].Name)
 		}
+	})
+}
+
+// TestAddJob_WithSummaryFlag tests that the Summarize flag is copied from the job model
+func TestAddJob_WithSummaryFlag(t *testing.T) {
+	t.Run("job with summarize enabled", func(t *testing.T) {
+		builder := NewBuilder("test-pipeline")
+		job := &model.Job{
+			Desc:      "Test job with summary",
+			Summarize: true,
+			Steps: []*model.Step{
+				{Run: "echo 1", Name: "step 1"},
+				{Run: "echo 2", Name: "step 2"},
+			},
+		}
+
+		treeNode := builder.AddJob(job, []string{}, "test-summary")
+		assert.NotNil(t, treeNode)
+		assert.Equal(t, "test-summary", treeNode.Node.Name)
+		assert.True(t, treeNode.Node.Summarize)
+
+		children := treeNode.Node.GetChildren()
+		assert.Equal(t, 2, len(children))
+	})
+
+	t.Run("job with summarize disabled", func(t *testing.T) {
+		builder := NewBuilder("test-pipeline")
+		job := &model.Job{
+			Desc:      "Test job without summary",
+			Summarize: false,
+			Steps: []*model.Step{
+				{Run: "echo 1", Name: "step 1"},
+			},
+		}
+
+		treeNode := builder.AddJob(job, []string{}, "test-no-summary")
+		assert.NotNil(t, treeNode)
+		assert.False(t, treeNode.Node.Summarize)
+	})
+}
+
+// TestAddJobWithSummary tests the AddJobWithSummary helper method
+func TestAddJobWithSummary(t *testing.T) {
+	t.Run("adding job with summary enabled", func(t *testing.T) {
+		builder := NewBuilder("test-pipeline")
+		job := &model.Job{
+			Desc: "Test job",
+			Steps: []*model.Step{
+				{Run: "echo test", Name: "test step"},
+			},
+		}
+
+		treeNode := builder.AddJobWithSummary(job, []string{}, "summary-job")
+		assert.NotNil(t, treeNode)
+		assert.Equal(t, "summary-job", treeNode.Node.Name)
+		assert.True(t, treeNode.Node.Summarize)
+
+		children := treeNode.Node.GetChildren()
+		assert.Equal(t, 1, len(children))
+	})
+}
+
+// TestBuildFromPipeline_WithSummarize tests building a pipeline with summarized jobs
+func TestBuildFromPipeline_WithSummarize(t *testing.T) {
+	t.Run("pipeline with summarized job", func(t *testing.T) {
+		pipeline := &model.Pipeline{
+			Name: "test-pipeline",
+			Jobs: map[string]*model.Job{
+				"test": {
+					Desc:      "Test job",
+					Summarize: true,
+					Steps: []*model.Step{
+						{Run: "go test ./...", Name: "run tests"},
+						{Run: "go coverage", Name: "coverage"},
+					},
+				},
+			},
+		}
+
+		node, err := BuildFromPipeline(pipeline, mockResolveDeps)
+		assert.NoError(t, err)
+		assert.NotNil(t, node)
+
+		children := node.GetChildren()
+		assert.Equal(t, 1, len(children))
+		assert.Equal(t, "test", children[0].Name)
+		assert.True(t, children[0].Summarize)
 	})
 }
 

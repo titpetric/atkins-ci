@@ -271,7 +271,7 @@ func TestValidateJobRequirements(t *testing.T) {
 			ctx := &runner.ExecutionContext{
 				Variables: tt.variables,
 			}
-			tt.job.Name = tt.job.Name // Ensure job name is set
+			// Ensure job name is set (already set by test case)
 
 			err := runner.ValidateJobRequirements(tt.job, ctx)
 

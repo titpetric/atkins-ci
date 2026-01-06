@@ -61,6 +61,64 @@ func TestDisplay_RenderStatic(t *testing.T) {
 			display.RenderStatic(root)
 		})
 	})
+
+	t.Run("renders complex tree summary", func(t *testing.T) {
+		display := NewDisplay()
+		root := NewNode("root")
+		root.Summarize = true
+
+		// Create multiple levels
+		for i := 0; i < 3; i++ {
+			child := NewNode("child" + string(rune(48+i)))
+			root.AddChild(child)
+
+			for j := 0; j < 2; j++ {
+				grandchild := NewNode("grandchild")
+				child.AddChild(grandchild)
+			}
+		}
+
+		assert.NotPanics(t, func() {
+			display.RenderStatic(root)
+		})
+	})
+
+	t.Run("renders job with summarized children by status", func(t *testing.T) {
+		display := NewDisplay()
+		root := NewNode("pipeline")
+
+		// Job with summarization enabled
+		job := NewNode("build-job")
+		job.Summarize = true
+
+		// Add children with different statuses
+		step1 := NewNode("step 1")
+		step1.SetStatus(StatusPassed)
+		job.AddChild(step1)
+
+		step2 := NewNode("step 2")
+		step2.SetStatus(StatusPassed)
+		job.AddChild(step2)
+
+		step3 := NewNode("step 3")
+		step3.SetStatus(StatusFailed)
+		job.AddChild(step3)
+
+		step4 := NewNode("step 4")
+		step4.SetStatus(StatusRunning)
+		job.AddChild(step4)
+
+		root.AddChild(job)
+
+		// Verify the structure is created correctly
+		assert.True(t, job.Summarize)
+		assert.Equal(t, 4, len(job.GetChildren()))
+
+		// Render should not panic
+		assert.NotPanics(t, func() {
+			display.RenderStatic(root)
+		})
+	})
 }
 
 // TestDisplay_Render tests interactive rendering (may not display on non-terminal)

@@ -131,6 +131,7 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		// Only add to tree if it's in jobOrder (root-level execution)
 		if isRootJob {
 			jobNode := tree.AddJobWithoutSteps(deps, jobLabel, job.Nested)
+			jobNode.Summarize = job.Summarize
 
 			// Populate children
 			for _, step := range job.Steps {
@@ -149,8 +150,9 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		} else {
 			// For non-root jobs (only invoked as tasks), create nodes but don't add to tree
 			jobNode := &treeview.Node{
-				Name:   jobLabel,
-				Status: treeview.StatusPending,
+				Name:      jobLabel,
+				Status:    treeview.StatusPending,
+				Summarize: job.Summarize,
 			}
 
 			// Populate children
@@ -195,7 +197,7 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 			}
 		}
 
-		jobCtx := *pipelineCtx
+		jobCtx := pipelineCtx.Copy()
 		jobCtx.Job = job
 		jobCtx.Depth = 1
 
@@ -206,7 +208,7 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 
 		display.Render(root)
 
-		if err := executor.ExecuteJob(ctx, job, &jobCtx, jobName); err != nil {
+		if err := executor.ExecuteJob(ctx, job, jobCtx, jobName); err != nil {
 			jobMutex.Lock()
 			jobCompleted[jobName] = true
 			jobMutex.Unlock()
@@ -220,7 +222,7 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		// Store results
 		jobMutex.Lock()
 		jobCompleted[jobName] = true
-		jobResults[jobName] = &jobCtx
+		jobResults[jobName] = jobCtx
 		jobMutex.Unlock()
 
 		return nil

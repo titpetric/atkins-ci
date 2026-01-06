@@ -519,8 +519,12 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 		}
 	}
 
-	if lastErr != nil {
-		return lastErr
+	if stepNode != nil {
+		if lastErr != nil {
+			stepNode.SetStatus(treeview.StatusFailed)
+			return lastErr
+		}
+		stepNode.SetStatus(treeview.StatusPassed)
 	}
 
 	execCtx.StepsCount++
@@ -614,6 +618,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 		}
 		return fmt.Errorf("task %q node not found in tree", taskName)
 	}
+	taskJobNode.Summarize = taskJob.Summarize
 
 	// If the task is nested and the step node exists, add task node as child of step node
 	// so it appears in the tree under the step

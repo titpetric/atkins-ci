@@ -28,6 +28,7 @@ func (b *Builder) AddJob(job *model.Job, deps []string, jobName string) *TreeNod
 	// Create job node
 	jobNode := NewJobNode(jobName, job.Nested)
 	jobNode.Dependencies = deps
+	jobNode.Summarize = job.Summarize
 
 	// Add steps as children
 	for _, step := range job.Steps {
@@ -55,6 +56,25 @@ func (b *Builder) AddJobWithoutSteps(deps []string, jobName string, nested bool)
 	}
 }
 
+// AddJobWithSummary adds a job node to the tree with summarization enabled.
+func (b *Builder) AddJobWithSummary(job *model.Job, deps []string, jobName string) *TreeNode {
+	jobNode := NewJobNode(jobName, job.Nested)
+	jobNode.Dependencies = deps
+	jobNode.Summarize = true
+
+	// Add steps as children
+	for _, step := range job.Steps {
+		stepNode := b.buildStepNode(step)
+		jobNode.AddChild(stepNode)
+	}
+
+	b.root.AddChild(jobNode)
+
+	return &TreeNode{
+		Node: jobNode,
+	}
+}
+
 // buildStepNode constructs a step node from a step definition
 func (b *Builder) buildStepNode(step *model.Step) *Node {
 	// Build step command/label
@@ -68,6 +88,8 @@ func (b *Builder) buildStepNode(step *model.Step) *Node {
 	}
 
 	stepNode := NewNode(stepName)
+	stepNode.Summarize = step.Summarize
+	stepNode.Deferred = step.Deferred
 
 	return stepNode
 }

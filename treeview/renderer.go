@@ -30,7 +30,11 @@ func (r *Renderer) RenderStatic(root *Node) string {
 
 	output := colors.BrightWhite(root.Name) + "\n"
 
-	// Render only the children, not the root again
+	if root.Summarize {
+		output += r.renderNodeSummary(root, "", true)
+		return output
+	}
+
 	children := root.GetChildren()
 	for i, child := range children {
 		isLast := i == len(children)-1
@@ -38,6 +42,48 @@ func (r *Renderer) RenderStatic(root *Node) string {
 	}
 
 	return output
+}
+
+// renderNodeSummary will give a one-liner with status (pending, running, passed...)
+func (r *Renderer) renderNodeSummary(node *Node, prefix string, isLast bool) string {
+	// Determine branch character
+	branch := "├─ "
+	if isLast {
+		branch = "└─ "
+	}
+
+	var pending, running, passing, failed int
+	for _, child := range node.GetChildren() {
+		switch child.Status {
+		case StatusRunning:
+			running++
+		case StatusFailed:
+			failed++
+		case StatusPending:
+			pending++
+		case StatusPassed:
+			passing++
+		}
+	}
+
+	total := pending + running + passing
+	summary := colors.White(fmt.Sprintf("%d/%d", passing, total))
+	if total == passing {
+		summary = colors.Green(fmt.Sprintf("%d/%d", passing, total))
+	}
+
+	// If no summary items, just show the node name
+	if len(summary) == 0 {
+		label := node.Label()
+		status := node.StatusColor()
+		output := prefix + branch + label
+		if status != "" {
+			output += " " + status
+		}
+		return output + "\n"
+	}
+
+	return prefix + branch + node.Label() + " " + node.StatusColor() + " (" + colors.Gray(summary) + ")\n"
 }
 
 // renderStaticNode renders a static node without execution state (for list views)
@@ -48,6 +94,10 @@ func (r *Renderer) renderStaticNode(node *Node, prefix string, isLast bool) stri
 	branch := "├─ "
 	if isLast {
 		branch = "└─ "
+	}
+
+	if node.Summarize {
+		return r.renderNodeSummary(node, prefix, isLast)
 	}
 
 	label := node.Label()

@@ -7,36 +7,6 @@ import (
 	"github.com/titpetric/atkins-ci/colors"
 )
 
-// Status represents the execution status of a node.
-type Status int
-
-// Status constants.
-const (
-	StatusPending Status = iota
-	StatusRunning
-	StatusPassed
-	StatusFailed
-	StatusSkipped
-	StatusConditional
-)
-
-func (s Status) String() string {
-	switch s {
-	case StatusRunning:
-		return colors.BrightOrange("●")
-	case StatusPassed:
-		return colors.BrightGreen("✓")
-	case StatusFailed:
-		return colors.BrightRed("✗")
-	case StatusSkipped:
-		return colors.BrightYellow("⊘")
-	case StatusConditional:
-		return colors.Gray("●")
-	default:
-	}
-	return ""
-}
-
 func (n *Node) StatusColor() string {
 	var (
 		haveChildren = n.HasChildren()
@@ -88,6 +58,7 @@ type Node struct {
 	Children     []*Node
 	Dependencies []string
 	Deferred     bool
+	Summarize    bool
 	mu           sync.Mutex
 }
 

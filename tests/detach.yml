@@ -3,6 +3,7 @@ name: Detached Steps Test
 jobs:
   parallel-work:
     desc: "Job with many parallel detached steps"
+    summarize: true
     steps:
       - name: "step-10s"
         detach: true
