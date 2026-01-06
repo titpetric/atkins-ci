@@ -75,9 +75,13 @@ func (e *Executor) ExecuteJob(parentCtx context.Context, job *model.Job, ctx *Ex
 	// Store context in execution context for use in steps
 	ctx.Context = jobCtx
 
-	// Merge job variables into context
+	// Merge job variables into context with interpolation
 	if job.Vars != nil {
-		for k, v := range job.Vars {
+		interpolated, err := interpolateVariables(ctx, job.Vars)
+		if err != nil {
+			return err
+		}
+		for k, v := range interpolated {
 			ctx.Variables[k] = v
 		}
 	}
@@ -653,6 +657,22 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 	taskCtx.CurrentJob = taskJobNode
 	taskCtx.Context = jobCtx
 
+	// Interpolate task-level variables (supports $(exec) syntax)
+	if taskJob.Vars != nil {
+		interpolated, err := interpolateVariables(taskCtx, taskJob.Vars)
+		if err != nil {
+			taskJobNode.SetStatus(treeview.StatusFailed)
+			if stepNode != nil {
+				stepNode.SetStatus(treeview.StatusFailed)
+			}
+			execCtx.Render()
+			return err
+		}
+		for k, v := range interpolated {
+			taskCtx.Variables[k] = v
+		}
+	}
+
 	// Validate job requirements
 	if err := ValidateJobRequirements(taskJob, taskCtx); err != nil {
 		taskJobNode.SetStatus(treeview.StatusFailed)
@@ -711,10 +731,29 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 	for _, iter := range iterations {
 		// Create execution context for this iteration with loop variables
 		iterCtx := execCtx.Copy()
-		iterCtx.Variables = iter.Variables // Use iteration variables
+		// Merge iteration variables (loop variables) with parent variables
+		// Iteration variables take precedence over parent variables
+		for k, v := range iter.Variables {
+			iterCtx.Variables[k] = v
+		}
 		iterCtx.Job = taskJob
 		iterCtx.CurrentJob = taskJobNode
 		iterCtx.Context = jobCtx
+
+		// Interpolate task-level variables (supports $(exec) syntax)
+		if taskJob.Vars != nil {
+			interpolated, err := interpolateVariables(iterCtx, taskJob.Vars)
+			if err != nil {
+				taskJobNode.SetStatus(treeview.StatusFailed)
+				if stepNode != nil {
+					stepNode.SetStatus(treeview.StatusFailed)
+				}
+				return err
+			}
+			for k, v := range interpolated {
+				iterCtx.Variables[k] = v
+			}
+		}
 
 		// Mark task as running
 		taskJobNode.SetStatus(treeview.StatusRunning)
@@ -761,6 +800,30 @@ func copyVariables(vars map[string]interface{}) map[string]interface{} {
 		copy[k] = v
 	}
 	return copy
+}
+
+// interpolateVariables interpolates all string variables in a map using $(exec) and ${{ var }} syntax.
+// Non-string values are passed through unchanged.
+// Returns the interpolated map or an error if interpolation fails.
+func interpolateVariables(ctx *ExecutionContext, vars map[string]interface{}) (map[string]interface{}, error) {
+	if vars == nil {
+		return nil, nil
+	}
+
+	result := make(map[string]interface{})
+	for k, v := range vars {
+		// Only interpolate string values
+		if strVal, ok := v.(string); ok {
+			interpolated, err := InterpolateString(strVal, ctx)
+			if err != nil {
+				return nil, fmt.Errorf("failed to interpolate variable %q: %w", k, err)
+			}
+			result[k] = interpolated
+		} else {
+			result[k] = v
+		}
+	}
+	return result, nil
 }
 
 // countOutputLines counts the number of newlines in output

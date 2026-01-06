@@ -44,9 +44,18 @@ type ExecutionContext struct {
 	stepSeqMu    sync.Mutex
 }
 
-// Copy copies everything except Context and Variables.
+// Copy copies everything except Context. Variables are shallow-copied.
 func (e *ExecutionContext) Copy() *ExecutionContext {
+	// Create a copy of Variables map to avoid nil pointer issues
+	varsCopy := make(map[string]interface{})
+	if e.Variables != nil {
+		for k, v := range e.Variables {
+			varsCopy[k] = v
+		}
+	}
+
 	return &ExecutionContext{
+		Variables:    varsCopy,
 		Env:          e.Env,
 		Results:      e.Results,
 		Verbose:      e.Verbose,

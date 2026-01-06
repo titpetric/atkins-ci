@@ -5,7 +5,7 @@ tasks:
   default:
     cmds:
       - task: install
-      - task: test
+      - atkins-ci
 
   install:
     cmds:

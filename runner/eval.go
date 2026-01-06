@@ -208,7 +208,19 @@ func getForItems(ctx *ExecutionContext, itemsSpec string, executeCommand func(st
 			}
 			return items, nil
 		case string:
-			// Single item
+			// Split by newlines to support multi-line variables (e.g., from $(command) output)
+			lines := strings.Split(strings.TrimSpace(v), "\n")
+			items := make([]interface{}, 0, len(lines))
+			for _, line := range lines {
+				line = strings.TrimSpace(line)
+				if line != "" {
+					items = append(items, line)
+				}
+			}
+			if len(items) > 0 {
+				return items, nil
+			}
+			// If no non-empty lines, return the original string as a single item
 			return []interface{}{v}, nil
 		case map[string]interface{}:
 			// For key-value, return the map as a single item

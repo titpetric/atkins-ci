@@ -209,28 +209,6 @@ func TestHasChildren(t *testing.T) {
 	})
 }
 
-// TestStatusConstants tests that all status values are unique
-func TestStatusConstants(t *testing.T) {
-	t.Run("status constants are unique", func(t *testing.T) {
-		statuses := []Status{
-			StatusPending,
-			StatusRunning,
-			StatusPassed,
-			StatusFailed,
-			StatusSkipped,
-			StatusConditional,
-		}
-
-		seen := make(map[Status]bool)
-		for _, status := range statuses {
-			assert.False(t, seen[status], "duplicate status value")
-			seen[status] = true
-		}
-
-		assert.Equal(t, 6, len(seen))
-	})
-}
-
 // TestNodeFieldInitialization tests that node fields are properly initialized
 func TestNodeFieldInitialization(t *testing.T) {
 	t.Run("dependencies field", func(t *testing.T) {

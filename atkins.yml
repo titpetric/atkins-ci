@@ -1,0 +1,78 @@
+# Atkins CI: https://github.com/titpetric/atkins-ci
+
+name: Atkins CI Go project tests
+
+jobs:
+  default:
+    desc: "Run everything needed"
+    depends_on: fmt
+    steps:
+      - task: test:build
+      - task: test:run
+
+  install:
+    desc: "Install atkins-ci"
+    steps:
+      - go install .
+
+  fmt:
+    desc: "Format the code"
+    steps:
+      - goimports -w .
+      - go fmt ./...
+      - go mod tidy
+
+  test:build:
+    desc: "Build tests"
+    steps:
+      - rm bin/*.test -f
+      - go test -cover -coverpkg=./... -c -o bin/ ./...
+
+  test:run:
+    desc: "Run built tests"
+    depends_on: install
+    vars:
+      testBinaries: $(ls ./bin/*.test | xargs -n1 basename)
+    steps:
+      - task: docker:up
+      - rm -rf coverage
+      - for: item in testBinaries
+        task: test:detail
+        detach: true
+      - for: item in testBinaries
+        task: test:coverage
+      - name: cleanup
+        task: docker:down
+        deferred: true
+
+  test:detail:
+    dest: "Collect per-function test runs"
+    requires: [item]
+    vars:
+      tests: $(./bin/${{ item }} -test.list ^Test.)
+    steps:
+      - mkdir -p coverage/${{ item }}
+      - for: funcName in tests
+        summarize: true
+        run: ./bin/${{ item }} -test.coverprofile "./coverage/${{ item }}/${{ funcName }}.cov" -test.run "^${{ funcName }}$"
+
+  test:coverage:
+    dest: "Collect per-function test coverage"
+    requires: [item]
+    vars:
+      tests: $(./bin/${{ item }} -test.list ^Test.)
+    steps:
+      - for: funcName in tests
+        summarize: true
+        cmds:
+          - covertrace --name=${{ funcName }} -i "./coverage/${{ item }}/${{ funcName }}.cov" > "./coverage/${{ item }}/${{ funcName }}.yml"
+
+  docker:up:
+    desc: "Bring up docker env"
+    steps:
+      - docker compose up -d --wait --remove-orphans
+
+  docker:down:
+    desc: "Bring down docker env"
+    steps:
+      - docker compose down
