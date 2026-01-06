@@ -90,14 +90,13 @@ func (s *Step) IsDeferred() bool {
 func (s *Step) String() string {
 	switch {
 	case s.Task != "":
-		return s.Task
+		return "task: " + s.Task
 	case s.Run != "":
-		return s.Run
+		return "run: " + s.Run
 	case s.Cmd != "":
-		return s.Cmd
+		return "cmd: " + s.Cmd
 	case len(s.Cmds) > 0:
-		// For cmds array, just show the first one as a placeholder
-		return s.Cmds[0]
+		return fmt.Sprintf("cmds: [%s,...] (%d)", s.Cmds[0], len(s.Cmds))
 	}
 	return s.Name
 }
@@ -129,8 +128,6 @@ func (s *Step) UnmarshalYAML(node *yaml.Node) error {
 
 			*s = *ds.Defer
 			s.Deferred = true
-
-			fmt.Printf("step: %#v\n", s.String())
 
 			return nil
 		}

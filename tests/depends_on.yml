@@ -18,6 +18,6 @@ tasks:
   test:run:
     depends_on: [fmt, test:build]
     steps:
-      - for: "item in $(ls ./bin/*.test)"
+      - for: item in $(ls ./bin/*.test)
         summarize: true
         run: ${{ item }}

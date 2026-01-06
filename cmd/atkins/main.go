@@ -132,6 +132,8 @@ func main() {
 					}
 				}
 				fmt.Fprintf(os.Stderr, "\n")
+				fmt.Fprintf(os.Stderr, "  Stack trace:\n")
+				fmt.Fprintf(os.Stderr, "%s", errorLog.Trace)
 				exitCode = errorLog.LastExitCode
 			}
 

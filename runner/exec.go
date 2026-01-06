@@ -1,8 +1,10 @@
 package runner
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -11,6 +13,7 @@ type ExecError struct {
 	Message      string
 	Output       string
 	LastExitCode int
+	Trace        string
 }
 
 // Error returns the error message.
@@ -53,7 +56,11 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 	// Inherit current process environment
 	cmd.Env = os.Environ()
 
-	output, err := cmd.CombinedOutput()
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
 
 	if err != nil {
 		// Extract exit code
@@ -62,16 +69,21 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 			exitCode = exitErr.ExitCode()
 		}
 
+		b := make([]byte, 2048) // adjust buffer size to be larger than expected stack
+		n := runtime.Stack(b, false)
+		s := string(b[:n])
+
 		resErr := ExecError{
 			Message:      "failed to run command: " + err.Error(),
 			LastExitCode: exitCode,
-			Output:       string(output),
+			Output:       stderr.String(),
+			Trace:        s,
 		}
 
 		return "", resErr
 	}
 
-	return string(output), nil
+	return stdout.String(), nil
 }
 
 // removeEnvKey removes a key from environment variable list

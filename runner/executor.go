@@ -259,17 +259,17 @@ func (e *Executor) executeStepWithNode(jobCtx context.Context, execCtx *Executio
 		return nil
 	}
 
-	// Handle task invocation
-	if step.Task != "" {
-		if stepNode != nil {
-			stepNode.SetStatus(treeview.StatusRunning)
-		}
-		return e.executeTaskStep(jobCtx, stepCtx, step, stepNode)
-	}
-
 	// Handle for loop expansion
 	if step.For != "" {
 		return e.executeStepWithForLoop(jobCtx, stepCtx, step, 0, stepNode)
+	} else {
+		// Handle task invocation
+		if step.Task != "" {
+			if stepNode != nil {
+				stepNode.SetStatus(treeview.StatusRunning)
+			}
+			return e.executeTaskStep(jobCtx, stepCtx, step, stepNode)
+		}
 	}
 
 	// Determine which command to run
@@ -363,6 +363,7 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 
 	// Handle for loop expansion
 	if step.For != "" {
+		stepNode.Summarize = step.Summarize
 		if stepNode != nil {
 			stepNode.SetStatus(treeview.StatusRunning)
 		}
@@ -410,6 +411,8 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 		return nil
 	}
 
+	stepNode.Summarize = step.Summarize
+
 	// Build iteration nodes as children of the step node
 	iterationNodes := make([]*treeview.Node, 0, len(iterations))
 	if stepNode != nil {
@@ -454,9 +457,10 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 			iterID := fmt.Sprintf("jobs.%s.steps.%d", jobName, iterSeqIndex)
 
 			iterNode := &treeview.Node{
-				Name:   interpolated,
-				ID:     iterID,
-				Status: treeview.StatusPending,
+				Name:      interpolated,
+				ID:        iterID,
+				Status:    treeview.StatusPending,
+				Summarize: step.Summarize,
 			}
 
 			// Add as child of the step node
@@ -617,6 +621,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 		return fmt.Errorf("task %q node not found in tree", taskName)
 	}
 	taskJobNode.Summarize = taskJob.Summarize
+	stepNode.Summarize = step.Summarize
 
 	// If the task is nested and the step node exists, add task node as child of step node
 	// so it appears in the tree under the step
@@ -788,7 +793,7 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 	// Execute the command via bash with quiet mode
 	output, err := NewExec().ExecuteCommandWithQuiet(interpolated, execCtx.Verbose)
 	if err != nil {
-		return fmt.Errorf("command execution failed: %w", err)
+		return fmt.Errorf("command execution %s failed: %w", execCtx.CurrentStep.ID, err)
 	}
 
 	// Only print output if not in quiet mode (quiet mode 1 = suppress output)

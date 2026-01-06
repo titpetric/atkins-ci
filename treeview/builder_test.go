@@ -186,9 +186,9 @@ func TestAddJob_WithSteps(t *testing.T) {
 		assert.Equal(t, 3, len(children))
 
 		// Verify step names
-		assert.Equal(t, "echo 1", children[0].Name)
-		assert.Equal(t, "echo 2", children[1].Name)
-		assert.Equal(t, "echo 3", children[2].Name)
+		assert.Equal(t, "run: echo 1", children[0].Name)
+		assert.Equal(t, "run: echo 2", children[1].Name)
+		assert.Equal(t, "run: echo 3", children[2].Name)
 	})
 
 	t.Run("job without steps", func(t *testing.T) {
@@ -220,9 +220,9 @@ func TestAddJob_WithSteps(t *testing.T) {
 		assert.Equal(t, 3, len(children))
 
 		// Verify that task steps are properly converted to node names
-		assert.Equal(t, "build", children[0].Name)
-		assert.Equal(t, "test", children[1].Name)
-		assert.Equal(t, "echo cleanup", children[2].Name)
+		assert.Equal(t, "task: build", children[0].Name)
+		assert.Equal(t, "task: test", children[1].Name)
+		assert.Equal(t, "run: echo cleanup", children[2].Name)
 	})
 
 	t.Run("job with summarized step", func(t *testing.T) {

@@ -1,6 +1,7 @@
 package treeview
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -22,7 +23,7 @@ func (n *Node) StatusColor() string {
 
 func (n *Node) Label() string {
 	var (
-		name         = n.Name
+		name         = fmt.Sprintf("%s, [summarize %v]", n.Name, n.Summarize)
 		haveChildren = n.HasChildren()
 		haveDeps     = len(n.Dependencies) > 0
 	)
