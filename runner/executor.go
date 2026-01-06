@@ -556,17 +556,10 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 	// Mark step as running and render immediately to show state transition
 	if stepNode != nil {
 		stepNode.SetStatus(treeview.StatusRunning)
-		stepCtx.Display.Render(stepCtx.Builder.Root())
+		stepCtx.Render()
 	}
 
-	// Channel to signal command completion
-	cmdDone := make(chan error)
-	go func() {
-		cmdDone <- e.executeCommand(jobCtx, stepCtx, cmd)
-		close(cmdDone)
-	}()
-
-	err := <-cmdDone
+	err := e.executeCommand(jobCtx, stepCtx, cmd)
 
 	// Calculate duration in milliseconds
 	duration := time.Since(startTime).Milliseconds()
@@ -589,8 +582,7 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 		stepCtx.Logger.LogPass(jobName, seqIndex, stepName, duration)
 	}
 
-	// Render tree with final state
-	stepCtx.Display.Render(stepCtx.Builder.Root())
+	stepCtx.Render()
 	return nil
 }
 
@@ -642,7 +634,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 
 	// Mark the task node itself as running
 	taskJobNode.SetStatus(treeview.StatusRunning)
-	execCtx.Display.Render(execCtx.Builder.Root())
+	execCtx.Render()
 
 	// Create a new execution context for the task using the task's existing tree node
 	taskCtx := execCtx.Copy()
@@ -658,7 +650,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 		if stepNode != nil {
 			stepNode.SetStatus(treeview.StatusFailed)
 		}
-		execCtx.Display.Render(execCtx.Builder.Root())
+		execCtx.Render()
 		return err
 	}
 
@@ -668,7 +660,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 		if stepNode != nil {
 			stepNode.SetStatus(treeview.StatusFailed)
 		}
-		execCtx.Display.Render(execCtx.Builder.Root())
+		execCtx.Render()
 		return err
 	}
 
@@ -677,13 +669,15 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 	if stepNode != nil {
 		stepNode.SetStatus(treeview.StatusPassed)
 	}
-	execCtx.Display.Render(execCtx.Builder.Root())
+	execCtx.Render()
 
 	return nil
 }
 
 // executeTaskStepWithLoop executes a task multiple times via a for loop with loop variables
 func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node, taskJob *model.Job, taskJobNode *treeview.TreeNode) error {
+	defer execCtx.Render()
+
 	// Expand the for loop to get iteration contexts
 	iterations, err := ExpandFor(execCtx, func(cmd string) (string, error) {
 		return NewExec().ExecuteCommand(cmd)
@@ -715,7 +709,6 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 
 		// Mark task as running
 		taskJobNode.SetStatus(treeview.StatusRunning)
-		execCtx.Display.Render(execCtx.Builder.Root())
 
 		// Validate job requirements (loop variables should satisfy requires)
 		if err := ValidateJobRequirements(taskJob, iterCtx); err != nil {
@@ -723,7 +716,6 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 			if stepNode != nil {
 				stepNode.SetStatus(treeview.StatusFailed)
 			}
-			execCtx.Display.Render(execCtx.Builder.Root())
 			return err
 		}
 
@@ -741,7 +733,6 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 		if stepNode != nil {
 			stepNode.SetStatus(treeview.StatusFailed)
 		}
-		execCtx.Display.Render(execCtx.Builder.Root())
 		return lastErr
 	}
 
@@ -750,7 +741,6 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 	if stepNode != nil {
 		stepNode.SetStatus(treeview.StatusPassed)
 	}
-	execCtx.Display.Render(execCtx.Builder.Root())
 
 	return nil
 }
