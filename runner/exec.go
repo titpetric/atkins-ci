@@ -61,7 +61,6 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 	cmd.Stderr = &stderr
 
 	err := cmd.Run()
-
 	if err != nil {
 		// Extract exit code
 		exitCode := 1

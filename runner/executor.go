@@ -6,9 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/titpetric/atkins-ci/model"
 	"github.com/titpetric/atkins-ci/treeview"
-	"golang.org/x/sync/errgroup"
 )
 
 // Options provides configuration for the executor.

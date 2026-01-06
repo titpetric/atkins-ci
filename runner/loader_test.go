@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/titpetric/atkins-ci/model"
 	"github.com/titpetric/atkins-ci/runner"
 )

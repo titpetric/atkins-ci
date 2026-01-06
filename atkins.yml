@@ -18,8 +18,8 @@ jobs:
   fmt:
     desc: "Format the code"
     steps:
-      - goimports -w .
-      - go fmt ./...
+      - goimports-reviser -set-alias -format -imports-order "std,blanked,general,company,project" ./...
+      - gofumpt -w .
       - go mod tidy
 
   test:build:
@@ -65,7 +65,7 @@ jobs:
       - for: funcName in tests
         summarize: true
         cmds:
-          - covertrace --name=${{ funcName }} -i "./coverage/${{ item }}/${{ funcName }}.cov" > "./coverage/${{ item }}/${{ funcName }}.yml"
+          - covertrace --name ${{ funcName }} -i "./coverage/${{ item }}/${{ funcName }}.cov" > "./coverage/${{ item }}/${{ funcName }}.yml"
 
   docker:up:
     desc: "Bring up docker env"

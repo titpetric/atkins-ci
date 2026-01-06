@@ -311,7 +311,6 @@ func TestTaskInvocationWithForLoop(t *testing.T) {
 		iterations, err := runner.ExpandFor(ctx, func(cmd string) (string, error) {
 			return "", nil
 		})
-
 		if err != nil {
 			t.Fatalf("ExpandFor failed: %v", err)
 		}

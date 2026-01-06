@@ -3,7 +3,7 @@ package model
 import (
 	"fmt"
 
-	"gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Pipeline represents the root structure of an atkins.yml file.

@@ -9,9 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	yaml "gopkg.in/yaml.v3"
+
 	"github.com/titpetric/atkins-ci/colors"
 	"github.com/titpetric/atkins-ci/runner"
-	"gopkg.in/yaml.v3"
 )
 
 func fatalf(message string, args ...any) {
@@ -142,5 +143,4 @@ func main() {
 			}
 		}
 	}
-
 }

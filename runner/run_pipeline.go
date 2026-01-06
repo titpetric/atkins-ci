@@ -8,10 +8,11 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/titpetric/atkins-ci/colors"
 	"github.com/titpetric/atkins-ci/model"
 	"github.com/titpetric/atkins-ci/treeview"
-	"golang.org/x/sync/errgroup"
 )
 
 // RunPipelineWithLog runs a pipeline with optional logging to a file.
