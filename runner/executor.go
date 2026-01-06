@@ -406,18 +406,19 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 		return nil
 	}
 
-	// Build iteration nodes with interpolated command names
+	// Build iteration nodes as children of the step node
 	iterationNodes := make([]*treeview.Node, 0, len(iterations))
 	if stepNode != nil {
-		// Replace the for-loop step node with actual iteration nodes as siblings
 		// Get the command template
 		var cmdTemplate string
-		if step.Run != "" {
-			cmdTemplate = step.Run
-		} else if step.Cmd != "" {
-			cmdTemplate = step.Cmd
-		} else if len(step.Cmds) > 0 {
-			cmdTemplate = strings.Join(step.Cmds, " && ")
+		if step.Task == "" {
+			if step.Run != "" {
+				cmdTemplate = step.Run
+			} else if step.Cmd != "" {
+				cmdTemplate = step.Cmd
+			} else if len(step.Cmds) > 0 {
+				cmdTemplate = strings.Join(step.Cmds, " && ")
+			}
 		}
 
 		// Create node for each iteration with interpolated command
@@ -432,7 +433,13 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 				iterCtx.Variables[k] = v
 			}
 
-			interpolated, _ := InterpolateCommand(cmdTemplate, iterCtx)
+			var interpolated string
+			// For task invocations, use the task name; otherwise interpolate the command
+			if step.Task != "" {
+				interpolated = step.Task
+			} else {
+				interpolated, _ = InterpolateCommand(cmdTemplate, iterCtx)
+			}
 
 			// Get job name for ID generation
 			jobName := ""
@@ -450,31 +457,9 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 				Status: treeview.StatusPending,
 			}
 
-			// Add as sibling to stepNode by adding to parent's children
-			if execCtx.CurrentJob != nil {
-				jobChildren := execCtx.CurrentJob.Node.GetChildren()
-				// Find the step node's index and replace/insert
-				for i, child := range jobChildren {
-					if child == stepNode {
-						// Insert after this node
-						jobChildren = append(jobChildren[:i+1], append([]*treeview.Node{iterNode}, jobChildren[i+1:]...)...)
-						execCtx.CurrentJob.Node.Children = jobChildren
-						break
-					}
-				}
-			}
+			// Add as child of the step node
+			stepNode.AddChild(iterNode)
 			iterationNodes = append(iterationNodes, iterNode)
-		}
-
-		// Remove the original step node since iterations replace it
-		if execCtx.CurrentJob != nil {
-			jobChildren := make([]*treeview.Node, 0)
-			for _, child := range execCtx.CurrentJob.Node.GetChildren() {
-				if child != stepNode {
-					jobChildren = append(jobChildren, child)
-				}
-			}
-			execCtx.CurrentJob.Node.Children = jobChildren
 		}
 	}
 
@@ -494,29 +479,39 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 			iterCtx.Variables[k] = v
 		}
 
-		// Determine which command to run
-		var cmd string
-		if step.Run != "" {
-			cmd = step.Run
-		} else if step.Cmd != "" {
-			cmd = step.Cmd
-		} else if len(step.Cmds) > 0 {
-			cmd = strings.Join(step.Cmds, " && ")
-		} else {
-			continue // Skip if no command
-		}
-
 		// Get the iteration sub-node
 		var iterNode *treeview.Node
 		if len(iterationNodes) > idx {
 			iterNode = iterationNodes[idx]
 		}
 
-		// Execute this iteration with the iteration sub-node
-		if err := e.executeStepIteration(jobCtx, iterCtx, step, iterNode, cmd, stepIndex); err != nil {
-			lastErr = err
-			// Continue to next iteration even on error (collect all failures)
-			// This matches yamlexpr behavior of processing all items
+		// Handle task invocation or command execution
+		if step.Task != "" {
+			// Task invocation with loop variables
+			if err := e.executeTaskStep(jobCtx, iterCtx, step, iterNode); err != nil {
+				lastErr = err
+				// Continue to next iteration even on error (collect all failures)
+				// This matches yamlexpr behavior of processing all items
+			}
+		} else {
+			// Determine which command to run
+			var cmd string
+			if step.Run != "" {
+				cmd = step.Run
+			} else if step.Cmd != "" {
+				cmd = step.Cmd
+			} else if len(step.Cmds) > 0 {
+				cmd = strings.Join(step.Cmds, " && ")
+			} else {
+				continue // Skip if no command
+			}
+
+			// Execute this iteration with the iteration sub-node
+			if err := e.executeStepIteration(jobCtx, iterCtx, step, iterNode, cmd, stepIndex); err != nil {
+				lastErr = err
+				// Continue to next iteration even on error (collect all failures)
+				// This matches yamlexpr behavior of processing all items
+			}
 		}
 	}
 
@@ -654,6 +649,12 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 			stepNode.SetStatus(treeview.StatusFailed)
 		}
 		return fmt.Errorf("task %q node not found in tree", taskName)
+	}
+
+	// If the task is nested and the step node exists, add task node as child of step node
+	// so it appears in the tree under the step
+	if taskJob.Nested && stepNode != nil && taskJobNode != nil {
+		stepNode.AddChild(taskJobNode.Node)
 	}
 
 	// Check if this step has a for loop

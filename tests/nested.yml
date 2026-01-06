@@ -1,0 +1,49 @@
+name: CI pipeline
+
+jobs:
+  fmt:
+    desc: "Format the code"
+    steps:
+      - goimports -w .
+      - go fmt ./...
+      - go mod tidy
+
+  test:
+    depends_on: fmt
+    steps:
+      - task: test:build
+      - task: test:run
+
+  test:build:
+    desc: "Build tests"
+    steps:
+      - go-fsck test -c -o bin/ ./...
+
+  test:run:
+    desc: "Run built tests"
+    steps:
+      - task: docker:up
+      - for: item in $(ls ./bin/*.test)
+        task: test:detail
+        detach: true
+      - name: cleanup
+        task: docker:down
+        deferred: true
+
+  test:detail:
+    dest: "Collect per-function test runs"
+    requires: [item]
+    show: false
+    steps:
+      - for: funcName in $(${{ item }} -test.list .)
+        run: ${{ item }} -test.run "^${{ funcName }}$"
+
+  docker:up:
+    desc: "Bring up docker env"
+    steps:
+      - docker compose up -d --wait --remove-orphans
+
+  docker:down:
+    desc: "Bring down docker env"
+    steps:
+      - docker compose down

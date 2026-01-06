@@ -66,3 +66,32 @@ func countDepth(name string) int {
 	}
 	return count
 }
+
+// SortByOrder returns the job names from the set in the order specified by orderList.
+// Jobs in the set that are not in orderList are appended at the end.
+func SortByOrder(jobSet map[string]bool, orderList []string) []string {
+	result := make([]string, 0, len(jobSet))
+
+	// Add jobs in order from orderList
+	for _, jobName := range orderList {
+		if jobSet[jobName] {
+			result = append(result, jobName)
+		}
+	}
+
+	// Add any remaining jobs from the set not in orderList
+	for jobName := range jobSet {
+		found := false
+		for _, ordered := range result {
+			if ordered == jobName {
+				found = true
+				break
+			}
+		}
+		if !found {
+			result = append(result, jobName)
+		}
+	}
+
+	return result
+}

@@ -90,9 +90,9 @@ func TestDisplay_Render(t *testing.T) {
 // TestCountOutputLines tests line counting utility
 func TestCountOutputLines(t *testing.T) {
 	tests := []struct {
-		name        string
-		input       string
-		expected    int
+		name     string
+		input    string
+		expected int
 	}{
 		{
 			name:     "no newlines",

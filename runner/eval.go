@@ -171,9 +171,16 @@ func getForItems(ctx *ExecutionContext, itemsSpec string, executeCommand func(st
 	// Check for bash command expansion: $(...)
 	if strings.HasPrefix(itemsSpec, "$(") && strings.HasSuffix(itemsSpec, ")") {
 		cmd := itemsSpec[2 : len(itemsSpec)-1]
-		output, err := executeCommand(cmd)
+
+		// Interpolate the command to resolve any variables like ${{ item }}
+		interpolated, err := InterpolateString(cmd, ctx)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute command %q: %w", cmd, err)
+			return nil, fmt.Errorf("failed to interpolate command %q: %w", cmd, err)
+		}
+
+		output, err := executeCommand(interpolated)
+		if err != nil {
+			return nil, fmt.Errorf("failed to execute command %q: %w", interpolated, err)
 		}
 
 		// Split output by newlines

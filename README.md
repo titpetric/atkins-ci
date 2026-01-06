@@ -4,7 +4,9 @@ Atkins CI is a minimal runner focused on usage in local testing and
 CI/CD environments. It features a nice CLI status tree, where you can
 see which jobs are running, and run jobs and steps in parallel.
 
-![Atkins CI Pipeline Demo](./atkins.gif)
+![](./examples/root_jobs.gif)
+![](./examples/detach.gif)
+![](./examples/depends_on.gif)
 
 It should be simple to use:
 

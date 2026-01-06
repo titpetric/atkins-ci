@@ -118,6 +118,22 @@ func (sl *StepLogger) LogSkip(jobName string, stepIndex int, stepName string) {
 	)
 }
 
+// LogOutput logs command output for a step.
+func (sl *StepLogger) LogOutput(jobName string, stepIndex int, output string) {
+	if sl.logger == nil || output == "" {
+		return
+	}
+	sl.mu.Lock()
+	defer sl.mu.Unlock()
+
+	stepID := generateStepID(jobName, stepIndex)
+	sl.logger.Info("OUTPUT",
+		slog.String("pipeline", sl.pipelineName),
+		slog.String("id", stepID),
+		slog.String("output", output),
+	)
+}
+
 // generateStepID creates a step ID from job name and sequential step index
 // Format follows GitHub Actions: jobs.<jobName>.steps.<sequentialIndex>
 func generateStepID(jobName string, stepIndex int) string {

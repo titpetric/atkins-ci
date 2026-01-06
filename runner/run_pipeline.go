@@ -107,7 +107,9 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 	}
 
 	// Create job nodes for all jobs that might be invoked
-	for jobName := range jobsToCreate {
+	// Only add root-level jobs to the tree display; nested jobs are added when invoked as tasks
+	jobsToCreateSorted := treeview.SortByOrder(jobsToCreate, jobOrder)
+	for _, jobName := range jobsToCreateSorted {
 		job := allJobs[jobName]
 		jobLabel := jobName
 		if job.Desc != "" {
@@ -117,22 +119,55 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		// Get job dependencies
 		deps := GetDependencies(job.DependsOn)
 
-		jobNode := tree.AddJobWithoutSteps(deps, jobLabel, job.Nested)
-
-		// Populate children
-		for _, step := range job.Steps {
-			// Get the step command/name
-			stepName := step.String()
-			stepNode := &treeview.Node{
-				Name:     stepName,
-				Status:   treeview.StatusPending,
-				Children: make([]*treeview.Node, 0),
-				Deferred: step.IsDeferred(),
+		// Check if this job is in the root execution order
+		isRootJob := false
+		for _, rootName := range jobOrder {
+			if rootName == jobName {
+				isRootJob = true
+				break
 			}
-			jobNode.AddChild(stepNode)
 		}
 
-		jobNodes[jobName] = jobNode
+		// Only add to tree if it's in jobOrder (root-level execution)
+		if isRootJob {
+			jobNode := tree.AddJobWithoutSteps(deps, jobLabel, job.Nested)
+
+			// Populate children
+			for _, step := range job.Steps {
+				// Get the step command/name
+				stepName := step.String()
+				stepNode := &treeview.Node{
+					Name:     stepName,
+					Status:   treeview.StatusPending,
+					Children: make([]*treeview.Node, 0),
+					Deferred: step.IsDeferred(),
+				}
+				jobNode.AddChild(stepNode)
+			}
+
+			jobNodes[jobName] = jobNode
+		} else {
+			// For non-root jobs (only invoked as tasks), create nodes but don't add to tree
+			jobNode := &treeview.Node{
+				Name:   jobLabel,
+				Status: treeview.StatusPending,
+			}
+
+			// Populate children
+			for _, step := range job.Steps {
+				// Get the step command/name
+				stepName := step.String()
+				stepNode := &treeview.Node{
+					Name:     stepName,
+					Status:   treeview.StatusPending,
+					Children: make([]*treeview.Node, 0),
+					Deferred: step.IsDeferred(),
+				}
+				jobNode.AddChild(stepNode)
+			}
+
+			jobNodes[jobName] = &treeview.TreeNode{Node: jobNode}
+		}
 	}
 	pipelineCtx.JobNodes = jobNodes
 	display.Render(root)

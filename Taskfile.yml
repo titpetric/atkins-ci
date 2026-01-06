@@ -27,9 +27,20 @@ tasks:
   record:
     cmds:
       - task: install
-      - rm -f atkins.cast atkins.gif
-      - asciinema rec --cols 80 --rows 30 -t "Atkins CI runner example" -c "task test:fixtures" atkins.cast
-      - task: record:gif
+      - mkdir -p examples
+      - task: record:fixtures
+
+  record:fixtures:
+    cmds:
+      - rm examples/* -f
+      - asciinema rec --cols 80 --rows 25 -t "Atkins detach example" -c "atkins -file tests/detach.yml" examples/detach.yml.cast
+      - $HOME/.cargo/bin/agg examples/detach.yml.cast examples/detach.yml.gif
+      - asciinema rec --cols 80 --rows 25 -t "Atkins depends_on example" -c "atkins -file tests/depends_on.yml" examples/depends_on.yml.cast
+      - $HOME/.cargo/bin/agg examples/depends_on.yml.cast examples/depends_on.yml.gif
+      - asciinema rec --cols 80 --rows 25 -t "Atkins root_jobs example" -c "atkins -file tests/root_jobs.yml" examples/root_jobs.yml.cast
+      - $HOME/.cargo/bin/agg examples/root_jobs.yml.cast examples/root_jobs.yml.gif
+      - asciinema rec --cols 80 --rows 25 -t "Atkins nested example" -c "atkins -file tests/nested.yml" examples/nested.yml.cast
+      - $HOME/.cargo/bin/agg examples/nested.yml.cast examples/nested.yml.gif
 
   record:gif:
     cmds:
@@ -46,11 +57,8 @@ tasks:
       - atkins -file test/pipelines/atkins-err.yml
 
   test:fixtures:
-    depends_on: install
     cmds:
-      - atkins -file tests/detach.yml -l
       - atkins -file tests/detach.yml
-      - atkins -file tests/depends_on.yml -l
       - atkins -file tests/depends_on.yml
-      - atkins -file tests/root_jobs.yml -l
       - atkins -file tests/root_jobs.yml
+      - atkins -file tests/nested.yml

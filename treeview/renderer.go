@@ -103,6 +103,9 @@ func (r *Renderer) renderStaticNode(node *Node, prefix string, isLast bool) stri
 
 	status, label := statusBadge(node)
 
+	// Replace newlines in label to prevent breaking the tree display
+	label = strings.ReplaceAll(label, "\n", " ")
+
 	// Build the node label with dependencies and deferred info
 	if len(node.Dependencies) > 0 {
 		depItems := make([]string, len(node.Dependencies))
