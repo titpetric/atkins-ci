@@ -4,16 +4,19 @@ name: "Test case for root jobs"
 tasks:
   job1:
     desc: "First job"
+    detach: true
     steps:
       - sleep 1
 
   job2:
     desc: "Second job"
+    detach: true
     steps:
       - sleep 2
 
   job3:
     desc: "Third job"
+    detach: true
     steps:
       - sleep 3
 

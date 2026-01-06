@@ -27,12 +27,11 @@ tasks:
   record:
     cmds:
       - task: install
-      - mkdir -p examples
+      - rm -rf examples ; mkdir -p examples
       - task: record:fixtures
 
   record:fixtures:
     cmds:
-      - rm examples/* -f
       - asciinema rec --cols 80 --rows 25 -t "Atkins detach example" -c "atkins -file tests/detach.yml" examples/detach.yml.cast
       - $HOME/.cargo/bin/agg examples/detach.yml.cast examples/detach.yml.gif
       - asciinema rec --cols 80 --rows 25 -t "Atkins depends_on example" -c "atkins -file tests/depends_on.yml" examples/depends_on.yml.cast
