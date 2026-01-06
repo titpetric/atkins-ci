@@ -33,6 +33,7 @@ func NewLinter(pipeline *model.Pipeline) *Linter {
 // Lint validates the pipeline and returns any errors.
 func (l *Linter) Lint() []LintError {
 	l.validateDependencies()
+	l.validateTaskInvocations()
 	return l.errors
 }
 
@@ -56,6 +57,33 @@ func (l *Linter) validateDependencies() {
 					Issue:  "missing dependency",
 					Detail: fmt.Sprintf("job '%s' depends_on '%s', but job '%s' not found", jobName, dep, dep),
 				})
+			}
+		}
+	}
+}
+
+// validateTaskInvocations checks that referenced tasks exist
+func (l *Linter) validateTaskInvocations() {
+	jobs := l.pipeline.Jobs
+	if len(jobs) == 0 {
+		jobs = l.pipeline.Tasks
+	}
+
+	for jobName, job := range jobs {
+		if job == nil {
+			continue
+		}
+
+		// Check each step for task references
+		for _, step := range job.Steps {
+			if step != nil && step.Task != "" {
+				if _, exists := jobs[step.Task]; !exists {
+					l.errors = append(l.errors, LintError{
+						Job:    jobName,
+						Issue:  "missing task reference",
+						Detail: fmt.Sprintf("step references task '%s', but task not found", step.Task),
+					})
+				}
 			}
 		}
 	}
@@ -163,6 +191,27 @@ func resolveDependencyChain(jobs map[string]*model.Job, jobName string) ([]strin
 	}
 
 	return resolved, nil
+}
+
+// ValidateJobRequirements checks that all required variables are present in the context.
+// Returns an error with a clear message listing missing variables.
+func ValidateJobRequirements(job *model.Job, ctx *ExecutionContext) error {
+	if len(job.Requires) == 0 {
+		return nil // No requirements to validate
+	}
+
+	var missing []string
+	for _, varName := range job.Requires {
+		if _, exists := ctx.Variables[varName]; !exists {
+			missing = append(missing, varName)
+		}
+	}
+
+	if len(missing) > 0 {
+		return fmt.Errorf("job '%s' requires variables %v but missing: %v", job.Name, job.Requires, missing)
+	}
+
+	return nil
 }
 
 // resolveJobs returns all jobs in dependency order (topological sort)

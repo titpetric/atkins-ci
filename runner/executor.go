@@ -628,6 +628,7 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 }
 
 // executeTaskStep executes a task/job from within a step
+// Supports both simple task invocation and for loop task invocation with loop variables
 func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node) error {
 	// Get the task name from the step
 	taskName := step.Task
@@ -655,6 +656,12 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 		return fmt.Errorf("task %q node not found in tree", taskName)
 	}
 
+	// Check if this step has a for loop
+	if step.For != "" {
+		// Handle task invocation with for loop
+		return e.executeTaskStepWithLoop(jobCtx, execCtx, step, stepNode, taskJob, taskJobNode)
+	}
+
 	// Mark the task as running
 	if stepNode != nil {
 		stepNode.SetStatus(treeview.StatusRunning)
@@ -672,6 +679,16 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 	taskCtx.CurrentJob = taskJobNode
 	taskCtx.Context = jobCtx
 
+	// Validate job requirements
+	if err := ValidateJobRequirements(taskJob, taskCtx); err != nil {
+		taskJobNode.SetStatus(treeview.StatusFailed)
+		if stepNode != nil {
+			stepNode.SetStatus(treeview.StatusFailed)
+		}
+		execCtx.Display.Render(execCtx.Builder.Root())
+		return err
+	}
+
 	// Execute the task job steps
 	if err := e.executeSteps(jobCtx, taskCtx, taskJob.Steps); err != nil {
 		taskJobNode.SetStatus(treeview.StatusFailed)
@@ -680,6 +697,79 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 		}
 		execCtx.Display.Render(execCtx.Builder.Root())
 		return err
+	}
+
+	// Mark task and step as passed
+	taskJobNode.SetStatus(treeview.StatusPassed)
+	if stepNode != nil {
+		stepNode.SetStatus(treeview.StatusPassed)
+	}
+	execCtx.Display.Render(execCtx.Builder.Root())
+
+	return nil
+}
+
+// executeTaskStepWithLoop executes a task multiple times via a for loop with loop variables
+func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node, taskJob *model.Job, taskJobNode *treeview.TreeNode) error {
+	// Expand the for loop to get iteration contexts
+	iterations, err := ExpandFor(execCtx, func(cmd string) (string, error) {
+		return NewExec().ExecuteCommand(cmd)
+	})
+	if err != nil {
+		if stepNode != nil {
+			stepNode.SetStatus(treeview.StatusFailed)
+		}
+		return fmt.Errorf("failed to expand for loop: %w", err)
+	}
+
+	if len(iterations) == 0 {
+		// No iterations, mark as passed
+		if stepNode != nil {
+			stepNode.SetStatus(treeview.StatusPassed)
+		}
+		return nil
+	}
+
+	// Execute task for each iteration
+	var lastErr error
+	for _, iter := range iterations {
+		// Create execution context for this iteration with loop variables
+		iterCtx := execCtx.Copy()
+		iterCtx.Variables = iter.Variables // Use iteration variables
+		iterCtx.Job = taskJob
+		iterCtx.CurrentJob = taskJobNode
+		iterCtx.Context = jobCtx
+
+		// Mark task as running
+		taskJobNode.SetStatus(treeview.StatusRunning)
+		execCtx.Display.Render(execCtx.Builder.Root())
+
+		// Validate job requirements (loop variables should satisfy requires)
+		if err := ValidateJobRequirements(taskJob, iterCtx); err != nil {
+			taskJobNode.SetStatus(treeview.StatusFailed)
+			if stepNode != nil {
+				stepNode.SetStatus(treeview.StatusFailed)
+			}
+			execCtx.Display.Render(execCtx.Builder.Root())
+			return err
+		}
+
+		// Execute the task job steps with iteration context
+		if err := e.executeSteps(jobCtx, iterCtx, taskJob.Steps); err != nil {
+			lastErr = err
+			// Continue to next iteration even on error (collect all failures)
+			// This matches yamlexpr behavior of processing all items
+		}
+	}
+
+	// Update task node status based on results
+	if lastErr != nil {
+		taskJobNode.SetStatus(treeview.StatusFailed)
+		if stepNode != nil {
+			stepNode.SetStatus(treeview.StatusFailed)
+		}
+		execCtx.Display.Render(execCtx.Builder.Root())
+		return lastErr
 	}
 
 	// Mark task and step as passed

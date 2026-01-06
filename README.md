@@ -188,3 +188,79 @@ So each pipeline will have 1) services, 2) steps, 3) runtime docker environment 
 The services should be reachable from `cmd/cmds/steps` by it's name, so a docker network is shared.
 
 If steps don't run in a docker env, then they would need to rely on localhost.
+
+## Task Invocation with For Loops
+
+You can invoke tasks within a for loop to run the same task multiple times with different loop variables. This is useful for processing multiple items in parallel.
+
+### Basic Example
+
+```yaml
+vars:
+  components:
+    - src/main
+    - src/utils
+    - tests/
+
+tasks:
+  build:
+    desc: "Build all components"
+    steps:
+      - for: component in components
+        task: build_component
+
+  build_component:
+    desc: "Build a single component"
+    requires: [component]  # Declare required variables
+    steps:
+      - run: make build -C "${{ component }}"
+```
+
+### How It Works
+
+1. **For Loop in Step**: A step can have both `for:` and `task:` fields
+   - `for: variable in collection` - Defines the loop pattern
+   - `task: task_name` - Names the task to invoke
+
+2. **Loop Variables**: The loop variable becomes available to the invoked task
+   - Use `${{ variable_name }}` to reference the loop variable
+   - Loop variables are merged with existing context variables
+
+3. **Requires Declaration**: Tasks can declare required variables with `requires: [...]`
+   - When invoked in a loop, the task validates that all required variables are present
+   - If a required variable is missing, execution fails with a clear error message
+   - `requires` is optional; omit it if the task doesn't require specific variables
+
+### Advanced Example
+
+```yaml
+vars:
+  environments:
+    - dev
+    - staging
+    - prod
+  service_version: 1.2.3
+
+tasks:
+  deploy_all:
+    desc: "Deploy to all environments"
+    steps:
+      - for: env in environments
+        task: deploy_service
+
+  deploy_service:
+    desc: "Deploy to a specific environment"
+    requires: [env, service_version]
+    steps:
+      - run: kubectl apply -f config/${{ env }}/deployment.yml --image=app:${{ service_version }}
+```
+
+### Error Handling
+
+If a task has `requires: [var1, var2]` but one of those variables is missing from the loop context:
+
+```
+job 'deploy_service' requires variables [env service_version] but missing: [env]
+```
+
+The execution stops with a clear message listing the missing variables.

@@ -199,3 +199,187 @@ func TestForLoopStepExecution(t *testing.T) {
 		}
 	})
 }
+
+func TestValidateJobRequirements(t *testing.T) {
+	tests := []struct {
+		name      string
+		job       *model.Job
+		variables map[string]interface{}
+		expectErr bool
+		errMsg    string
+	}{
+		{
+			name: "no requirements",
+			job: &model.Job{
+				Name:     "test_job",
+				Requires: []string{},
+			},
+			variables: map[string]interface{}{},
+			expectErr: false,
+		},
+		{
+			name: "requirements satisfied",
+			job: &model.Job{
+				Name:     "build_component",
+				Requires: []string{"component"},
+			},
+			variables: map[string]interface{}{
+				"component": "src/main",
+			},
+			expectErr: false,
+		},
+		{
+			name: "single requirement missing",
+			job: &model.Job{
+				Name:     "build_component",
+				Requires: []string{"component"},
+			},
+			variables: map[string]interface{}{},
+			expectErr: true,
+			errMsg:    "requires variables [component] but missing: [component]",
+		},
+		{
+			name: "multiple requirements, some missing",
+			job: &model.Job{
+				Name:     "deploy_service",
+				Requires: []string{"service", "version", "env"},
+			},
+			variables: map[string]interface{}{
+				"service": "api",
+				"version": "1.0.0",
+			},
+			expectErr: true,
+			errMsg:    "requires variables [service version env] but missing: [env]",
+		},
+		{
+			name: "all requirements present",
+			job: &model.Job{
+				Name:     "deploy_service",
+				Requires: []string{"service", "version", "env"},
+			},
+			variables: map[string]interface{}{
+				"service": "api",
+				"version": "1.0.0",
+				"env":     "prod",
+			},
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := &runner.ExecutionContext{
+				Variables: tt.variables,
+			}
+			tt.job.Name = tt.job.Name // Ensure job name is set
+
+			err := runner.ValidateJobRequirements(tt.job, ctx)
+
+			if (err != nil) != tt.expectErr {
+				t.Errorf("ValidateJobRequirements error = %v, expectErr %v", err, tt.expectErr)
+				return
+			}
+
+			if tt.expectErr && err != nil && tt.errMsg != "" {
+				if !contains(err.Error(), tt.errMsg) {
+					t.Errorf("ValidateJobRequirements error message = %q, expected to contain %q", err.Error(), tt.errMsg)
+				}
+			}
+		})
+	}
+}
+
+func TestTaskInvocationWithForLoop(t *testing.T) {
+	t.Run("expand for loop with task variables", func(t *testing.T) {
+		// Create a step that invokes a task with a for loop
+		step := &model.Step{
+			Name: "build all components",
+			Task: "build_component",
+			For:  "component in components",
+		}
+
+		// Create execution context
+		ctx := &runner.ExecutionContext{
+			Variables: map[string]interface{}{
+				"components": []interface{}{"src/main", "src/utils", "tests/"},
+			},
+			Step: step,
+			Env:  make(map[string]string),
+		}
+
+		// Expand the for loop
+		iterations, err := runner.ExpandFor(ctx, func(cmd string) (string, error) {
+			return "", nil
+		})
+
+		if err != nil {
+			t.Fatalf("ExpandFor failed: %v", err)
+		}
+
+		if len(iterations) != 3 {
+			t.Errorf("Expected 3 iterations, got %d", len(iterations))
+		}
+
+		// Verify each iteration has the component variable
+		expectedComponents := []string{"src/main", "src/utils", "tests/"}
+		for i, iter := range iterations {
+			if iter.Variables["component"] != expectedComponents[i] {
+				t.Errorf("Iteration %d: expected component=%q, got %q", i, expectedComponents[i], iter.Variables["component"])
+			}
+		}
+	})
+
+	t.Run("task requires variable from for loop", func(t *testing.T) {
+		// Create a task that requires the loop variable
+		task := &model.Job{
+			Name:     "build_component",
+			Requires: []string{"component"},
+		}
+
+		// Simulate iteration context with loop variable
+		ctx := &runner.ExecutionContext{
+			Variables: map[string]interface{}{
+				"component": "src/main",
+			},
+		}
+
+		// Should pass validation
+		err := runner.ValidateJobRequirements(task, ctx)
+		if err != nil {
+			t.Errorf("ValidateJobRequirements failed: %v", err)
+		}
+	})
+
+	t.Run("task requires variable missing from for loop context", func(t *testing.T) {
+		// Create a task that requires a variable
+		task := &model.Job{
+			Name:     "build_component",
+			Requires: []string{"component"},
+		}
+
+		// Iteration context without the required variable
+		ctx := &runner.ExecutionContext{
+			Variables: map[string]interface{}{},
+		}
+
+		// Should fail validation
+		err := runner.ValidateJobRequirements(task, ctx)
+		if err == nil {
+			t.Errorf("Expected ValidateJobRequirements to fail, but it passed")
+		}
+
+		if !contains(err.Error(), "component") {
+			t.Errorf("Expected error to mention 'component', got: %v", err)
+		}
+	})
+}
+
+// Helper function to check if a string contains a substring
+func contains(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
+}

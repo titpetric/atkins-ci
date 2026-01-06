@@ -29,6 +29,7 @@ type Job struct {
 	Detach    bool                   `yaml:"detach,omitempty"`
 	Show      bool                   `yaml:"show,omitempty"` // Show in display (true=show, false=hide unless invoked)
 	DependsOn Dependencies           `yaml:"depends_on,omitempty"`
+	Requires  []string               `yaml:"requires,omitempty"` // Variables required when invoked in a loop
 	Timeout   string                 `yaml:"timeout,omitempty"` // e.g., "10m", "300s"
 
 	Name   string `yaml:"-"`
