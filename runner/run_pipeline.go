@@ -76,9 +76,38 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		os.Exit(1)
 	}
 
-	// Pre-populate all jobs as pending
+	// Pre-populate all jobs as pending - include all jobs that might be invoked
 	jobNodes := make(map[string]*treeview.TreeNode)
+	jobsToCreate := make(map[string]bool)
+
+	// Recursively find all jobs that might be invoked
+	var findInvokedJobs func(jobName string)
+	findInvokedJobs = func(jobName string) {
+		if jobsToCreate[jobName] {
+			return // Already processed
+		}
+		jobsToCreate[jobName] = true
+
+		job, exists := allJobs[jobName]
+		if !exists {
+			return
+		}
+
+		// Recursively find all task references
+		for _, step := range job.Steps {
+			if step.Task != "" {
+				findInvokedJobs(step.Task)
+			}
+		}
+	}
+
+	// Start with jobs in order
 	for _, jobName := range jobOrder {
+		findInvokedJobs(jobName)
+	}
+
+	// Create job nodes for all jobs that might be invoked
+	for jobName := range jobsToCreate {
 		job := allJobs[jobName]
 		jobLabel := jobName
 		if job.Desc != "" {
@@ -164,22 +193,13 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 
 	eg := new(errgroup.Group)
 	detached := 0
-	parallel := 0
 	count := 0
 
 	for _, name := range jobOrder {
 		job := allJobs[name]
 
-		// Check if job has no dependencies - can run in parallel
-		deps := GetDependencies(job.DependsOn)
-		canParallel := len(deps) == 0
-
-		if job.Detach || canParallel {
-			if job.Detach {
-				detached++
-			} else {
-				parallel++
-			}
+		if job.Detach {
+			detached++
 			count++
 			eg.Go(func() error {
 				return executeJobWithDeps(name, job)
@@ -195,8 +215,8 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		count++
 	}
 
-	// Wait for all parallel and detached jobs
-	if detached > 0 || parallel > 0 {
+	// Wait for all detached jobs
+	if detached > 0 {
 		if err := eg.Wait(); err != nil {
 			// Mark pipeline as failed
 			root.SetStatus(treeview.StatusFailed)

@@ -27,6 +27,7 @@ type Job struct {
 	Vars      map[string]interface{} `yaml:"vars,omitempty"`
 	Env       map[string]string      `yaml:"env,omitempty"`
 	Detach    bool                   `yaml:"detach,omitempty"`
+	Show      bool                   `yaml:"show,omitempty"` // Show in display (true=show, false=hide unless invoked)
 	DependsOn Dependencies           `yaml:"depends_on,omitempty"`
 	Timeout   string                 `yaml:"timeout,omitempty"` // e.g., "10m", "300s"
 
@@ -43,6 +44,17 @@ func (j *Job) IsRootLevel() bool {
 		}
 	}
 	return true
+}
+
+// ShouldShow returns true if the job should be displayed in the tree output.
+// Root jobs are shown by default. Nested jobs are hidden unless Show is true.
+func (j *Job) ShouldShow() bool {
+	// Always show if explicitly marked with show: true
+	if j.Show {
+		return true
+	}
+	// Show root jobs by default, hide nested jobs
+	return j.IsRootLevel()
 }
 
 // Step represents a step within a job.

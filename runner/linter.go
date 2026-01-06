@@ -122,6 +122,13 @@ func ResolveJobDependencies(jobs map[string]*model.Job, startingJob string) ([]s
 
 // resolveDependencyChain returns a job and all its dependencies in execution order
 func resolveDependencyChain(jobs map[string]*model.Job, jobName string) ([]string, error) {
+	// Set Name field on all jobs for IsRootLevel() check
+	for name, job := range jobs {
+		if job.Name == "" {
+			job.Name = name
+		}
+	}
+
 	resolved := make([]string, 0)
 	visited := make(map[string]bool)
 	var visit func(string) error
