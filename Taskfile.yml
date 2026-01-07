@@ -4,11 +4,12 @@ version: "3"
 tasks:
   default:
     cmds:
-      - atkins install
+      - task: install
       - atkins
 
   install:
     cmds:
+      - which atkins || go install .
       - atkins install
 
   fmt:
