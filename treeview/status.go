@@ -1,6 +1,6 @@
 package treeview
 
-import "github.com/titpetric/atkins-ci/colors"
+import "github.com/titpetric/atkins/colors"
 
 // Status represents the execution status of a node.
 type Status int

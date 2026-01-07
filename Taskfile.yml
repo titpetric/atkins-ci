@@ -4,12 +4,12 @@ version: "3"
 tasks:
   default:
     cmds:
-      - atkins-ci install
-      - atkins-ci
+      - atkins install
+      - atkins
 
   install:
     cmds:
-      - atkins-ci install
+      - atkins install
 
   fmt:
     silent: true
@@ -31,13 +31,13 @@ tasks:
 
   record:fixtures:
     cmds:
-      - asciinema rec --cols 80 --rows 25 -t "Atkins detach example" -c "atkins-ci -file tests/detach.yml" examples/detach.yml.cast
+      - asciinema rec --cols 80 --rows 25 -t "Atkins detach example" -c "atkins -file tests/detach.yml" examples/detach.yml.cast
       - $HOME/.cargo/bin/agg examples/detach.yml.cast examples/detach.yml.gif
-      - asciinema rec --cols 80 --rows 25 -t "Atkins depends_on example" -c "atkins-ci -file tests/depends_on.yml" examples/depends_on.yml.cast
+      - asciinema rec --cols 80 --rows 25 -t "Atkins depends_on example" -c "atkins -file tests/depends_on.yml" examples/depends_on.yml.cast
       - $HOME/.cargo/bin/agg examples/depends_on.yml.cast examples/depends_on.yml.gif
-      - asciinema rec --cols 80 --rows 25 -t "Atkins root_jobs example" -c "atkins-ci -file tests/root_jobs.yml" examples/root_jobs.yml.cast
+      - asciinema rec --cols 80 --rows 25 -t "Atkins root_jobs example" -c "atkins -file tests/root_jobs.yml" examples/root_jobs.yml.cast
       - $HOME/.cargo/bin/agg examples/root_jobs.yml.cast examples/root_jobs.yml.gif
-      - asciinema rec --cols 80 --rows 25 -t "Atkins nested example" -c "atkins-ci -file tests/nested.yml" examples/nested.yml.cast
+      - asciinema rec --cols 80 --rows 25 -t "Atkins nested example" -c "atkins -file tests/nested.yml" examples/nested.yml.cast
       - $HOME/.cargo/bin/agg examples/nested.yml.cast examples/nested.yml.gif
 
   record:gif:
@@ -47,16 +47,16 @@ tasks:
   run:
     cmds:
       - task: install
-      - atkins-ci -file test/pipelines/atkins.yml
+      - atkins -file test/pipelines/atkins.yml
 
   run:error:
     cmds:
       - task: install
-      - atkins-ci -file test/pipelines/atkins-err.yml
+      - atkins -file test/pipelines/atkins-err.yml
 
   test:fixtures:
     cmds:
-      - atkins-ci -file tests/detach.yml
-      - atkins-ci -file tests/depends_on.yml
-      - atkins-ci -file tests/root_jobs.yml
-      - atkins-ci -file tests/nested.yml
+      - atkins -file tests/detach.yml
+      - atkins -file tests/depends_on.yml
+      - atkins -file tests/root_jobs.yml
+      - atkins -file tests/nested.yml

@@ -10,8 +10,8 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/titpetric/atkins-ci/model"
-	"github.com/titpetric/atkins-ci/treeview"
+	"github.com/titpetric/atkins/model"
+	"github.com/titpetric/atkins/treeview"
 )
 
 // LineCapturingWriter captures all output written to it

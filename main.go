@@ -12,8 +12,8 @@ import (
 
 	yaml "gopkg.in/yaml.v3"
 
-	"github.com/titpetric/atkins-ci/colors"
-	"github.com/titpetric/atkins-ci/runner"
+	"github.com/titpetric/atkins/colors"
+	"github.com/titpetric/atkins/runner"
 )
 
 // Version information injected at build time via ldflags
@@ -35,7 +35,7 @@ func fatal(message string) {
 }
 
 func printBuildInfo() {
-	fmt.Printf("atkins-ci\n")
+	fmt.Printf("atkins\n")
 	fmt.Printf("  Version:     %s\n", Version)
 
 	// Print VCS information

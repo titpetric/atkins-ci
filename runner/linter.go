@@ -5,8 +5,8 @@ import (
 	"maps"
 	"slices"
 
-	"github.com/titpetric/atkins-ci/model"
-	"github.com/titpetric/atkins-ci/treeview"
+	"github.com/titpetric/atkins/model"
+	"github.com/titpetric/atkins/treeview"
 )
 
 // LintError represents a linting error.

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/titpetric/atkins-ci/model"
+	"github.com/titpetric/atkins/model"
 )
 
 // ProcessEnvDecl processes an EnvDecl and returns a map of environment variables.

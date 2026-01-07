@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/titpetric/atkins-ci/model"
+	"github.com/titpetric/atkins/model"
 )
 
 // TestBuildFromPipeline_SingleJob tests building a pipeline with a single job

@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/titpetric/atkins-ci/model"
-	"github.com/titpetric/atkins-ci/runner"
+	"github.com/titpetric/atkins/model"
+	"github.com/titpetric/atkins/runner"
 )
 
 func TestExecuteStepWithForLoop(t *testing.T) {

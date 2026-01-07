@@ -13,12 +13,12 @@ See pipeline examples in [./tests](./tests).
 Use the following command to install, needs the latest version of Go:
 
 ```bash
-go install github.com/titpetric/atkins-ci@latest
+go install github.com/titpetric/atkins@latest
 ```
 
 ```text
-$ atkins-ci --help
-Usage of atkins-ci:
+$ atkins --help
+Usage of atkins:
   -debug
     	Print debug data
   -file string
@@ -34,13 +34,13 @@ Usage of atkins-ci:
 
 To set up in your workspace, you'd:
 
-- provide `atkins.yml` and invoke `atkins-ci` or
-- provide several configurations and invoke `atkins-ci -file ${{ config }}`.
+- provide `atkins.yml` and invoke `atkins` or
+- provide several configurations and invoke `atkins -file ${{ config }}`.
 
-You can use `atkins-ci -l` in a project to view the projects pipeline:
+You can use `atkins -l` in a project to view the projects pipeline:
 
 ```text
-$ atkins-ci -l
+$ atkins -l
 Vuego CI pipeline
 ├─ fmt ●
 │  ├─ run: goimports -w .

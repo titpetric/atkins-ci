@@ -1,4 +1,4 @@
-#!/usr/bin/env atkins-ci
+#!/usr/bin/env atkins
 id: "depends_on"
 name: "Test case for depends_on"
 

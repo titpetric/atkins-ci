@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/titpetric/atkins-ci/model"
+	"github.com/titpetric/atkins/model"
 )
 
 func TestProcessEnvDecl_VarsOnly(t *testing.T) {

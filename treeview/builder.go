@@ -3,7 +3,7 @@ package treeview
 import (
 	"fmt"
 
-	"github.com/titpetric/atkins-ci/model"
+	"github.com/titpetric/atkins/model"
 )
 
 // Builder constructs tree nodes from pipeline data.

@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/titpetric/atkins-ci/colors"
+	"github.com/titpetric/atkins/colors"
 )
 
 func (n *Node) StatusColor() string {

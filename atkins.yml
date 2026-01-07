@@ -1,5 +1,5 @@
-#!/usr/bin/env atkins-ci
-# Atkins CI: https://github.com/titpetric/atkins-ci
+#!/usr/bin/env atkins
+# Atkins CI: https://github.com/titpetric/atkins
 
 name: Atkins CI Go project tests, build
 
@@ -36,10 +36,10 @@ jobs:
     steps:
       - echo gh release create ${{ semver }} --title ${{semver}} --notes "Release ${{semver}}"
       - for: goarch in ${{build.goarch}}
-        run: echo gh release upload ${{ semver }} ./bin/atkins-ci-linux-${{goarch}}
+        run: echo gh release upload ${{ semver }} ./bin/atkins-linux-${{goarch}}
 
   install:
-    desc: "Install atkins-ci"
+    desc: "Install atkins"
     depends_on: fmt
     vars:
       goos: linux
@@ -50,10 +50,10 @@ jobs:
             CGO_ENABLED: 0
             GOOS: ${{ goos }}
             GOARCH: ${{ goarch }}
-        run: go build -ldflags="-X 'main.Version=${GIT_TAG}' -X 'main.Commit=${GIT_COMMIT}' -X 'main.CommitTime=${GIT_TIME}' -X 'main.Branch=${GIT_BRANCH}' -X 'main.Modified=${GIT_MODIFIED}'" -o bin/atkins-ci-${GOOS}-${GOARCH} .
+        run: go build -ldflags="-X 'main.Version=${GIT_TAG}' -X 'main.Commit=${GIT_COMMIT}' -X 'main.CommitTime=${GIT_TIME}' -X 'main.Branch=${GIT_BRANCH}' -X 'main.Modified=${GIT_MODIFIED}'" -o bin/atkins-${GOOS}-${GOARCH} .
       - cmds:  # This implements a rename based self-update
-          - mv -f /usr/local/bin/atkins-ci /usr/local/bin/atkins-ci.old
-          - cp -f ./bin/atkins-ci-linux-$(dpkg --print-architecture) /usr/local/bin/atkins-ci
+          - mv -f /usr/local/bin/atkins /usr/local/bin/atkins.old
+          - cp -f ./bin/atkins-linux-$(dpkg --print-architecture) /usr/local/bin/atkins
 
   fmt:
     desc: "Format the code"

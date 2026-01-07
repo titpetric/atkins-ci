@@ -3,7 +3,7 @@ package treeview
 import (
 	"sync"
 
-	"github.com/titpetric/atkins-ci/model"
+	"github.com/titpetric/atkins/model"
 )
 
 // TreeNode represents a node in the execution tree (backward compatibility).

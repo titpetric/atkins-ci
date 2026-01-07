@@ -2,7 +2,6 @@
 /bin
 atkins.log
 atkins
-atkins-ci
 /*.test
 /*.cov
 *.rec

@@ -6,7 +6,7 @@ import (
 	"github.com/expr-lang/expr"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/titpetric/atkins-ci/runner"
+	"github.com/titpetric/atkins/runner"
 )
 
 func TestInterpolation(t *testing.T) {

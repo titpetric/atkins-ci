@@ -7,7 +7,7 @@ import (
 
 	yaml "gopkg.in/yaml.v3"
 
-	"github.com/titpetric/atkins-ci/model"
+	"github.com/titpetric/atkins/model"
 )
 
 // LoadPipeline loads and parses a pipeline from a yaml file.

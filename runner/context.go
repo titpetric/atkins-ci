@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/titpetric/atkins-ci/model"
-	"github.com/titpetric/atkins-ci/treeview"
+	"github.com/titpetric/atkins/model"
+	"github.com/titpetric/atkins/treeview"
 )
 
 // IterationContext holds the variables for a single iteration of a for loop.

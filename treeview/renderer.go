@@ -6,7 +6,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	"github.com/titpetric/atkins-ci/colors"
+	"github.com/titpetric/atkins/colors"
 )
 
 // Renderer handles rendering of tree nodes to strings with proper formatting.
