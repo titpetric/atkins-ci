@@ -24,19 +24,11 @@ jobs:
       - task: test:build
       - task: test:run
 
-  release:build:
-    vars:
-      lastRelease: $(git tag | tail -n 1)
+  release:
+    desc: "Release atkins"
     steps:
       - task: install
-      - run: >
-          echo "Last release [${{lastRelease != "" ? lastRelease : "None"}}]"
-
-  release:create:
-    steps:
-      - echo gh release create ${{ semver }} --title ${{semver}} --notes "Release ${{semver}}"
-      - for: goarch in ${{build.goarch}}
-        run: echo gh release upload ${{ semver }} ./bin/atkins-linux-${{goarch}}
+      - run: ./ci/release.yml build
 
   install:
     desc: "Install atkins"
@@ -90,6 +82,15 @@ jobs:
       - name: cleanup
         task: docker:down
         deferred: true
+
+  test:fixtures:
+    desc: "Run test fixtures"
+    depends_on: install
+    cmds:
+      - ./tests/detach.yml
+      - ./tests/depends_on.yml
+      - ./tests/root_jobs.yml
+      - ./tests/nested.yml
 
   test:detail:
     dest: "Collect per-function test runs"

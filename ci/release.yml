@@ -1,0 +1,18 @@
+#!/usr/bin/env atkins
+name: Release Atkins binaries
+
+vars:
+  build:
+    goarch: [arm64, amd64]
+
+jobs:
+  build:
+    passthru: true
+    vars:
+      semver: $(git tag | tail -n 1)
+    steps:
+      - run: |
+          echo "Last release [${{semver != "" ? semver : "None"}}]"
+      - gh release create ${{ semver }} --title ${{semver}} --notes "Release ${{semver}}"
+      - for: goarch in ${{build.goarch}}
+        run: gh release upload ${{ semver }} ./bin/atkins-linux-${{goarch}}
