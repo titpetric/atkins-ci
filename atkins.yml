@@ -20,18 +20,23 @@ jobs:
     desc: "Run everything needed"
     depends_on: fmt
     steps:
+      - task: test:simple
       - task: test:build
       - task: test:run
 
-  release:
+  release:build:
     vars:
       lastRelease: $(git tag | tail -n 1)
     steps:
       - task: install
-      - echo "Last release: ${{ lastRelease }}"
-      - echo gh release create ${{ semver }} --title ${{semver}} --notes "Release {{semver}}"
-      - for: goarch in build.goarch
-        run: echo gh release upload ${{ semver }} ./bin/atkins-ci-linux-${{
+      - run: >
+          echo "Last release [${{lastRelease != "" ? lastRelease : "None"}}]"
+
+  release:create:
+    steps:
+      - echo gh release create ${{ semver }} --title ${{semver}} --notes "Release ${{semver}}"
+      - for: goarch in ${{build.goarch}}
+        run: echo gh release upload ${{ semver }} ./bin/atkins-ci-linux-${{goarch}}
 
   install:
     desc: "Install atkins-ci"
@@ -56,6 +61,12 @@ jobs:
       - goimports-reviser -set-alias -format -imports-order "std,blanked,general,company,project" ./...
       - gofumpt -w .
       - go mod tidy
+
+  test:simple:
+    desc: "Simple go test with gotestsum (passthru)"
+    passthru: true
+    steps:
+      - gotestsum ./... -- -count 1
 
   test:build:
     desc: "Build tests"
@@ -99,8 +110,7 @@ jobs:
     steps:
       - for: funcName in tests
         summarize: true
-        cmds:
-          - covertrace --name ${{ funcName }} -i "./coverage/${{ item }}/${{ funcName }}.cov" > "./coverage/${{ item }}/${{ funcName }}.yml"
+        run: covertrace --name ${{ funcName }} -i "./coverage/${{ item }}/${{ funcName }}.cov" > "./coverage/${{ item }}/${{ funcName }}.yml"
 
   docker:up:
     desc: "Bring up docker env"

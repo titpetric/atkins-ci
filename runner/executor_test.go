@@ -3,6 +3,8 @@ package runner_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/titpetric/atkins-ci/model"
 	"github.com/titpetric/atkins-ci/runner"
 )
@@ -69,31 +71,23 @@ func TestExecuteStepWithForLoop(t *testing.T) {
 			})
 
 			if (err != nil) != tt.expectError {
-				t.Errorf("ExpandFor error = %v, expectError %v", err, tt.expectError)
+				assert.Fail(t, "ExpandFor error mismatch", "error = %v, expectError %v", err, tt.expectError)
 				return
 			}
 
-			if len(iterations) != tt.expectedCount {
-				t.Errorf("ExpandFor returned %d iterations, expected %d", len(iterations), tt.expectedCount)
-				return
-			}
+			assert.Equal(t, tt.expectedCount, len(iterations), "expected %d iterations", tt.expectedCount)
 
 			// Verify iteration variables are set correctly
 			for i, iter := range iterations {
-				if iter.Variables == nil {
-					t.Errorf("Iteration %d has nil variables", i)
-					continue
-				}
+				assert.NotNil(t, iter.Variables, "Iteration %d has nil variables", i)
 
 				// For simple pattern, check if the loop variable is set
 				if tt.step.For == "item in fruits" {
-					if _, ok := iter.Variables["item"]; !ok {
-						t.Errorf("Iteration %d missing 'item' variable", i)
-					}
+					_, ok := iter.Variables["item"]
+					assert.True(t, ok, "Iteration %d missing 'item' variable", i)
 				} else if tt.step.For == "pkg in packages" {
-					if _, ok := iter.Variables["pkg"]; !ok {
-						t.Errorf("Iteration %d missing 'pkg' variable", i)
-					}
+					_, ok := iter.Variables["pkg"]
+					assert.True(t, ok, "Iteration %d missing 'pkg' variable", i)
 				}
 			}
 		})
@@ -140,14 +134,13 @@ func TestInterpolationInForLoop(t *testing.T) {
 
 			result, err := runner.InterpolateCommand(tt.cmd, ctx)
 
-			if (err != nil) != tt.expectError {
-				t.Errorf("InterpolateCommand error = %v, expectError %v", err, tt.expectError)
-				return
+			if tt.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
 			}
 
-			if result != tt.expected {
-				t.Errorf("InterpolateCommand returned %q, expected %q", result, tt.expected)
-			}
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
@@ -182,20 +175,14 @@ func TestForLoopStepExecution(t *testing.T) {
 
 		// Expand and verify
 		iterations, err := runner.ExpandFor(ctx, mockExecuteFunc)
-		if err != nil {
-			t.Fatalf("ExpandFor failed: %v", err)
-		}
+		assert.NoError(t, err)
 
-		if len(iterations) != 3 {
-			t.Errorf("Expected 3 iterations, got %d", len(iterations))
-		}
+		assert.Equal(t, 3, len(iterations))
 
 		// Verify each iteration has the correct variable
 		expectedItems := []string{"one", "two", "three"}
 		for i, iter := range iterations {
-			if iter.Variables["item"] != expectedItems[i] {
-				t.Errorf("Iteration %d: expected item=%q, got %q", i, expectedItems[i], iter.Variables["item"])
-			}
+			assert.Equal(t, expectedItems[i], iter.Variables["item"], "Iteration %d item mismatch", i)
 		}
 	})
 }
@@ -275,15 +262,13 @@ func TestValidateJobRequirements(t *testing.T) {
 
 			err := runner.ValidateJobRequirements(tt.job, ctx)
 
-			if (err != nil) != tt.expectErr {
-				t.Errorf("ValidateJobRequirements error = %v, expectErr %v", err, tt.expectErr)
-				return
-			}
-
-			if tt.expectErr && err != nil && tt.errMsg != "" {
-				if !contains(err.Error(), tt.errMsg) {
-					t.Errorf("ValidateJobRequirements error message = %q, expected to contain %q", err.Error(), tt.errMsg)
+			if tt.expectErr {
+				assert.Error(t, err)
+				if tt.errMsg != "" {
+					assert.Contains(t, err.Error(), tt.errMsg)
 				}
+			} else {
+				assert.NoError(t, err)
 			}
 		})
 	}
@@ -311,20 +296,14 @@ func TestTaskInvocationWithForLoop(t *testing.T) {
 		iterations, err := runner.ExpandFor(ctx, func(cmd string) (string, error) {
 			return "", nil
 		})
-		if err != nil {
-			t.Fatalf("ExpandFor failed: %v", err)
-		}
+		assert.NoError(t, err)
 
-		if len(iterations) != 3 {
-			t.Errorf("Expected 3 iterations, got %d", len(iterations))
-		}
+		assert.Equal(t, 3, len(iterations))
 
 		// Verify each iteration has the component variable
 		expectedComponents := []string{"src/main", "src/utils", "tests/"}
 		for i, iter := range iterations {
-			if iter.Variables["component"] != expectedComponents[i] {
-				t.Errorf("Iteration %d: expected component=%q, got %q", i, expectedComponents[i], iter.Variables["component"])
-			}
+			assert.Equal(t, expectedComponents[i], iter.Variables["component"], "Iteration %d component mismatch", i)
 		}
 	})
 
@@ -344,9 +323,7 @@ func TestTaskInvocationWithForLoop(t *testing.T) {
 
 		// Should pass validation
 		err := runner.ValidateJobRequirements(task, ctx)
-		if err != nil {
-			t.Errorf("ValidateJobRequirements failed: %v", err)
-		}
+		assert.NoError(t, err)
 	})
 
 	t.Run("task requires variable missing from for loop context", func(t *testing.T) {
@@ -363,22 +340,7 @@ func TestTaskInvocationWithForLoop(t *testing.T) {
 
 		// Should fail validation
 		err := runner.ValidateJobRequirements(task, ctx)
-		if err == nil {
-			t.Errorf("Expected ValidateJobRequirements to fail, but it passed")
-		}
-
-		if !contains(err.Error(), "component") {
-			t.Errorf("Expected error to mention 'component', got: %v", err)
-		}
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "component")
 	})
-}
-
-// Helper function to check if a string contains a substring
-func contains(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }

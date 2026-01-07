@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/titpetric/atkins-ci/colors"
 )
@@ -120,6 +121,49 @@ func (r *Renderer) renderStaticNode(node *Node, prefix string, isLast bool) stri
 		output += " " + status
 	}
 	output += "\n"
+
+	// Render output lines from command execution (with proper indentation)
+	if len(node.Output) > 0 {
+		// Determine continuation character for output indentation
+		continuation := "│  "
+		if isLast {
+			continuation = "   "
+		}
+
+		// Calculate max width of output lines for border (in runes)
+		maxWidth := 0
+		for _, outputLine := range node.Output {
+			width := utf8.RuneCountInString(outputLine)
+			if width > maxWidth {
+				maxWidth = width
+			}
+		}
+
+		// Add top border if 2+ elements (account for spaces around content)
+		if len(node.Output) >= 2 {
+			topBorder := prefix + continuation + colors.Gray("┌"+strings.Repeat("─", maxWidth+2)+"┐") + "\n"
+			output += topBorder
+		}
+
+		// Add each output line with left/right borders
+		for _, outputLine := range node.Output {
+			// Pad line to max width for consistent border
+			currentWidth := utf8.RuneCountInString(outputLine)
+			padding := strings.Repeat(" ", maxWidth-currentWidth)
+			paddedLine := " " + outputLine + padding + " "
+			if len(node.Output) >= 2 {
+				output += prefix + continuation + colors.Gray("│") + colors.White(paddedLine) + colors.Gray("│") + "\n"
+			} else {
+				output += prefix + continuation + colors.White(outputLine) + "\n"
+			}
+		}
+
+		// Add bottom border if 2+ elements (account for spaces around content)
+		if len(node.Output) >= 2 {
+			bottomBorder := prefix + continuation + colors.Gray("└"+strings.Repeat("─", maxWidth+2)+"┘") + "\n"
+			output += bottomBorder
+		}
+	}
 
 	// Render children
 	children := node.GetChildren()

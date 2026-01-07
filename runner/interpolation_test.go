@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/expr-lang/expr"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/titpetric/atkins-ci/runner"
 )
@@ -193,14 +194,13 @@ func TestInterpolation(t *testing.T) {
 
 			result, err := runner.InterpolateCommand(tt.cmd, ctx)
 
-			if (err != nil) != tt.expectError {
-				t.Errorf("InterpolateCommand error = %v, expectError %v", err, tt.expectError)
-				return
+			if tt.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
 			}
 
-			if result != tt.expected {
-				t.Errorf("InterpolateCommand returned %q, expected %q", result, tt.expected)
-			}
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
@@ -281,14 +281,8 @@ func TestNullCoalescingOperator(t *testing.T) {
 			}
 
 			result, err := evaluateExpr(tt.expr, ctx)
-			if err != nil {
-				t.Errorf("evaluateExpr error = %v", err)
-				return
-			}
-
-			if result != tt.expected {
-				t.Errorf("evaluateExpr returned %v (%T), expected %v (%T)", result, result, tt.expected, tt.expected)
-			}
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }

@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/titpetric/atkins-ci/model"
 )
 
@@ -22,16 +24,9 @@ func TestProcessEnvDecl_VarsOnly(t *testing.T) {
 	}
 
 	result, err := ProcessEnvDecl(envDecl, ctx)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if result["KEY1"] != "value1" {
-		t.Errorf("expected KEY1=value1, got %q", result["KEY1"])
-	}
-	if result["KEY2"] != "value2" {
-		t.Errorf("expected KEY2=value2, got %q", result["KEY2"])
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, "value1", result["KEY1"])
+	assert.Equal(t, "value2", result["KEY2"])
 }
 
 func TestProcessEnvDecl_WithInterpolation(t *testing.T) {
@@ -49,13 +44,8 @@ func TestProcessEnvDecl_WithInterpolation(t *testing.T) {
 	}
 
 	result, err := ProcessEnvDecl(envDecl, ctx)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if result["FULL_PATH"] != "/app/config" {
-		t.Errorf("expected FULL_PATH=/app/config, got %q", result["FULL_PATH"])
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, "/app/config", result["FULL_PATH"])
 }
 
 func TestProcessEnvDecl_WithCommandExecution(t *testing.T) {
@@ -71,14 +61,10 @@ func TestProcessEnvDecl_WithCommandExecution(t *testing.T) {
 	}
 
 	result, err := ProcessEnvDecl(envDecl, ctx)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	assert.NoError(t, err)
 
 	// Should have some hostname (not empty)
-	if result["HOSTNAME"] == "" {
-		t.Error("expected HOSTNAME to be populated from command execution")
-	}
+	assert.NotEmpty(t, result["HOSTNAME"], "expected HOSTNAME to be populated from command execution")
 }
 
 func TestLoadEnvFile(t *testing.T) {
@@ -93,14 +79,10 @@ KEY3=value with spaces
 # Comment line
 KEY4=final
 `
-	if err := os.WriteFile(envFile, []byte(envContent), 0o644); err != nil {
-		t.Fatalf("failed to create test env file: %v", err)
-	}
+	assert.NoError(t, os.WriteFile(envFile, []byte(envContent), 0o644))
 
 	env := make(map[string]string)
-	if err := loadEnvFile(envFile, env); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	assert.NoError(t, loadEnvFile(envFile, env))
 
 	tests := []struct {
 		key   string
@@ -113,9 +95,7 @@ KEY4=final
 	}
 
 	for _, tt := range tests {
-		if env[tt.key] != tt.value {
-			t.Errorf("env[%q] = %q, want %q", tt.key, env[tt.key], tt.value)
-		}
+		assert.Equal(t, tt.value, env[tt.key])
 	}
 }
 
@@ -131,16 +111,9 @@ func TestMergeEnv(t *testing.T) {
 		},
 	}
 
-	if err := MergeEnv(envDecl, ctx); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if ctx.Env["EXISTING"] != "value" {
-		t.Error("existing env var should be preserved")
-	}
-	if ctx.Env["NEW_KEY"] != "new_value" {
-		t.Error("new env var should be merged")
-	}
+	assert.NoError(t, MergeEnv(envDecl, ctx))
+	assert.Equal(t, "value", ctx.Env["EXISTING"], "existing env var should be preserved")
+	assert.Equal(t, "new_value", ctx.Env["NEW_KEY"], "new env var should be merged")
 }
 
 func TestEnvDeclPrecedence(t *testing.T) {
@@ -163,16 +136,9 @@ func TestEnvDeclPrecedence(t *testing.T) {
 	}
 
 	result, err := ProcessEnvDecl(envDecl, ctx)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if result["KEY"] != "from_vars" {
-		t.Errorf("vars should override include files, got %q", result["KEY"])
-	}
-	if result["OTHER"] != "value" {
-		t.Errorf("OTHER should be %q, got %q", "value", result["OTHER"])
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, "from_vars", result["KEY"], "vars should override include files")
+	assert.Equal(t, "value", result["OTHER"])
 }
 
 func TestEnvIncludeDecl_UnmarshalString(t *testing.T) {
@@ -183,12 +149,8 @@ func TestEnvIncludeDecl_UnmarshalString(t *testing.T) {
 	// Simulate setting a single file
 	includeDecl.Files = []string{".env"}
 
-	if len(includeDecl.Files) != 1 {
-		t.Errorf("expected 1 file, got %d", len(includeDecl.Files))
-	}
-	if includeDecl.Files[0] != ".env" {
-		t.Errorf("expected .env, got %q", includeDecl.Files[0])
-	}
+	assert.Equal(t, 1, len(includeDecl.Files))
+	assert.Equal(t, ".env", includeDecl.Files[0])
 }
 
 func TestEnvIncludeDecl_UnmarshalList(t *testing.T) {
@@ -196,15 +158,11 @@ func TestEnvIncludeDecl_UnmarshalList(t *testing.T) {
 	includeDecl := &model.EnvIncludeDecl{}
 	includeDecl.Files = []string{".env", ".env.local", ".env.production"}
 
-	if len(includeDecl.Files) != 3 {
-		t.Errorf("expected 3 files, got %d", len(includeDecl.Files))
-	}
+	assert.Equal(t, 3, len(includeDecl.Files))
 
 	expected := []string{".env", ".env.local", ".env.production"}
 	for i, file := range includeDecl.Files {
-		if file != expected[i] {
-			t.Errorf("file[%d] = %q, want %q", i, file, expected[i])
-		}
+		assert.Equal(t, expected[i], file)
 	}
 }
 
@@ -221,13 +179,8 @@ func TestProcessEnvDecl_NoInterpolationWithoutContext(t *testing.T) {
 	}
 
 	result, err := ProcessEnvDecl(envDecl, ctx)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if result["PLAIN"] != "no_interpolation" {
-		t.Errorf("expected no_interpolation, got %q", result["PLAIN"])
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, "no_interpolation", result["PLAIN"])
 }
 
 func TestProcessEnvDecl_IntegerValue(t *testing.T) {
@@ -244,16 +197,9 @@ func TestProcessEnvDecl_IntegerValue(t *testing.T) {
 	}
 
 	result, err := ProcessEnvDecl(envDecl, ctx)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if result["PORT"] != "8080" {
-		t.Errorf("expected PORT=8080, got %q", result["PORT"])
-	}
-	if result["DEBUG"] != "true" {
-		t.Errorf("expected DEBUG=true, got %q", result["DEBUG"])
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, "8080", result["PORT"])
+	assert.Equal(t, "true", result["DEBUG"])
 }
 
 func TestLoadEnvFile_SingleQuote(t *testing.T) {
@@ -262,11 +208,6 @@ func TestLoadEnvFile_SingleQuote(t *testing.T) {
 	os.WriteFile(envFile, []byte("KEY='single quoted value'\n"), 0o644)
 
 	env := make(map[string]string)
-	if err := loadEnvFile(envFile, env); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if env["KEY"] != "single quoted value" {
-		t.Errorf("expected 'single quoted value', got %q", env["KEY"])
-	}
+	assert.NoError(t, loadEnvFile(envFile, env))
+	assert.Equal(t, "single quoted value", env["KEY"])
 }

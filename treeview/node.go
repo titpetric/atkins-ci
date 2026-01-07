@@ -60,6 +60,7 @@ type Node struct {
 	Dependencies []string
 	Deferred     bool
 	Summarize    bool
+	Output       []string // Multi-line output from command execution
 	mu           sync.Mutex
 }
 
@@ -70,6 +71,13 @@ func (n *Node) SetStatus(status Status) {
 	n.Status = status
 	n.Deferred = false
 	n.UpdatedAt = time.Now()
+}
+
+// SetOutput sets the output lines for this node (from command execution).
+func (n *Node) SetOutput(lines []string) {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	n.Output = lines
 }
 
 // AddChild adds a child node.

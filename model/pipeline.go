@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"strings"
 
 	yaml "gopkg.in/yaml.v3"
 )
@@ -67,6 +68,7 @@ type Job struct {
 	Requires  []string               `yaml:"requires,omitempty"` // Variables required when invoked in a loop
 	Timeout   string                 `yaml:"timeout,omitempty"`  // e.g., "10m", "300s"
 	Summarize bool                   `yaml:"summarize,omitempty"`
+	Passthru  bool                   `yaml:"passthru,omitempty"` // If true, output is printed with tree indentation
 
 	Name   string `yaml:"-"`
 	Nested bool   `yaml:"-"`
@@ -111,6 +113,7 @@ type Step struct {
 	Deferred  bool                   `yaml:"deferred,omitempty"`
 	Verbose   bool                   `yaml:"verbose,omitempty"`
 	Summarize bool                   `yaml:"summarize,omitempty"`
+	Passthru  bool                   `yaml:"passthru,omitempty"` // If true, output is printed with tree indentation
 }
 
 type DeferredStep struct {
@@ -120,6 +123,23 @@ type DeferredStep struct {
 // IsDeferred returns true if deferred is filled.
 func (s *Step) IsDeferred() bool {
 	return s.Deferred
+}
+
+// UnmarshalYAML implements custom unmarshalling for Job to trim whitespace.
+func (j *Job) UnmarshalYAML(node *yaml.Node) error {
+	type rawJob Job
+	if err := node.Decode((*rawJob)(j)); err != nil {
+		return err
+	}
+
+	// Trim spaces from Run, Cmd, and Cmds after decoding
+	j.Run = strings.TrimSpace(j.Run)
+	j.Cmd = strings.TrimSpace(j.Cmd)
+	for i, cmd := range j.Cmds {
+		j.Cmds[i] = strings.TrimSpace(cmd)
+	}
+
+	return nil
 }
 
 func (s *Step) String() string {
@@ -140,8 +160,8 @@ func (s *Step) String() string {
 func (s *Step) UnmarshalYAML(node *yaml.Node) error {
 	if node.Kind == yaml.ScalarNode {
 		// Simple string step - treat as a Run command
-		s.Run = node.Value
-		s.Name = node.Value
+		s.Run = strings.TrimSpace(node.Value)
+		s.Name = strings.TrimSpace(node.Value)
 		return nil
 	}
 
@@ -165,6 +185,13 @@ func (s *Step) UnmarshalYAML(node *yaml.Node) error {
 			s.Deferred = true
 
 			return nil
+		}
+
+		// Trim spaces from Run, Cmd, and Cmds after decoding
+		s.Run = strings.TrimSpace(s.Run)
+		s.Cmd = strings.TrimSpace(s.Cmd)
+		for i, cmd := range s.Cmds {
+			s.Cmds[i] = strings.TrimSpace(cmd)
 		}
 
 		return nil
