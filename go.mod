@@ -1,6 +1,6 @@
-module github.com/titpetric/atkins-ci
+module github.com/titpetric/atkins
 
-go 1.25.4
+go 1.25.5
 
 require (
 	github.com/expr-lang/expr v1.17.7
