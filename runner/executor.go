@@ -1,9 +1,11 @@
 package runner
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/sync/errgroup"
@@ -11,6 +13,43 @@ import (
 	"github.com/titpetric/atkins-ci/model"
 	"github.com/titpetric/atkins-ci/treeview"
 )
+
+// LineCapturingWriter captures all output written to it
+type LineCapturingWriter struct {
+	buffer bytes.Buffer
+	mu     sync.Mutex
+}
+
+// NewLineCapturingWriter creates a new LineCapturingWriter
+func NewLineCapturingWriter() *LineCapturingWriter {
+	return &LineCapturingWriter{}
+}
+
+// Write implements io.Writer
+func (w *LineCapturingWriter) Write(p []byte) (int, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	return w.buffer.Write(p)
+}
+
+// GetLines returns all captured output as lines
+func (w *LineCapturingWriter) GetLines() []string {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
+	output := w.buffer.String()
+	if output == "" {
+		return nil
+	}
+
+	lines := strings.Split(output, "\n")
+	// Remove the last empty line if it exists (from final newline)
+	if len(lines) > 0 && lines[len(lines)-1] == "" {
+		lines = lines[:len(lines)-1]
+	}
+
+	return lines
+}
 
 // Options provides configuration for the executor.
 type Options struct {
@@ -98,17 +137,18 @@ func (e *Executor) ExecuteJob(parentCtx context.Context, job *model.Job, ctx *Ex
 	}
 
 	// Execute legacy cmd/cmds format
+	emptyStep := &model.Step{}
 	if job.Run != "" {
-		return e.executeCommand(jobCtx, ctx, job.Run)
+		return e.executeCommand(jobCtx, ctx, emptyStep, job.Run)
 	}
 
 	if job.Cmd != "" {
-		return e.executeCommand(jobCtx, ctx, job.Cmd)
+		return e.executeCommand(jobCtx, ctx, emptyStep, job.Cmd)
 	}
 
 	if len(job.Cmds) > 0 {
 		for _, cmd := range job.Cmds {
-			if err := e.executeCommand(jobCtx, ctx, cmd); err != nil {
+			if err := e.executeCommand(jobCtx, ctx, emptyStep, cmd); err != nil {
 				return err
 			}
 		}
@@ -454,9 +494,11 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 			}
 
 			var interpolated string
+			var nodeName string
 			// For task invocations, use the task name; otherwise interpolate the command
 			if step.Task != "" {
 				interpolated = step.Task
+				nodeName = interpolated
 			} else {
 				var err error
 				interpolated, err = InterpolateCommand(cmdTemplate, iterCtx)
@@ -466,6 +508,9 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 					}
 					return fmt.Errorf("failed to interpolate command for iteration %d: %w", idx, err)
 				}
+
+				// Use the interpolated command as the node name
+				nodeName = interpolated
 			}
 
 			// Get job name for ID generation
@@ -479,7 +524,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 			iterID := fmt.Sprintf("jobs.%s.steps.%d", jobName, iterSeqIndex)
 
 			iterNode := &treeview.Node{
-				Name:      interpolated,
+				Name:      nodeName,
 				ID:        iterID,
 				Status:    treeview.StatusPending,
 				Summarize: step.Summarize,
@@ -601,7 +646,7 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 	if len(step.Cmds) > 0 && stepNode != nil && stepNode.HasChildren() {
 		err = e.executeCmdsStep(jobCtx, stepCtx, step, stepNode)
 	} else {
-		err = e.executeCommand(jobCtx, stepCtx, cmd)
+		err = e.executeCommand(jobCtx, stepCtx, step, cmd)
 	}
 
 	// Calculate duration in milliseconds
@@ -888,7 +933,7 @@ func (e *Executor) executeCmdsStep(ctx context.Context, execCtx *ExecutionContex
 		}
 
 		// Execute the command
-		if err := e.executeCommand(ctx, execCtx, cmd); err != nil {
+		if err := e.executeCommand(ctx, execCtx, step, cmd); err != nil {
 			if cmdNode != nil {
 				cmdNode.SetStatus(treeview.StatusFailed)
 			}
@@ -906,8 +951,14 @@ func (e *Executor) executeCmdsStep(ctx context.Context, execCtx *ExecutionContex
 	return lastErr
 }
 
+// isEchoCommand checks if a command is a bare echo command
+func isEchoCommand(cmd string) bool {
+	trimmed := strings.TrimSpace(cmd)
+	return strings.HasPrefix(trimmed, "echo ")
+}
+
 // executeCommand runs a single command with interpolation and respects context timeout
-func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext, cmd string) error {
+func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext, step *model.Step, cmd string) error {
 	// Interpolate the command
 	interpolated, err := InterpolateCommand(cmd, execCtx)
 	if err != nil {
@@ -925,7 +976,20 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 
 	// Execute the command via bash with quiet mode, passing execution context env
 	exec := NewExecWithEnv(execCtx.Env)
-	output, err := exec.ExecuteCommandWithQuiet(interpolated, execCtx.Verbose)
+
+	// Determine if output should be captured for display with tree indentation
+	// Check step passthru flag first, then job passthru flag
+	shouldPassthru := step.Passthru || (execCtx.Job != nil && execCtx.Job.Passthru)
+
+	// If passthru is enabled, capture output to the node for display with tree indentation
+	var writer *LineCapturingWriter
+	if shouldPassthru && execCtx.CurrentStep != nil {
+		writer = NewLineCapturingWriter()
+		_, err = exec.ExecuteCommandWithWriter(interpolated, writer)
+	} else {
+		_, err = exec.ExecuteCommandWithQuiet(interpolated, execCtx.Verbose)
+	}
+
 	if err != nil {
 		// Return the error as-is if it's an ExecError, otherwise wrap it
 		if execErr, ok := err.(ExecError); ok {
@@ -934,9 +998,12 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 		return fmt.Errorf("command execution %s failed: %w", execCtx.CurrentStep.ID, err)
 	}
 
-	// Only print output if not in quiet mode (quiet mode 1 = suppress output)
-	if execCtx.Verbose && output != "" {
-		fmt.Print(output)
+	// Set output on node only after command completes successfully
+	if writer != nil && execCtx.CurrentStep != nil {
+		lines := writer.GetLines()
+		if len(lines) > 0 {
+			execCtx.CurrentStep.SetOutput(lines)
+		}
 	}
 
 	return nil

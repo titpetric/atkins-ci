@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/expr-lang/expr"
 )
 
 var (
@@ -14,31 +16,29 @@ var (
 	commandExecRegex = regexp.MustCompile(`\$\(([^)]+)\)`)
 )
 
-// InterpolateString replaces ${ variable } with values from context.
+// InterpolateString replaces ${{ expression }} with values from context.
+// Supports variable interpolation, dot notation, and expr expressions with ?? and || operators.
 func InterpolateString(s string, ctx *ExecutionContext) (string, error) {
 	result := s
 
-	// Handle variable interpolation: ${ var }
+	// Handle variable interpolation: ${{ expression }}
 	result = interpolationRegex.ReplaceAllStringFunc(result, func(match string) string {
-		varName := interpolationRegex.FindStringSubmatch(match)[1]
-		varName = strings.TrimSpace(varName)
+		exprStr := interpolationRegex.FindStringSubmatch(match)[1]
+		exprStr = strings.TrimSpace(exprStr)
 
-		// Handle dot notation for nested access: matrix.goarch
-		if strings.Contains(varName, ".") {
-			val := getNestedValue(varName, ctx.Variables)
-			if val != nil {
-				return fmt.Sprintf("%v", val)
-			}
+		// Evaluate expression using expr-lang
+		val, err := evaluateExpression(exprStr, ctx)
+		if err != nil {
+			// If expression evaluation fails, return original match
+			return match
 		}
 
-		// Check variables first, then environment
-		if val, ok := ctx.Variables[varName]; ok {
+		// Convert result to string
+		if val != nil {
 			return fmt.Sprintf("%v", val)
 		}
-		if val, ok := ctx.Env[varName]; ok {
-			return val
-		}
-		// Return original if not found
+
+		// Return original if result is nil
 		return match
 	})
 
@@ -104,23 +104,37 @@ func InterpolateCommand(cmd string, ctx *ExecutionContext) (string, error) {
 	return InterpolateString(cmd, ctx)
 }
 
-// getNestedValue retrieves a nested value using dot notation (e.g., "matrix.goarch")
-func getNestedValue(path string, vars map[string]interface{}) interface{} {
-	parts := strings.Split(path, ".")
-	var current interface{} = vars
-
-	for _, part := range parts {
-		switch v := current.(type) {
-		case map[string]interface{}:
-			var ok bool
-			current, ok = v[part]
-			if !ok {
-				return nil
-			}
-		default:
-			return nil
-		}
+// evaluateExpression evaluates an expr expression with access to variables and environment.
+// Uses expr-lang/expr for evaluation with support for:
+//   - Simple variable access: varName
+//   - Dot notation: user.name
+//   - Null coalescing (RECOMMENDED): var ?? default
+//   - Returns second value only if first is nil/missing
+//   - Empty strings, false, 0 are valid and won't trigger default
+//   - Complex expressions: (var1 ?? var2) ?? 'fallback'
+//
+// Note: The ?? (null coalescing) operator is the preferred pattern for defaults
+// since it explicitly handles nil/missing values without side effects on falsy values.
+func evaluateExpression(exprStr string, ctx *ExecutionContext) (interface{}, error) {
+	// Merge variables and environment into a single map for expr evaluation
+	env := make(map[string]interface{})
+	for k, v := range ctx.Variables {
+		env[k] = v
+	}
+	for k, v := range ctx.Env {
+		env[k] = v
 	}
 
-	return current
+	// Compile and evaluate the expression
+	program, err := expr.Compile(exprStr)
+	if err != nil {
+		return nil, fmt.Errorf("failed to compile expression: %w", err)
+	}
+
+	result, err := expr.Run(program, env)
+	if err != nil {
+		return nil, fmt.Errorf("failed to evaluate expression: %w", err)
+	}
+
+	return result, nil
 }

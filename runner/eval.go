@@ -198,77 +198,42 @@ func getForItems(ctx *ExecutionContext, itemsSpec string, executeCommand func(st
 	// Check for variable interpolation: ${{ ... }}
 	// Extract variable name from ${{ varname }} pattern
 	if strings.HasPrefix(itemsSpec, "${{") && strings.HasSuffix(itemsSpec, "}}") {
-		varName := strings.TrimPrefix(strings.TrimSuffix(itemsSpec, "}}"), "${{")
-		varName = strings.TrimSpace(varName)
+		exprStr := strings.TrimPrefix(strings.TrimSuffix(itemsSpec, "}}"), "${{")
+		exprStr = strings.TrimSpace(exprStr)
 
-		// Handle dot notation for nested access: build.goarch
-		if strings.Contains(varName, ".") {
-			val := getNestedValue(varName, ctx.Variables)
-			if val != nil {
-				// Convert to []interface{}
-				switch v := val.(type) {
-				case []interface{}:
-					return v, nil
-				case []string:
-					items := make([]interface{}, len(v))
-					for i, s := range v {
-						items[i] = s
-					}
-					return items, nil
-				case string:
-					// Split by newlines to support multi-line variables
-					lines := strings.Split(strings.TrimSpace(v), "\n")
-					items := make([]interface{}, 0, len(lines))
-					for _, line := range lines {
-						line = strings.TrimSpace(line)
-						if line != "" {
-							items = append(items, line)
-						}
-					}
-					if len(items) > 0 {
-						return items, nil
-					}
-					return []interface{}{v}, nil
-				case map[string]interface{}:
-					return []interface{}{v}, nil
-				default:
-					return []interface{}{v}, nil
+		// Evaluate expression (supports dot notation, operators, etc)
+		val, err := evaluateExpression(exprStr, ctx)
+		if err == nil && val != nil {
+			// Convert to []interface{}
+			switch v := val.(type) {
+			case []interface{}:
+				return v, nil
+			case []string:
+				items := make([]interface{}, len(v))
+				for i, s := range v {
+					items[i] = s
 				}
-			}
-		} else {
-			// Simple variable lookup
-			if val, ok := ctx.Variables[varName]; ok {
-				// Convert to []interface{} (same logic as below)
-				switch v := val.(type) {
-				case []interface{}:
-					return v, nil
-				case []string:
-					items := make([]interface{}, len(v))
-					for i, s := range v {
-						items[i] = s
+				return items, nil
+			case string:
+				// Split by newlines to support multi-line variables
+				lines := strings.Split(strings.TrimSpace(v), "\n")
+				items := make([]interface{}, 0, len(lines))
+				for _, line := range lines {
+					line = strings.TrimSpace(line)
+					if line != "" {
+						items = append(items, line)
 					}
-					return items, nil
-				case string:
-					lines := strings.Split(strings.TrimSpace(v), "\n")
-					items := make([]interface{}, 0, len(lines))
-					for _, line := range lines {
-						line = strings.TrimSpace(line)
-						if line != "" {
-							items = append(items, line)
-						}
-					}
-					if len(items) > 0 {
-						return items, nil
-					}
-					return []interface{}{v}, nil
-				case map[string]interface{}:
-					return []interface{}{v}, nil
-				default:
-					return []interface{}{v}, nil
 				}
+				if len(items) > 0 {
+					return items, nil
+				}
+				return []interface{}{v}, nil
+			case map[string]interface{}:
+				return []interface{}{v}, nil
+			default:
+				return []interface{}{v}, nil
 			}
 		}
-		return nil, fmt.Errorf("variable %q not found in context", varName)
 	}
 
 	// Look up in variables

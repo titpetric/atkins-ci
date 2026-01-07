@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bytes"
+	"io"
 	"os"
 	"os/exec"
 	"runtime"
@@ -86,6 +87,57 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 		}
 
 		b := make([]byte, 2048) // adjust buffer size to be larger than expected stack
+		n := runtime.Stack(b, false)
+		s := string(b[:n])
+
+		resErr := ExecError{
+			Message:      "failed to run command: " + err.Error(),
+			LastExitCode: exitCode,
+			Output:       stderr.String(),
+			Trace:        s,
+		}
+
+		return "", resErr
+	}
+
+	return stdout.String(), nil
+}
+
+// ExecuteCommandWithWriter executes a command and writes stdout to the provided writer.
+// Also returns the full stdout string for the caller.
+func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string, error) {
+	if cmdStr == "" {
+		return "", nil
+	}
+
+	cmd := exec.Command("bash", "-c", cmdStr)
+
+	// Build environment: start with OS environment, then overlay custom env
+	cmdEnv := os.Environ()
+	for k, v := range e.Env {
+		// Remove existing key if present and add new one
+		cmdEnv = removeEnvKey(cmdEnv, k)
+		cmdEnv = append(cmdEnv, k+"="+v)
+	}
+	cmd.Env = cmdEnv
+
+	// Write to both the provided writer and a buffer for the return value
+	var stdout bytes.Buffer
+	multiWriter := io.MultiWriter(&stdout, writer)
+	cmd.Stdout = multiWriter
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		// Extract exit code
+		exitCode := 1
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			exitCode = exitErr.ExitCode()
+		}
+
+		b := make([]byte, 2048)
 		n := runtime.Stack(b, false)
 		s := string(b[:n])
 
