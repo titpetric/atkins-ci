@@ -40,13 +40,19 @@ func main() {
 	flag.StringVar(&logFile, "log", "", "Log file path for command execution (e.g., atkins.log)")
 	flag.Parse()
 
-	// Handle positional argument as job name
+	// Handle positional arguments
 	args := flag.Args()
-	if len(args) > 0 {
-		if args[0] == "lint" {
+	for _, arg := range args {
+		// Check if arg is a file that exists (shebang invocation)
+		if _, err := os.Stat(arg); err == nil {
+			pipelineFile = arg
+		} else if arg == "lint" {
 			lintFlag = true
-		} else {
-			job = args[0]
+		} else if arg == "-l" {
+			listFlag = true
+		} else if job == "" {
+			// Treat as job name if not already set
+			job = arg
 		}
 	}
 

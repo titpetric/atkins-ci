@@ -1,3 +1,4 @@
+#!/usr/bin/env atkins-ci
 id: "depends_on"
 name: "Test case for depends_on"
 

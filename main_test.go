@@ -121,7 +121,6 @@ func testCoverageAggregate(t *testing.T) {
 		fill(r, name)
 	}
 
-
 	for pkgName, syms := range reverseLookup {
 		fmt.Println("-", pkgName)
 		for symbol, tests := range syms {

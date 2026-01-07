@@ -1,3 +1,4 @@
+#!/usr/bin/env atkins-ci
 id: "root_jobs"
 name: "Test case for root jobs"
 

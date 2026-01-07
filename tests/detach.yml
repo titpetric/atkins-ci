@@ -1,3 +1,4 @@
+#!/usr/bin/env atkins-ci
 name: Detached Steps Test
 
 jobs:
