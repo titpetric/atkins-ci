@@ -16,9 +16,9 @@ func ensureDeclInitialized(decl **Decl, node *yaml.Node) error {
 		*decl = &Decl{}
 	}
 
-	// If vars/include weren't decoded into the embedded Decl (which can happen with embedded pointers),
+	// If vars/include/env weren't decoded into the embedded Decl (which can happen with embedded pointers),
 	// try decoding them explicitly from the YAML node
-	if ((*decl).Vars == nil || (*decl).Include == nil) && node != nil && node.Content != nil && len(node.Content) > 0 {
+	if ((*decl).Vars == nil || (*decl).Include == nil || (*decl).Env == nil) && node != nil && node.Content != nil && len(node.Content) > 0 {
 		for i := 0; i < len(node.Content)-1; i += 2 {
 			keyNode := node.Content[i]
 			valueNode := node.Content[i+1]
@@ -31,6 +31,11 @@ func ensureDeclInitialized(decl **Decl, node *yaml.Node) error {
 			if keyNode.Value == "include" && (*decl).Include == nil {
 				if err := valueNode.Decode(&(*decl).Include); err != nil {
 					return fmt.Errorf("failed to decode include: %w", err)
+				}
+			}
+			if keyNode.Value == "env" && (*decl).Env == nil {
+				if err := valueNode.Decode(&(*decl).Env); err != nil {
+					return fmt.Errorf("failed to decode env: %w", err)
 				}
 			}
 		}

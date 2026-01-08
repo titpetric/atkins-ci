@@ -241,7 +241,7 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 
 		display.Render(root)
 
-		if err := executor.ExecuteJob(ctx, job, jobCtx, jobName); err != nil {
+		if err := executor.ExecuteJob(ctx, jobCtx); err != nil {
 			jobMutex.Lock()
 			jobCompleted[jobName] = true
 			jobMutex.Unlock()
@@ -268,11 +268,18 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 	for _, name := range jobOrder {
 		job := allJobs[name]
 
+		if job == nil {
+			return fmt.Errorf("job %q not found in pipeline", name)
+		}
+
 		if job.Detach {
 			detached++
 			count++
+			// Capture job and name by value to avoid closure variable capture issues
+			jobCopy := job
+			nameCopy := name
 			eg.Go(func() error {
-				return executeJobWithDeps(name, job)
+				return executeJobWithDeps(nameCopy, jobCopy)
 			})
 			continue
 		}

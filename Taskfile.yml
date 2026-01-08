@@ -20,7 +20,7 @@ tasks:
 
   record:
     cmds:
-      - task: install
+      - task: update
       - rm -rf examples ; mkdir -p examples
       - task: record:fixtures
 

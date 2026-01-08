@@ -161,7 +161,7 @@ vars:
   nestedVar: nested_value
 desc: "A nested job"
 steps:
-  - run: echo nested
+   - run: echo nested
 `
 
 	var job model.Job
@@ -182,4 +182,57 @@ steps:
 	// Check that root level jobs are identified correctly
 	job.Name = "rootjob"
 	assert.True(t, job.IsRootLevel())
+}
+
+// TestStepUnmarshalYAML_WithEnv tests that Step.Decl.Env is properly decoded.
+func TestStepUnmarshalYAML_WithEnv(t *testing.T) {
+	yamlContent := `
+name: test step
+run: echo test
+env:
+  vars:
+    MY_VAR: myvalue
+    ANOTHER_VAR: another_value
+`
+
+	var step model.Step
+	err := yaml.Unmarshal([]byte(yamlContent), &step)
+	assert.NoError(t, err)
+
+	// Check that Decl is not nil
+	assert.NotNil(t, step.Decl)
+
+	// Check that Env is loaded
+	assert.NotNil(t, step.Decl.Env)
+	assert.NotNil(t, step.Decl.Env.Vars)
+	assert.Equal(t, "myvalue", step.Decl.Env.Vars["MY_VAR"])
+	assert.Equal(t, "another_value", step.Decl.Env.Vars["ANOTHER_VAR"])
+}
+
+// TestJobUnmarshalYAML_WithEnv tests that Job.Decl.Env is properly decoded.
+func TestJobUnmarshalYAML_WithEnv(t *testing.T) {
+	yamlContent := `
+name: test:job
+env:
+  vars:
+    JOB_ENV_VAR: job_env_value
+    GOOS: linux
+    GOARCH: amd64
+steps:
+  - run: echo test
+`
+
+	var job model.Job
+	err := yaml.Unmarshal([]byte(yamlContent), &job)
+	assert.NoError(t, err)
+
+	// Check that Decl is not nil
+	assert.NotNil(t, job.Decl)
+
+	// Check that Env is loaded
+	assert.NotNil(t, job.Decl.Env)
+	assert.NotNil(t, job.Decl.Env.Vars)
+	assert.Equal(t, "job_env_value", job.Decl.Env.Vars["JOB_ENV_VAR"])
+	assert.Equal(t, "linux", job.Decl.Env.Vars["GOOS"])
+	assert.Equal(t, "amd64", job.Decl.Env.Vars["GOARCH"])
 }

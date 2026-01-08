@@ -46,8 +46,9 @@ jobs:
             GOARCH: ${{ goarch }}
         run: go build -ldflags="-X 'main.Version=${GIT_TAG}' -X 'main.Commit=${GIT_COMMIT}' -X 'main.CommitTime=${GIT_TIME}' -X 'main.Branch=${GIT_BRANCH}' -X 'main.Modified=${GIT_MODIFIED}'" -o bin/atkins-${GOOS}-${GOARCH} .
       - cmds:  # This implements a rename based self-update
+          - cp -f ./bin/atkins-linux-$(dpkg --print-architecture) /usr/local/bin/atkins.new
           - mv -f /usr/local/bin/atkins /usr/local/bin/atkins.old
-          - cp -f ./bin/atkins-linux-$(dpkg --print-architecture) /usr/local/bin/atkins
+          - mv -f /usr/local/bin/atkins.new /usr/local/bin/atkins
 
   fmt:
     desc: "Format the code"

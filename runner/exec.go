@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 )
 
@@ -86,15 +85,11 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 			exitCode = exitErr.ExitCode()
 		}
 
-		b := make([]byte, 2048) // adjust buffer size to be larger than expected stack
-		n := runtime.Stack(b, false)
-		s := string(b[:n])
-
 		resErr := ExecError{
 			Message:      "failed to run command: " + err.Error(),
 			LastExitCode: exitCode,
 			Output:       stderr.String(),
-			Trace:        s,
+			Trace:        "", // Stack traces disabled by default
 		}
 
 		return "", resErr
@@ -137,15 +132,11 @@ func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string
 			exitCode = exitErr.ExitCode()
 		}
 
-		b := make([]byte, 2048)
-		n := runtime.Stack(b, false)
-		s := string(b[:n])
-
 		resErr := ExecError{
 			Message:      "failed to run command: " + err.Error(),
 			LastExitCode: exitCode,
 			Output:       stderr.String(),
-			Trace:        s,
+			Trace:        "", // Stack traces disabled by default
 		}
 
 		return "", resErr

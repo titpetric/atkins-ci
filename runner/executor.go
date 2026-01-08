@@ -99,45 +99,49 @@ func parseTimeout(timeoutStr string, defaultTimeout time.Duration) time.Duration
 }
 
 // ExecuteJob runs a single job.
-func (e *Executor) ExecuteJob(parentCtx context.Context, job *model.Job, ctx *ExecutionContext, jobName string) error {
-	// Ensure job.Name is set
-	if job.Name == "" {
-		job.Name = jobName
+func (e *Executor) ExecuteJob(parentCtx context.Context, execCtx *ExecutionContext) error {
+	if execCtx == nil {
+		return fmt.Errorf("execution context is nil")
+	}
+
+	job := execCtx.Job
+	if job == nil {
+		return fmt.Errorf("job is nil in execution context")
 	}
 
 	// Parse job timeout
 	jobTimeout := parseTimeout(job.Timeout, e.opts.DefaultTimeout)
 
 	// Create a child context with the job timeout
-	jobCtx, cancel := context.WithTimeout(parentCtx, jobTimeout)
+	ctx, cancel := context.WithTimeout(parentCtx, jobTimeout)
 	defer cancel()
 
 	// Store context in execution context for use in steps
-	ctx.Context = jobCtx
+	execCtx.Context = ctx
 
 	// Merge job variables into context with interpolation
-	if err := MergeVariables(job.Decl, ctx); err != nil {
+	if err := MergeVariables(job.Decl, execCtx); err != nil {
 		return err
 	}
 
 	// Execute steps
 	if len(job.Steps) > 0 {
-		return e.executeSteps(jobCtx, ctx, job.Steps)
+		return e.executeSteps(ctx, execCtx, job.Steps)
 	}
 
 	// Execute legacy cmd/cmds format
 	emptyStep := &model.Step{}
 	if job.Run != "" {
-		return e.executeCommand(jobCtx, ctx, emptyStep, job.Run)
+		return e.executeCommand(ctx, execCtx, emptyStep, job.Run)
 	}
 
 	if job.Cmd != "" {
-		return e.executeCommand(jobCtx, ctx, emptyStep, job.Cmd)
+		return e.executeCommand(ctx, execCtx, emptyStep, job.Cmd)
 	}
 
 	if len(job.Cmds) > 0 {
 		for _, cmd := range job.Cmds {
-			if err := e.executeCommand(jobCtx, ctx, emptyStep, cmd); err != nil {
+			if err := e.executeCommand(ctx, execCtx, emptyStep, cmd); err != nil {
 				return err
 			}
 		}
@@ -148,7 +152,7 @@ func (e *Executor) ExecuteJob(parentCtx context.Context, job *model.Job, ctx *Ex
 }
 
 // executeSteps runs a sequence of steps (deferred steps are already at the end of the list)
-func (e *Executor) executeSteps(jobCtx context.Context, execCtx *ExecutionContext, steps []*model.Step) error {
+func (e *Executor) executeSteps(ctx context.Context, execCtx *ExecutionContext, steps []*model.Step) error {
 	eg := new(errgroup.Group)
 
 	detached := 0
@@ -178,7 +182,7 @@ func (e *Executor) executeSteps(jobCtx context.Context, execCtx *ExecutionContex
 		if step.Detach {
 			detached++
 			eg.Go(func() error {
-				return e.executeStep(jobCtx, execCtx, steps[idx], idx)
+				return e.executeStep(ctx, execCtx, steps[idx], idx)
 			})
 			continue
 		}
@@ -187,7 +191,7 @@ func (e *Executor) executeSteps(jobCtx context.Context, execCtx *ExecutionContex
 			return err
 		}
 
-		if err := e.executeStep(jobCtx, execCtx, steps[idx], idx); err != nil {
+		if err := e.executeStep(ctx, execCtx, steps[idx], idx); err != nil {
 			return err
 		}
 	}
@@ -223,12 +227,12 @@ func (e *Executor) executeSteps(jobCtx context.Context, execCtx *ExecutionContex
 			stepNode.SetStatus(treeview.StatusRunning)
 
 			// Execute step with the actual found node
-			if err := e.executeStepWithNode(jobCtx, execCtx, step, stepNode); err != nil {
+			if err := e.executeStepWithNode(ctx, execCtx, step, stepNode); err != nil {
 				return err
 			}
 		} else {
 			// Fallback to executeStep if node not found
-			if err := e.executeStep(jobCtx, execCtx, step, stepIdx); err != nil {
+			if err := e.executeStep(ctx, execCtx, step, stepIdx); err != nil {
 				return err
 			}
 		}
@@ -238,10 +242,10 @@ func (e *Executor) executeSteps(jobCtx context.Context, execCtx *ExecutionContex
 }
 
 // executeStepWithNode runs a single step with a provided node
-func (e *Executor) executeStepWithNode(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node) error {
+func (e *Executor) executeStepWithNode(ctx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node) error {
 	// Handle step-level environment variables
 	stepCtx := execCtx.Copy()
-	stepCtx.Context = jobCtx
+	stepCtx.Context = ctx
 	stepCtx.Step = step
 
 	env := make(map[string]string)
@@ -296,14 +300,14 @@ func (e *Executor) executeStepWithNode(jobCtx context.Context, execCtx *Executio
 
 	// Handle for loop expansion
 	if step.For != "" {
-		return e.executeStepWithForLoop(jobCtx, stepCtx, step, 0, stepNode)
+		return e.executeStepWithForLoop(ctx, stepCtx, step, 0, stepNode)
 	} else {
 		// Handle task invocation
 		if step.Task != "" {
 			if stepNode != nil {
 				stepNode.SetStatus(treeview.StatusRunning)
 			}
-			return e.executeTaskStep(jobCtx, stepCtx, step, stepNode)
+			return e.executeTaskStep(ctx, stepCtx, step, stepNode)
 		}
 	}
 
@@ -320,16 +324,16 @@ func (e *Executor) executeStepWithNode(jobCtx context.Context, execCtx *Executio
 	}
 
 	// Execute single iteration of the step
-	return e.executeStepIteration(jobCtx, stepCtx, step, stepNode, cmd, 0)
+	return e.executeStepIteration(ctx, stepCtx, step, stepNode, cmd, 0)
 }
 
 // executeStep runs a single step
-func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepIndex int) error {
+func (e *Executor) executeStep(ctx context.Context, execCtx *ExecutionContext, step *model.Step, stepIndex int) error {
 	defer execCtx.Render()
 
 	// Handle step-level environment variables
 	stepCtx := execCtx.Copy()
-	stepCtx.Context = jobCtx
+	stepCtx.Context = ctx
 	stepCtx.Step = step
 
 	env := make(map[string]string)
@@ -398,7 +402,7 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 		if stepNode != nil {
 			stepNode.SetStatus(treeview.StatusRunning)
 		}
-		return e.executeTaskStep(jobCtx, stepCtx, step, stepNode)
+		return e.executeTaskStep(ctx, stepCtx, step, stepNode)
 	}
 
 	// Handle for loop expansion
@@ -407,7 +411,7 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 		if stepNode != nil {
 			stepNode.SetStatus(treeview.StatusRunning)
 		}
-		if err := e.executeStepWithForLoop(jobCtx, stepCtx, step, stepIndex, stepNode); err != nil {
+		if err := e.executeStepWithForLoop(ctx, stepCtx, step, stepIndex, stepNode); err != nil {
 			stepNode.SetStatus(treeview.StatusFailed)
 			return err
 		}
@@ -427,12 +431,12 @@ func (e *Executor) executeStep(jobCtx context.Context, execCtx *ExecutionContext
 	}
 
 	// Execute single iteration of the step
-	return e.executeStepIteration(jobCtx, stepCtx, step, stepNode, cmd, stepIndex)
+	return e.executeStepIteration(ctx, stepCtx, step, stepNode, cmd, stepIndex)
 }
 
 // executeStepWithForLoop handles for loop expansion and execution
 // Each iteration becomes a separate execution with iteration variables overlaid on context
-func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepIndex int, stepNode *treeview.Node) error {
+func (e *Executor) executeStepWithForLoop(ctx context.Context, execCtx *ExecutionContext, step *model.Step, stepIndex int, stepNode *treeview.Node) error {
 	// Expand the for loop to get all iterations
 	exec := NewExecWithEnv(execCtx.Env)
 	iterations, err := ExpandFor(execCtx, exec.ExecuteCommand)
@@ -529,7 +533,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 	for idx, iteration := range iterations {
 		// Create iteration context by overlaying iteration variables on parent context
 		iterCtx := execCtx.Copy()
-		iterCtx.Context = jobCtx
+		iterCtx.Context = ctx
 
 		// Overlay iteration variables (they override parent variables)
 		for k, v := range iteration.Variables {
@@ -554,7 +558,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 		// Handle task invocation or command execution
 		if step.Task != "" {
 			// Task invocation with loop variables
-			if err := e.executeTaskStep(jobCtx, iterCtx, step, iterNode); err != nil {
+			if err := e.executeTaskStep(ctx, iterCtx, step, iterNode); err != nil {
 				lastErr = err
 				// Continue to next iteration even on error (collect all failures)
 				// This matches yamlexpr behavior of processing all items
@@ -573,7 +577,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 			}
 
 			// Execute this iteration with the iteration sub-node
-			if err := e.executeStepIteration(jobCtx, iterCtx, step, iterNode, cmd, stepIndex); err != nil {
+			if err := e.executeStepIteration(ctx, iterCtx, step, iterNode, cmd, stepIndex); err != nil {
 				lastErr = err
 				// Continue to next iteration even on error (collect all failures)
 				// This matches yamlexpr behavior of processing all items
@@ -595,7 +599,7 @@ func (e *Executor) executeStepWithForLoop(jobCtx context.Context, execCtx *Execu
 }
 
 // executeStepIteration executes a single step (or iteration of a step) with the given context
-func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node, cmd string, stepIndex int) error {
+func (e *Executor) executeStepIteration(ctx context.Context, stepCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node, cmd string, stepIndex int) error {
 	// Get step name for logging
 	stepName := step.Name
 	if stepName == "" && stepNode != nil {
@@ -628,9 +632,9 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 	// Handle cmds: if step has multiple commands and child nodes exist, execute each command individually
 	var err error
 	if len(step.Cmds) > 0 && stepNode != nil && stepNode.HasChildren() {
-		err = e.executeCmdsStep(jobCtx, stepCtx, step, stepNode)
+		err = e.executeCmdsStep(ctx, stepCtx, step, stepNode)
 	} else {
-		err = e.executeCommand(jobCtx, stepCtx, step, cmd)
+		err = e.executeCommand(ctx, stepCtx, step, cmd)
 	}
 
 	// Calculate duration in milliseconds
@@ -661,7 +665,7 @@ func (e *Executor) executeStepIteration(jobCtx context.Context, stepCtx *Executi
 
 // executeTaskStep executes a task/job from within a step
 // Supports both simple task invocation and for loop task invocation with loop variables
-func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node) error {
+func (e *Executor) executeTaskStep(ctx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node) error {
 	defer execCtx.Render()
 
 	// Get the task name from the step
@@ -702,7 +706,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 	// Check if this step has a for loop
 	if step.For != "" {
 		// Handle task invocation with for loop
-		return e.executeTaskStepWithLoop(jobCtx, execCtx, step, stepNode, taskJob, taskJobNode)
+		return e.executeTaskStepWithLoop(ctx, execCtx, step, stepNode, taskJob, taskJobNode)
 	}
 
 	// Mark the task as running
@@ -719,7 +723,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 	taskCtx.Depth++
 	taskCtx.Job = taskJob
 	taskCtx.CurrentJob = taskJobNode
-	taskCtx.Context = jobCtx
+	taskCtx.Context = ctx
 
 	err := func() error {
 		if err := MergeVariables(taskJob.Decl, taskCtx); err != nil {
@@ -728,7 +732,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 		if err := ValidateJobRequirements(taskJob, taskCtx); err != nil {
 			return err
 		}
-		if err := e.executeSteps(jobCtx, taskCtx, taskJob.Steps); err != nil {
+		if err := e.executeSteps(ctx, taskCtx, taskJob.Steps); err != nil {
 			return err
 		}
 		return nil
@@ -750,7 +754,7 @@ func (e *Executor) executeTaskStep(jobCtx context.Context, execCtx *ExecutionCon
 }
 
 // executeTaskStepWithLoop executes a task multiple times via a for loop with loop variables
-func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node, taskJob *model.Job, taskJobNode *treeview.TreeNode) error {
+func (e *Executor) executeTaskStepWithLoop(ctx context.Context, execCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node, taskJob *model.Job, taskJobNode *treeview.TreeNode) error {
 	defer execCtx.Render()
 
 	// Expand the for loop to get iteration contexts
@@ -781,7 +785,7 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 		}
 		iterCtx.Job = taskJob
 		iterCtx.CurrentJob = taskJobNode
-		iterCtx.Context = jobCtx
+		iterCtx.Context = ctx
 
 		if err := MergeVariables(taskJob.Decl, iterCtx); err != nil {
 			taskJobNode.SetStatus(treeview.StatusFailed)
@@ -804,7 +808,7 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 		}
 
 		// Execute the task job steps with iteration context
-		if err := e.executeSteps(jobCtx, iterCtx, taskJob.Steps); err != nil {
+		if err := e.executeSteps(ctx, iterCtx, taskJob.Steps); err != nil {
 			lastErr = err
 			// Continue to next iteration even on error (collect all failures)
 			// This matches yamlexpr behavior of processing all items
@@ -835,6 +839,11 @@ func (e *Executor) executeTaskStepWithLoop(jobCtx context.Context, execCtx *Exec
 func interpolateVariables(ctx *ExecutionContext, vars map[string]any) (map[string]any, error) {
 	if vars == nil {
 		return nil, nil
+	}
+
+	if ctx == nil {
+		// If no context, return vars as-is (no interpolation possible)
+		return vars, nil
 	}
 
 	result := make(map[string]any)
