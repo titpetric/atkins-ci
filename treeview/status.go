@@ -15,6 +15,7 @@ const (
 	StatusConditional
 )
 
+// String returns a string representation of the Status.
 func (s Status) String() string {
 	switch s {
 	case StatusRunning:

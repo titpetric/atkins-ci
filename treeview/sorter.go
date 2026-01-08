@@ -2,20 +2,8 @@ package treeview
 
 import "slices"
 
-// SortJobsByDepth sorts job names by depth first, then alphabetically by name.
+// SortJobsByDepth sorts job names by ':' depth, then alphabetically.
 // Depth is determined by the count of ':' separators in the job name.
-//
-// Examples:
-//   - "test" (depth 0)
-//   - "test:run" (depth 1)
-//   - "test:run:subtask" (depth 2)
-//   - "docker:run" (depth 1)
-//
-// For same depth, jobs are sorted alphabetically.
-//
-// Example sorting order:
-//
-//	build, build:run, docker:setup, test, test:run, test:run:subtask
 func SortJobsByDepth(jobNames []string) []string {
 	result := make([]string, len(jobNames))
 	copy(result, jobNames)
