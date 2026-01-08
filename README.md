@@ -1,6 +1,6 @@
-# Atkins CI
+# Atkins
 
-Atkins CI is a minimal runner focused on usage in local testing and
+Atkins is a minimal runner focused on usage in local testing and
 CI/CD environments. It features a nice CLI status tree, where you can
 see which jobs are running, and run jobs and steps in parallel.
 

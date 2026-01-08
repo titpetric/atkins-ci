@@ -1,7 +1,7 @@
 #!/usr/bin/env atkins
-# Atkins CI: https://github.com/titpetric/atkins
+# Atkins: https://github.com/titpetric/atkins
 
-name: Atkins CI Go project tests, build
+name: Atkins project tests, build
 
 vars:
   build:
