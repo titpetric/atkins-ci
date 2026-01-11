@@ -183,6 +183,45 @@ func TestInterpolation(t *testing.T) {
 			expected:    "enabled=true",
 			expectError: false,
 		},
+
+		// Command substitution with variable interpolation
+		{
+			name:        "command substitution with variable inside",
+			cmd:         "result=$(echo ${{ item }})",
+			variables:   map[string]any{"item": "hello"},
+			expected:    "result=hello",
+			expectError: false,
+		},
+		{
+			name: "command substitution with nested variable",
+			cmd:  "result=$(echo ${{ user.name }})",
+			variables: map[string]any{
+				"user": map[string]any{"name": "alice"},
+			},
+			expected:    "result=alice",
+			expectError: false,
+		},
+		{
+			name:        "command substitution with multiple variables",
+			cmd:         "result=$(echo ${{ first }} ${{ second }})",
+			variables:   map[string]any{"first": "hello", "second": "world"},
+			expected:    "result=hello world",
+			expectError: false,
+		},
+		{
+			name:        "command substitution with nested parentheses in jq",
+			cmd:         "result=$(echo '[{\"content\":\"TEST\"}]' | jq -r '.[] | select(.content | contains(\"${{ pattern }}\")) | .content')",
+			variables:   map[string]any{"pattern": "TEST"},
+			expected:    "result=TEST",
+			expectError: false,
+		},
+		{
+			name:        "command substitution with complex jq and nested variables",
+			cmd:         "result=$(echo '[{\"to\":\"123\",\"time\":\"10:30\"}]' | jq -r '.[] | select(.to == \"${{ number }}\") | .time')",
+			variables:   map[string]any{"number": "123"},
+			expected:    "result=10:30",
+			expectError: false,
+		},
 	}
 
 	for _, tt := range tests {
