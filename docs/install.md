@@ -64,6 +64,5 @@ test:
   passthru: true
   steps:
     - docker buildx build --platform linux/amd64 -t titpetric/atkins-test -f docker/Dockerfile.test .
-    - docker run --rm titpetric/atkins-test -v $PWD/tests:/app -file nested.yml -l
+    - docker run --rm titpetric/atkins-test -v $PWD/tests:/app -f nested.yml -l
 ```
-

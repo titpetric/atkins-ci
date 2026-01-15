@@ -33,6 +33,7 @@ jobs:
 
   publish:
     desc: "Publish atkins"
+    depends_on: release
     steps:
       - ./ci/release.yml publish
 

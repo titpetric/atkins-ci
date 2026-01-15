@@ -31,7 +31,7 @@ func NewCommand() *cli.Command {
 		Title:   "Pipeline automation tool",
 		Default: true,
 		Bind: func(fs *pflag.FlagSet) {
-			fs.StringVar(&pipelineFile, "file", "atkins.yml", "Path to pipeline file")
+			fs.StringVarP(&pipelineFile, "file", "f", "atkins.yml", "Path to pipeline file")
 			fs.StringVar(&job, "job", "", "Specific job to run")
 			fs.BoolVarP(&listFlag, "list", "l", false, "List pipeline jobs and dependencies")
 			fs.BoolVar(&lintFlag, "lint", false, "Lint pipeline for errors")

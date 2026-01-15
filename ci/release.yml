@@ -30,7 +30,7 @@ jobs:
     passthru: true
     steps:
       - docker buildx build --platform linux/amd64 -t ${{image}}-test -f docker/Dockerfile.example .
-      - docker run --rm ${{image}}-test -v $PWD/tests:/app -file nested.yml -l
+      - docker run --rm ${{image}}-test -v $PWD/tests:/app -f nested.yml -l
 
   publish:
     desc: "Publish release assets"

@@ -12,20 +12,19 @@ See pipeline examples in [./tests](./tests).
 
 ## Usage
 
-```text
+```bash
 $ atkins --help
-Usage of atkins:
-  -debug
-    	Print debug data
-  -file string
-    	Path to pipeline file (default "atkins.yml")
-  -job string
-    	Specific job to run
-  -l	List pipeline jobs and dependencies
-  -lint
-    	Lint pipeline for errors
-  -log string
-    	Log file path for command execution (e.g., atkins.log)
+Usage: atkins [--flags]
+
+      --debug         Print debug data
+  -f, --file string   Path to pipeline file (default "atkins.yml")
+      --job string    Specific job to run
+      --lint          Lint pipeline for errors
+  -l, --list          List pipeline jobs and dependencies
+      --log string    Log file path for command execution
+  -v, --version       Print version and build information
+
+Error: pflag: help requested
 ```
 
 To set up in your workspace, you'd:
@@ -36,7 +35,7 @@ To set up in your workspace, you'd:
 
 You can use `atkins -l` in a project to view the projects pipeline:
 
-```text
+```bash
 $ atkins -l
 Vuego CI pipeline
 ├─ fmt ●
