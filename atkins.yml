@@ -30,6 +30,10 @@ jobs:
       - task: install
       - ./ci/release.yml build
       - ./ci/release.yml test
+
+  publish:
+    desc: "Publish atkins"
+    steps:
       - ./ci/release.yml publish
 
   install:

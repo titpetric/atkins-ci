@@ -10,13 +10,13 @@ tasks:
   update:
     cmds:
       - which atkins || go install .
-      - atkins install
+      - atkins run install
 
   install: go install .
 
-  release: atkins release
-  fmt: atkins fmt
-  test: atkins test
+  release: atkins run release
+  fmt: atkins run fmt
+  test: atkins run test
 
   record:
     cmds:
