@@ -697,9 +697,8 @@ func (e *Executor) executeTaskStep(ctx context.Context, execCtx *ExecutionContex
 	taskJobNode.Summarize = taskJob.Summarize
 	stepNode.Summarize = step.Summarize
 
-	// If the task is nested and the step node exists, add task node as child of step node
-	// so it appears in the tree under the step
-	if taskJob.Nested && stepNode != nil && taskJobNode != nil {
+	// Add task node as child of step node so it appears expanded in the tree
+	if stepNode != nil && taskJobNode != nil {
 		stepNode.AddChild(taskJobNode.Node)
 	}
 
