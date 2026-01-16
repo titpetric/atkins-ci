@@ -275,7 +275,7 @@ func outputPlantUML(title string) {
 	fmt.Println()
 	fmt.Println("skinparam componentStyle rectangle")
 	fmt.Println("skinparam defaultTextAlignment center")
-	fmt.Println("left to right direction")
+	fmt.Println("top to bottom direction")
 	fmt.Println()
 
 	// Group by type using components
