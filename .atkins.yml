@@ -59,7 +59,7 @@ jobs:
     desc: "Format the code"
     steps:
       - goimports -w .
-      - goimports-reviser -set-alias -format -imports-order "std,blanked,general,company,project" ./...
+      - goimports-reviser -set-alias -format -imports-order "std,blanked,general,company,project" -excludes "scripts/" ./...
       - gofumpt -w .
       - go mod tidy
 
@@ -110,6 +110,7 @@ jobs:
       - mkdir -p coverage/${{ item }}
       - for: funcName in tests
         summarize: true
+        detach: true
         run: ./bin/${{ item }} -test.coverprofile "./coverage/${{ item }}/${{ funcName }}.cov" -test.run "^${{ funcName }}$"
 
   test:coverage:
@@ -120,6 +121,7 @@ jobs:
     steps:
       - for: funcName in tests
         summarize: true
+        detach: true
         run: covertrace --name ${{ funcName }} -i "./coverage/${{ item }}/${{ funcName }}.cov" > "./coverage/${{ item }}/${{ funcName }}.yml"
 
   docker:up:

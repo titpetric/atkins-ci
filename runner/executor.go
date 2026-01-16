@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -542,61 +543,92 @@ func (e *Executor) executeStepWithForLoop(ctx context.Context, execCtx *Executio
 	// Render tree with expanded iterations
 	execCtx.Render()
 
-	// Execute each iteration
+	// Execute each iteration - use errgroup for detached (parallel) execution
+	var eg *errgroup.Group
+	if step.Detach {
+		eg = new(errgroup.Group)
+		eg.SetLimit(runtime.NumCPU())
+	}
+
 	var lastErr error
+	var errMu sync.Mutex
+
 	for idx, iteration := range iterations {
-		// Create iteration context by overlaying iteration variables on parent context
-		iterCtx := execCtx.Copy()
-		iterCtx.Context = ctx
+		idx := idx
+		iteration := iteration
 
-		// Overlay iteration variables (they override parent variables)
-		for k, v := range iteration.Variables {
-			iterCtx.Variables[k] = v
-		}
+		executeIteration := func() error {
+			// Create iteration context by overlaying iteration variables on parent context
+			iterCtx := execCtx.Copy()
+			iterCtx.Context = ctx
 
-		// Merge step-level env with interpolation
-		// This needs to happen before building the command so env vars can be interpolated
-		if err := MergeVariables(step.Decl, iterCtx); err != nil {
-			if stepNode != nil {
-				stepNode.SetStatus(treeview.StatusFailed)
+			// Overlay iteration variables (they override parent variables)
+			for k, v := range iteration.Variables {
+				iterCtx.Variables[k] = v
 			}
-			return fmt.Errorf("failed to process step env for iteration %d: %w", idx, err)
-		}
 
-		// Get the iteration sub-node
-		var iterNode *treeview.Node
-		if len(iterationNodes) > idx {
-			iterNode = iterationNodes[idx]
-		}
-
-		// Handle task invocation or command execution
-		if step.Task != "" {
-			// Task invocation with loop variables
-			if err := e.executeTaskStep(ctx, iterCtx, step, iterNode); err != nil {
-				lastErr = err
-				// Continue to next iteration even on error (collect all failures)
-				// This matches yamlexpr behavior of processing all items
+			// Merge step-level env with interpolation
+			// This needs to happen before building the command so env vars can be interpolated
+			if err := MergeVariables(step.Decl, iterCtx); err != nil {
+				return fmt.Errorf("failed to process step env for iteration %d: %w", idx, err)
 			}
-		} else {
-			// Determine which command to run
-			var cmd string
-			if step.Run != "" {
-				cmd = step.Run
-			} else if step.Cmd != "" {
-				cmd = step.Cmd
-			} else if len(step.Cmds) > 0 {
-				cmd = strings.Join(step.Cmds, " && ")
+
+			// Get the iteration sub-node
+			var iterNode *treeview.Node
+			if len(iterationNodes) > idx {
+				iterNode = iterationNodes[idx]
+			}
+
+			// Handle task invocation or command execution
+			if step.Task != "" {
+				// Task invocation with loop variables
+				if err := e.executeTaskStep(ctx, iterCtx, step, iterNode); err != nil {
+					return err
+				}
 			} else {
-				continue // Skip if no command
-			}
+				// Determine which command to run
+				var cmd string
+				if step.Run != "" {
+					cmd = step.Run
+				} else if step.Cmd != "" {
+					cmd = step.Cmd
+				} else if len(step.Cmds) > 0 {
+					cmd = strings.Join(step.Cmds, " && ")
+				} else {
+					return nil // Skip if no command
+				}
 
-			// Execute this iteration with the iteration sub-node
-			if err := e.executeStepIteration(ctx, iterCtx, step, iterNode, cmd, stepIndex); err != nil {
+				// Execute this iteration with the iteration sub-node
+				if err := e.executeStepIteration(ctx, iterCtx, step, iterNode, cmd, stepIndex); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+
+		if step.Detach {
+			// Run iterations in parallel
+			eg.Go(func() error {
+				if err := executeIteration(); err != nil {
+					errMu.Lock()
+					lastErr = err
+					errMu.Unlock()
+					// Don't return error - continue collecting all failures
+				}
+				return nil
+			})
+		} else {
+			// Run iterations sequentially
+			if err := executeIteration(); err != nil {
 				lastErr = err
 				// Continue to next iteration even on error (collect all failures)
-				// This matches yamlexpr behavior of processing all items
 			}
 		}
+	}
+
+	// Wait for all parallel iterations to complete
+	if eg != nil {
+		_ = eg.Wait()
 	}
 
 	if stepNode != nil {
