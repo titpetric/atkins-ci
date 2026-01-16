@@ -53,7 +53,16 @@ func (j *Job) ShouldShow() bool {
 }
 
 // UnmarshalYAML implements custom unmarshalling for Job to trim whitespace and handle Decl.
+// It also supports parsing a job from a simple string (e.g., "up: docker compose up").
 func (j *Job) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode {
+		// Simple string job - treat as a job with a single step
+		cmd := strings.TrimSpace(node.Value)
+		j.Steps = []*Step{{Run: cmd, Name: cmd}}
+		j.Passthru = true
+		return nil
+	}
+
 	type rawJob Job
 	if err := node.Decode((*rawJob)(j)); err != nil {
 		return err

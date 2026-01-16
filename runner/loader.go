@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	yaml "gopkg.in/yaml.v3"
@@ -27,6 +28,11 @@ func LoadPipeline(filePath string) ([]*model.Pipeline, error) {
 	}
 	if err := decoder.Decode(result[0]); err != nil {
 		return nil, fmt.Errorf("error decoding pipeline: %w", err)
+	}
+
+	// Set default name from filename if not specified
+	if result[0].Name == "" {
+		result[0].Name = filepath.Base(filePath)
 	}
 
 	for jobName, job := range result[0].Jobs {
