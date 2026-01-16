@@ -423,7 +423,7 @@
 ]]>
 </script>
 <rect x="0.0" y="0" width="1200.0" height="134.0" fill="url(#background)"  />
-<text id="title" x="600.00" y="24" >Atkins Pipeline Execution</text>
+<text id="title" x="600.00" y="24" >Atkins Pipeline</text>
 <text id="details" x="10.00" y="117" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
@@ -431,560 +431,776 @@
 <text id="matched" x="1090.00" y="117" > </text>
 <g id="frames">
 <g >
-<title>covertrace_--name_TestStepUnmarshalYAML_WithVars_-i_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithVars.cov&quot;_&gt;_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithVars.yml&quot; (124,000 Î¼s, 0.12%)</title><rect x="865.5" y="37" width="1.4" height="15.0" fill="rgb(209,18,4)" rx="2" ry="2" />
-<text  x="868.45" y="47.5" ></text>
+<title>covertrace_--name_TestLoadEnvFile_-i_&quot;./coverage/runner.test/TestLoadEnvFile.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadEnvFile.yml&quot; (298,000 samples, 0.26%)</title><rect x="759.8" y="37" width="3.0" height="15.0" fill="rgb(241,165,39)" rx="2" ry="2" />
+<text  x="762.79" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestBuildFromPipeline_SingleJob_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_SingleJob.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_SingleJob.yml&quot; (114,000 Î¼s, 0.11%)</title><rect x="739.1" y="37" width="1.3" height="15.0" fill="rgb(211,28,6)" rx="2" ry="2" />
-<text  x="742.07" y="47.5" ></text>
+<title>covertrace_--name_TestDiscoverConfig_CurrentDir_-i_&quot;./coverage/runner.test/TestDiscoverConfig_CurrentDir.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_CurrentDir.yml&quot; (326,000 samples, 0.28%)</title><rect x="661.4" y="37" width="3.3" height="15.0" fill="rgb(212,33,7)" rx="2" ry="2" />
+<text  x="664.36" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestAddJob_WithSteps_-i_&quot;./coverage/treeview.test/TestAddJob_WithSteps.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJob_WithSteps.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="732.1" y="37" width="1.4" height="15.0" fill="rgb(221,76,18)" rx="2" ry="2" />
-<text  x="735.12" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestValidateJobRequirements.cov&quot;_-test.run_&quot;^TestValidateJobRequirements$&quot; (18,000 samples, 0.02%)</title><rect x="957.6" y="37" width="0.2" height="15.0" fill="rgb(227,103,24)" rx="2" ry="2" />
+<text  x="960.58" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestForLoopStepExecution.cov&quot;_-test.run_&quot;^TestForLoopStepExecution$&quot; (11,000 Î¼s, 0.01%)</title><rect x="876.6" y="37" width="0.2" height="15.0" fill="rgb(208,16,3)" rx="2" ry="2" />
-<text  x="879.62" y="47.5" ></text>
+<title>covertrace_--name_TestCaptureGitInfo_-i_&quot;./coverage/eventlog.test/TestCaptureGitInfo.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCaptureGitInfo.yml&quot; (335,000 samples, 0.29%)</title><rect x="637.9" y="37" width="3.4" height="15.0" fill="rgb(206,7,1)" rx="2" ry="2" />
+<text  x="640.90" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestGenerateStepID_-i_&quot;./coverage/runner.test/TestGenerateStepID.cov&quot;_&gt;_&quot;./coverage/runner.test/TestGenerateStepID.yml&quot; (156,000 Î¼s, 0.15%)</title><rect x="779.4" y="37" width="1.9" height="15.0" fill="rgb(246,191,45)" rx="2" ry="2" />
-<text  x="782.45" y="47.5" ></text>
+<title>test:coverage (35,676,000 samples, 30.79%)</title><rect x="583.9" y="53" width="363.3" height="15.0" fill="rgb(242,173,41)" rx="2" ry="2" />
+<text  x="586.85" y="63.5" >test:coverage</text>
 </g>
 <g >
-<title>covertrace_--name_TestAddJobWithoutSteps_-i_&quot;./coverage/treeview.test/TestAddJobWithoutSteps.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJobWithoutSteps.yml&quot; (125,000 Î¼s, 0.12%)</title><rect x="730.7" y="37" width="1.4" height="15.0" fill="rgb(246,188,45)" rx="2" ry="2" />
-<text  x="733.65" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_LogExec_Fail.cov&quot;_-test.run_&quot;^TestLogger_LogExec_Fail$&quot; (16,000 samples, 0.01%)</title><rect x="948.6" y="37" width="0.2" height="15.0" fill="rgb(236,142,34)" rx="2" ry="2" />
+<text  x="951.64" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNestedJobInheritance_-i_&quot;./coverage/model.test/TestNestedJobInheritance.cov&quot;_&gt;_&quot;./coverage/model.test/TestNestedJobInheritance.yml&quot; (114,000 Î¼s, 0.11%)</title><rect x="819.9" y="37" width="1.3" height="15.0" fill="rgb(225,96,23)" rx="2" ry="2" />
-<text  x="822.90" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestNodeToStateNode_WithChildren.cov&quot;_-test.run_&quot;^TestNodeToStateNode_WithChildren$&quot; (13,000 samples, 0.01%)</title><rect x="950.4" y="37" width="0.1" height="15.0" fill="rgb(251,211,50)" rx="2" ry="2" />
+<text  x="953.40" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLoadPipeline_WithForLoopsIndexPattern_-i_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoopsIndexPattern.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoopsIndexPattern.yml&quot; (142,000 Î¼s, 0.14%)</title><rect x="802.5" y="37" width="1.7" height="15.0" fill="rgb(249,205,49)" rx="2" ry="2" />
-<text  x="805.55" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_FallbackToAtkins.cov&quot;_-test.run_&quot;^TestDiscoverConfig_FallbackToAtkins$&quot; (18,000 samples, 0.02%)</title><rect x="951.8" y="37" width="0.2" height="15.0" fill="rgb(215,47,11)" rx="2" ry="2" />
+<text  x="954.80" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNodeThreadSafety_-i_&quot;./coverage/treeview.test/TestNodeThreadSafety.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNodeThreadSafety.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="832.8" y="37" width="1.3" height="15.0" fill="rgb(228,109,26)" rx="2" ry="2" />
-<text  x="835.77" y="47.5" ></text>
+<title>goimports_-w_. (102,000 samples, 0.09%)</title><rect x="559.1" y="37" width="1.1" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
+<text  x="562.14" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestJobUnmarshalYAML_WithVars_-i_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithVars.cov&quot;_&gt;_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithVars.yml&quot; (119,000 Î¼s, 0.12%)</title><rect x="794.9" y="37" width="1.4" height="15.0" fill="rgb(209,18,4)" rx="2" ry="2" />
-<text  x="797.90" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestInterpolationInForLoop.cov&quot;_-test.run_&quot;^TestInterpolationInForLoop$&quot; (19,000 samples, 0.02%)</title><rect x="954.8" y="37" width="0.2" height="15.0" fill="rgb(234,134,32)" rx="2" ry="2" />
+<text  x="957.79" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestBuildFromPipeline_WithTasks_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithTasks.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithTasks.yml&quot; (118,000 Î¼s, 0.12%)</title><rect x="743.4" y="37" width="1.4" height="15.0" fill="rgb(244,180,43)" rx="2" ry="2" />
-<text  x="746.41" y="47.5" ></text>
+<title>covertrace_--name_TestSortJobsByDepth_RealWorld_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_RealWorld.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_RealWorld.yml&quot; (536,000 samples, 0.46%)</title><rect x="910.5" y="37" width="5.4" height="15.0" fill="rgb(229,110,26)" rx="2" ry="2" />
+<text  x="913.46" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNewJobNode_-i_&quot;./coverage/treeview.test/TestNewJobNode.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewJobNode.yml&quot; (117,000 Î¼s, 0.12%)</title><rect x="822.7" y="37" width="1.3" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
-<text  x="825.66" y="47.5" ></text>
+<title>covertrace_--name_TestPipelineUnmarshalYAML_WithVars_-i_&quot;./coverage/model.test/TestPipelineUnmarshalYAML_WithVars.cov&quot;_&gt;_&quot;./coverage/model.test/TestPipelineUnmarshalYAML_WithVars.yml&quot; (295,000 samples, 0.25%)</title><rect x="872.0" y="37" width="3.0" height="15.0" fill="rgb(213,38,9)" rx="2" ry="2" />
+<text  x="875.03" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNewLogger_CreatesLogger_-i_&quot;./coverage/eventlog.test/TestNewLogger_CreatesLogger.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNewLogger_CreatesLogger.yml&quot; (123,000 Î¼s, 0.12%)</title><rect x="824.0" y="37" width="1.5" height="15.0" fill="rgb(209,22,5)" rx="2" ry="2" />
-<text  x="827.03" y="47.5" ></text>
+<title>covertrace_--name_TestBuildFromPipeline_EmptyPipeline_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_EmptyPipeline.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_EmptyPipeline.yml&quot; (318,000 samples, 0.27%)</title><rect x="616.0" y="37" width="3.3" height="15.0" fill="rgb(224,88,21)" rx="2" ry="2" />
+<text  x="619.03" y="47.5" ></text>
 </g>
 <g >
-<title>docker_compose_up_-d_--wait_--remove-orphans (739,000 Î¼s, 0.73%)</title><rect x="573.8" y="37" width="8.7" height="15.0" fill="rgb(219,67,16)" rx="2" ry="2" />
-<text  x="576.83" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalString.cov&quot;_-test.run_&quot;^TestIncludeDecl_UnmarshalString$&quot; (16,000 samples, 0.01%)</title><rect x="954.1" y="37" width="0.1" height="15.0" fill="rgb(221,75,18)" rx="2" ry="2" />
+<text  x="957.05" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLogger_NilSafe_-i_&quot;./coverage/eventlog.test/TestLogger_NilSafe.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_NilSafe.yml&quot; (125,000 Î¼s, 0.12%)</title><rect x="814.2" y="37" width="1.5" height="15.0" fill="rgb(234,137,32)" rx="2" ry="2" />
-<text  x="817.24" y="47.5" ></text>
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestNewNode.cov&quot;_-test.run_&quot;^TestNewNode$&quot; (11,000 samples, 0.01%)</title><rect x="960.1" y="37" width="0.1" height="15.0" fill="rgb(248,201,48)" rx="2" ry="2" />
+<text  x="963.10" y="47.5" ></text>
 </g>
 <g >
-<title>goimports-reviser_-set-alias_-format_-imports-order_&quot;std,blanked,general,company,project&quot;_./... (4,743,000 Î¼s, 4.70%)</title><rect x="640.8" y="37" width="55.5" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
-<text  x="643.81" y="47.5" >goimp..</text>
+<title>docker:down (20,802,000 samples, 17.95%)</title><rect x="243.1" y="53" width="211.8" height="15.0" fill="rgb(213,40,9)" rx="2" ry="2" />
+<text  x="246.11" y="63.5" >docker:down</text>
 </g>
 <g >
-<title>covertrace_--name_TestSortJobsByDepth_DoesNotMutate_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_DoesNotMutate.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_DoesNotMutate.yml&quot; (121,000 Î¼s, 0.12%)</title><rect x="855.6" y="37" width="1.4" height="15.0" fill="rgb(217,55,13)" rx="2" ry="2" />
-<text  x="858.56" y="47.5" ></text>
+<title>covertrace_--name_TestDisplay_RenderStatic_-i_&quot;./coverage/treeview.test/TestDisplay_RenderStatic.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_RenderStatic.yml&quot; (319,000 samples, 0.28%)</title><rect x="685.5" y="37" width="3.3" height="15.0" fill="rgb(248,201,48)" rx="2" ry="2" />
+<text  x="688.52" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNodeToStateNode_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode.yml&quot; (117,000 Î¼s, 0.12%)</title><rect x="834.1" y="37" width="1.4" height="15.0" fill="rgb(233,131,31)" rx="2" ry="2" />
-<text  x="837.12" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestNullCoalescingOperator.cov&quot;_-test.run_&quot;^TestNullCoalescingOperator$&quot; (19,000 samples, 0.02%)</title><rect x="956.4" y="37" width="0.2" height="15.0" fill="rgb(247,193,46)" rx="2" ry="2" />
+<text  x="959.37" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLogger_Write_-i_&quot;./coverage/eventlog.test/TestLogger_Write.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_Write.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="817.0" y="37" width="1.4" height="15.0" fill="rgb(211,28,6)" rx="2" ry="2" />
-<text  x="820.04" y="47.5" ></text>
+<title>covertrace_--name_TestDiscoverConfig_ParentDir_-i_&quot;./coverage/runner.test/TestDiscoverConfig_ParentDir.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_ParentDir.yml&quot; (396,000 samples, 0.34%)</title><rect x="674.3" y="37" width="4.0" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
+<text  x="677.27" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestAddChild_-i_&quot;./coverage/treeview.test/TestAddChild.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddChild.yml&quot; (113,000 Î¼s, 0.11%)</title><rect x="726.0" y="37" width="1.3" height="15.0" fill="rgb(214,45,10)" rx="2" ry="2" />
-<text  x="729.01" y="47.5" ></text>
+<title>covertrace_--name_TestDisplay_ThreadSafety_-i_&quot;./coverage/treeview.test/TestDisplay_ThreadSafety.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_ThreadSafety.yml&quot; (434,000 samples, 0.37%)</title><rect x="692.3" y="37" width="4.4" height="15.0" fill="rgb(226,97,23)" rx="2" ry="2" />
+<text  x="695.32" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNodeToStateNode_AllStatuses_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_AllStatuses.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_AllStatuses.yml&quot; (121,000 Î¼s, 0.12%)</title><rect x="835.5" y="37" width="1.4" height="15.0" fill="rgb(230,116,27)" rx="2" ry="2" />
-<text  x="838.49" y="47.5" ></text>
+<title>covertrace_--name_TestNodeToStateNode_Times_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_Times.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_Times.yml&quot; (223,000 samples, 0.19%)</title><rect x="862.9" y="37" width="2.3" height="15.0" fill="rgb(231,121,29)" rx="2" ry="2" />
+<text  x="865.93" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestCountDepth_-i_&quot;./coverage/treeview.test/TestCountDepth.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestCountDepth.yml&quot; (118,000 Î¼s, 0.12%)</title><rect x="750.6" y="37" width="1.4" height="15.0" fill="rgb(224,88,21)" rx="2" ry="2" />
-<text  x="753.63" y="47.5" ></text>
+<title>covertrace_--name_TestGenerateStepID_-i_&quot;./coverage/runner.test/TestGenerateStepID.cov&quot;_&gt;_&quot;./coverage/runner.test/TestGenerateStepID.yml&quot; (316,000 samples, 0.27%)</title><rect x="716.8" y="37" width="3.2" height="15.0" fill="rgb(246,191,45)" rx="2" ry="2" />
+<text  x="719.76" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestCountSteps_-i_&quot;./coverage/eventlog.test/TestCountSteps.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCountSteps.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="753.5" y="37" width="1.4" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="756.50" y="47.5" ></text>
+<title>covertrace_--name_TestExecuteStepWithForLoop_-i_&quot;./coverage/runner.test/TestExecuteStepWithForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestExecuteStepWithForLoop.yml&quot; (361,000 samples, 0.31%)</title><rect x="703.1" y="37" width="3.7" height="15.0" fill="rgb(237,149,35)" rx="2" ry="2" />
+<text  x="706.12" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestCompareByDepthThenName_-i_&quot;./coverage/treeview.test/TestCompareByDepthThenName.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestCompareByDepthThenName.yml&quot; (125,000 Î¼s, 0.12%)</title><rect x="749.2" y="37" width="1.4" height="15.0" fill="rgb(224,89,21)" rx="2" ry="2" />
-<text  x="752.17" y="47.5" ></text>
+<title>covertrace_--name_TestSortJobsByDepth_SingleLevel_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_SingleLevel.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_SingleLevel.yml&quot; (594,000 samples, 0.51%)</title><rect x="915.9" y="37" width="6.1" height="15.0" fill="rgb(236,146,35)" rx="2" ry="2" />
+<text  x="918.92" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestBuildFromPipeline_DepthSorting_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_DepthSorting.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_DepthSorting.yml&quot; (123,000 Î¼s, 0.12%)</title><rect x="736.2" y="37" width="1.5" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
-<text  x="739.23" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_LogExec_Skip.cov&quot;_-test.run_&quot;^TestLogger_LogExec_Skip$&quot; (20,000 samples, 0.02%)</title><rect x="949.0" y="37" width="0.2" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
+<text  x="951.98" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestTreeNodeToStateNode_Nil_-i_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode_Nil.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode_Nil.yml&quot; (121,000 Î¼s, 0.12%)</title><rect x="870.0" y="37" width="1.4" height="15.0" fill="rgb(251,212,50)" rx="2" ry="2" />
-<text  x="872.99" y="47.5" ></text>
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestBuildFromPipeline_ConsistentOrdering.cov&quot;_-test.run_&quot;^TestBuildFromPipeline_ConsistentOrdering$&quot; (10,000 samples, 0.01%)</title><rect x="958.4" y="37" width="0.1" height="15.0" fill="rgb(218,60,14)" rx="2" ry="2" />
+<text  x="961.37" y="47.5" ></text>
 </g>
 <g >
-<title>docker_compose_down (10,373,000 Î¼s, 10.28%)</title><rect x="443.9" y="37" width="121.3" height="15.0" fill="rgb(214,44,10)" rx="2" ry="2" />
-<text  x="446.87" y="47.5" >docker_compose_..</text>
+<title>covertrace_--name_TestLogger_NoGoroutineIDWithoutDebug_-i_&quot;./coverage/eventlog.test/TestLogger_NoGoroutineIDWithoutDebug.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_NoGoroutineIDWithoutDebug.yml&quot; (315,000 samples, 0.27%)</title><rect x="797.8" y="37" width="3.2" height="15.0" fill="rgb(235,140,33)" rx="2" ry="2" />
+<text  x="800.82" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestNewLogger_CreatesLogger.cov&quot;_-test.run_&quot;^TestNewLogger_CreatesLogger$&quot; (9,000 Î¼s, 0.01%)</title><rect x="874.5" y="37" width="0.1" height="15.0" fill="rgb(254,226,54)" rx="2" ry="2" />
-<text  x="877.47" y="47.5" ></text>
+<title>covertrace_--name_TestDisplay_IsTerminal_-i_&quot;./coverage/treeview.test/TestDisplay_IsTerminal.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_IsTerminal.yml&quot; (382,000 samples, 0.33%)</title><rect x="681.6" y="37" width="3.9" height="15.0" fill="rgb(229,113,27)" rx="2" ry="2" />
+<text  x="684.63" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestStepUnmarshalYAML_WithInclude_-i_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithInclude.cov&quot;_&gt;_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithInclude.yml&quot; (128,000 Î¼s, 0.13%)</title><rect x="864.0" y="37" width="1.5" height="15.0" fill="rgb(222,81,19)" rx="2" ry="2" />
-<text  x="866.96" y="47.5" ></text>
+<title>covertrace_--name_TestNodeThreadSafety_-i_&quot;./coverage/treeview.test/TestNodeThreadSafety.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNodeThreadSafety.yml&quot; (657,000 samples, 0.57%)</title><rect x="848.5" y="37" width="6.7" height="15.0" fill="rgb(228,109,26)" rx="2" ry="2" />
+<text  x="851.49" y="47.5" ></text>
 </g>
 <g >
-<title>test:detail (722,000 Î¼s, 0.72%)</title><rect x="872.9" y="53" width="8.4" height="15.0" fill="rgb(244,181,43)" rx="2" ry="2" />
-<text  x="875.88" y="63.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestLoadPipeline_JobVariablesDecl.cov&quot;_-test.run_&quot;^TestLoadPipeline_JobVariablesDecl$&quot; (11,000 samples, 0.01%)</title><rect x="955.5" y="37" width="0.1" height="15.0" fill="rgb(215,50,12)" rx="2" ry="2" />
+<text  x="958.46" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestTaskInvocationWithForLoop.cov&quot;_-test.run_&quot;^TestTaskInvocationWithForLoop$&quot; (9,000 Î¼s, 0.01%)</title><rect x="878.8" y="37" width="0.1" height="15.0" fill="rgb(234,133,31)" rx="2" ry="2" />
-<text  x="881.81" y="47.5" ></text>
+<title>test:detail (1,423,000 samples, 1.23%)</title><rect x="947.2" y="53" width="14.4" height="15.0" fill="rgb(244,181,43)" rx="2" ry="2" />
+<text  x="950.15" y="63.5" ></text>
 </g>
 <g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestInterpolationInForLoop.cov&quot;_-test.run_&quot;^TestInterpolationInForLoop$&quot; (14,000 Î¼s, 0.01%)</title><rect x="877.3" y="37" width="0.2" height="15.0" fill="rgb(234,134,32)" rx="2" ry="2" />
-<text  x="880.29" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestCountSteps_Nil.cov&quot;_-test.run_&quot;^TestCountSteps_Nil$&quot; (22,000 samples, 0.02%)</title><rect x="947.7" y="37" width="0.2" height="15.0" fill="rgb(251,212,50)" rx="2" ry="2" />
+<text  x="950.70" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestIncludeDecl_UnmarshalString_-i_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalString.cov&quot;_&gt;_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalString.yml&quot; (139,000 Î¼s, 0.14%)</title><rect x="787.3" y="37" width="1.6" height="15.0" fill="rgb(205,3,0)" rx="2" ry="2" />
-<text  x="790.26" y="47.5" ></text>
+<title>covertrace_--name_TestLogger_DebugGoroutineID_-i_&quot;./coverage/eventlog.test/TestLogger_DebugGoroutineID.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_DebugGoroutineID.yml&quot; (321,000 samples, 0.28%)</title><rect x="779.6" y="37" width="3.2" height="15.0" fill="rgb(249,203,48)" rx="2" ry="2" />
+<text  x="782.57" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestMergeEnv_-i_&quot;./coverage/runner.test/TestMergeEnv.cov&quot;_&gt;_&quot;./coverage/runner.test/TestMergeEnv.yml&quot; (129,000 Î¼s, 0.13%)</title><rect x="818.4" y="37" width="1.5" height="15.0" fill="rgb(212,33,8)" rx="2" ry="2" />
-<text  x="821.39" y="47.5" ></text>
+<title>covertrace_--name_TestGetGoroutineID_-i_&quot;./coverage/eventlog.test/TestGetGoroutineID.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestGetGoroutineID.yml&quot; (286,000 samples, 0.25%)</title><rect x="725.0" y="37" width="3.0" height="15.0" fill="rgb(229,113,27)" rx="2" ry="2" />
+<text  x="728.04" y="47.5" ></text>
 </g>
 <g >
-<title>gotestsum_./..._--_-count_1 (898,000 Î¼s, 0.89%)</title><rect x="1179.5" y="37" width="10.5" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
-<text  x="1182.50" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestProcessEnv_WithInterpolation.cov&quot;_-test.run_&quot;^TestProcessEnv_WithInterpolation$&quot; (15,000 samples, 0.01%)</title><rect x="957.2" y="37" width="0.1" height="15.0" fill="rgb(223,84,20)" rx="2" ry="2" />
+<text  x="960.16" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestJobVariablesInForLoop_-i_&quot;./coverage/runner.test/TestJobVariablesInForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestJobVariablesInForLoop.yml&quot; (129,000 Î¼s, 0.13%)</title><rect x="796.3" y="37" width="1.5" height="15.0" fill="rgb(238,152,36)" rx="2" ry="2" />
-<text  x="799.29" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestMergeEnv.cov&quot;_-test.run_&quot;^TestMergeEnv$&quot; (15,000 samples, 0.01%)</title><rect x="956.2" y="37" width="0.2" height="15.0" fill="rgb(242,172,41)" rx="2" ry="2" />
+<text  x="959.21" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLoadEnvFile_SingleQuote_-i_&quot;./coverage/runner.test/TestLoadEnvFile_SingleQuote.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadEnvFile_SingleQuote.yml&quot; (135,000 Î¼s, 0.13%)</title><rect x="799.4" y="37" width="1.5" height="15.0" fill="rgb(234,136,32)" rx="2" ry="2" />
-<text  x="802.35" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestCaptureGitInfo.cov&quot;_-test.run_&quot;^TestCaptureGitInfo$&quot; (17,000 samples, 0.01%)</title><rect x="947.3" y="37" width="0.1" height="15.0" fill="rgb(235,139,33)" rx="2" ry="2" />
+<text  x="950.25" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestInterpolationInForLoop_-i_&quot;./coverage/runner.test/TestInterpolationInForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestInterpolationInForLoop.yml&quot; (133,000 Î¼s, 0.13%)</title><rect x="788.9" y="37" width="1.5" height="15.0" fill="rgb(249,206,49)" rx="2" ry="2" />
-<text  x="791.89" y="47.5" ></text>
+<title>covertrace_--name_TestExpandForWithVariables_-i_&quot;./coverage/runner.test/TestExpandForWithVariables.cov&quot;_&gt;_&quot;./coverage/runner.test/TestExpandForWithVariables.yml&quot; (280,000 samples, 0.24%)</title><rect x="706.8" y="37" width="2.8" height="15.0" fill="rgb(247,195,46)" rx="2" ry="2" />
+<text  x="709.80" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestExtractRepoFromURL_-i_&quot;./coverage/eventlog.test/TestExtractRepoFromURL.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestExtractRepoFromURL.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="776.6" y="37" width="1.4" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
-<text  x="779.62" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_LogExec_Pass.cov&quot;_-test.run_&quot;^TestLogger_LogExec_Pass$&quot; (18,000 samples, 0.02%)</title><rect x="948.8" y="37" width="0.2" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
+<text  x="951.80" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestAddJobWithSummary_-i_&quot;./coverage/treeview.test/TestAddJobWithSummary.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJobWithSummary.yml&quot; (156,000 Î¼s, 0.15%)</title><rect x="728.8" y="37" width="1.9" height="15.0" fill="rgb(240,165,39)" rx="2" ry="2" />
-<text  x="731.83" y="47.5" ></text>
+<title>covertrace_--name_TestStatusToResult_-i_&quot;./coverage/eventlog.test/TestStatusToResult.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestStatusToResult.yml&quot; (325,000 samples, 0.28%)</title><rect x="922.0" y="37" width="3.3" height="15.0" fill="rgb(227,103,24)" rx="2" ry="2" />
+<text  x="924.97" y="47.5" ></text>
 </g>
 <g >
-<title>go_test_-cover_-coverpkg=./..._-c_-o_bin/_./... (1,231,000 Î¼s, 1.22%)</title><rect x="711.6" y="37" width="14.4" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
-<text  x="714.57" y="47.5" ></text>
+<title>covertrace_--name_TestProcessEnv_IntegerValue_-i_&quot;./coverage/runner.test/TestProcessEnv_IntegerValue.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_IntegerValue.yml&quot; (345,000 samples, 0.30%)</title><rect x="875.0" y="37" width="3.5" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
+<text  x="878.03" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestProcessEnv_NoInterpolationWithoutContext.cov&quot;_-test.run_&quot;^TestProcessEnv_NoInterpolationWithoutContext$&quot; (9,000 Î¼s, 0.01%)</title><rect x="878.4" y="37" width="0.1" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
-<text  x="881.40" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_Write.cov&quot;_-test.run_&quot;^TestLogger_Write$&quot; (16,000 samples, 0.01%)</title><rect x="949.5" y="37" width="0.1" height="15.0" fill="rgb(238,153,36)" rx="2" ry="2" />
+<text  x="952.48" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNodeToStateNode_Nil_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_Nil.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_Nil.yml&quot; (134,000 Î¼s, 0.13%)</title><rect x="836.9" y="37" width="1.6" height="15.0" fill="rgb(253,221,52)" rx="2" ry="2" />
-<text  x="839.91" y="47.5" ></text>
+<title>covertrace_--name_TestNestedJobInheritance_-i_&quot;./coverage/model.test/TestNestedJobInheritance.cov&quot;_&gt;_&quot;./coverage/model.test/TestNestedJobInheritance.yml&quot; (304,000 samples, 0.26%)</title><rect x="808.1" y="37" width="3.1" height="15.0" fill="rgb(225,96,23)" rx="2" ry="2" />
+<text  x="811.14" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_NoGoroutineIDWithoutDebug.cov&quot;_-test.run_&quot;^TestLogger_NoGoroutineIDWithoutDebug$&quot; (9,000 Î¼s, 0.01%)</title><rect x="874.2" y="37" width="0.1" height="15.0" fill="rgb(221,75,17)" rx="2" ry="2" />
-<text  x="877.21" y="47.5" ></text>
+<title>covertrace_--name_TestExtractRepoFromURL_-i_&quot;./coverage/eventlog.test/TestExtractRepoFromURL.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestExtractRepoFromURL.yml&quot; (319,000 samples, 0.28%)</title><rect x="709.6" y="37" width="3.3" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
+<text  x="712.65" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNewNode_-i_&quot;./coverage/treeview.test/TestNewNode.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewNode.yml&quot; (124,000 Î¼s, 0.12%)</title><rect x="826.9" y="37" width="1.5" height="15.0" fill="rgb(246,192,46)" rx="2" ry="2" />
-<text  x="829.93" y="47.5" ></text>
+<title>covertrace_--name_TestGetChildren_-i_&quot;./coverage/treeview.test/TestGetChildren.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestGetChildren.yml&quot; (498,000 samples, 0.43%)</title><rect x="720.0" y="37" width="5.0" height="15.0" fill="rgb(220,72,17)" rx="2" ry="2" />
+<text  x="722.97" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestEnvDeclPrecedence_-i_&quot;./coverage/runner.test/TestEnvDeclPrecedence.cov&quot;_&gt;_&quot;./coverage/runner.test/TestEnvDeclPrecedence.yml&quot; (126,000 Î¼s, 0.12%)</title><rect x="770.6" y="37" width="1.5" height="15.0" fill="rgb(241,169,40)" rx="2" ry="2" />
-<text  x="773.62" y="47.5" ></text>
+<title>covertrace_--name_TestTreeNodeToStateNode_Nil_-i_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode_Nil.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode_Nil.yml&quot; (304,000 samples, 0.26%)</title><rect x="940.9" y="37" width="3.1" height="15.0" fill="rgb(251,212,50)" rx="2" ry="2" />
+<text  x="943.91" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestStepUnmarshalYAML_WithEnv_-i_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithEnv.cov&quot;_&gt;_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithEnv.yml&quot; (120,000 Î¼s, 0.12%)</title><rect x="862.6" y="37" width="1.4" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
-<text  x="865.55" y="47.5" ></text>
+<title>fmt (8,594,000 samples, 7.42%)</title><rect x="472.7" y="53" width="87.5" height="15.0" fill="rgb(251,212,50)" rx="2" ry="2" />
+<text  x="475.66" y="63.5" >fmt</text>
 </g>
 <g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestProcessEnv_WithCommandExecution.cov&quot;_-test.run_&quot;^TestProcessEnv_WithCommandExecution$&quot; (10,000 Î¼s, 0.01%)</title><rect x="878.6" y="37" width="0.1" height="15.0" fill="rgb(223,86,20)" rx="2" ry="2" />
-<text  x="881.60" y="47.5" ></text>
+<title>test:run (21,045,000 samples, 18.16%)</title><rect x="961.6" y="53" width="214.3" height="15.0" fill="rgb(242,170,40)" rx="2" ry="2" />
+<text  x="964.64" y="63.5" >test:run</text>
 </g>
 <g >
-<title>covertrace_--name_TestJobUnmarshalYAML_WithEnv_-i_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithEnv.cov&quot;_&gt;_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithEnv.yml&quot; (114,000 Î¼s, 0.11%)</title><rect x="793.6" y="37" width="1.3" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
-<text  x="796.56" y="47.5" ></text>
+<title>covertrace_--name_TestNewDisplay_-i_&quot;./coverage/treeview.test/TestNewDisplay.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewDisplay.yml&quot; (393,000 samples, 0.34%)</title><rect x="811.2" y="37" width="4.0" height="15.0" fill="rgb(235,139,33)" rx="2" ry="2" />
+<text  x="814.24" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestBuildFromPipeline_WithDependencies_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithDependencies.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithDependencies.yml&quot; (135,000 Î¼s, 0.13%)</title><rect x="740.4" y="37" width="1.6" height="15.0" fill="rgb(231,122,29)" rx="2" ry="2" />
-<text  x="743.41" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode.cov&quot;_-test.run_&quot;^TestTreeNodeToStateNode$&quot; (17,000 samples, 0.01%)</title><rect x="950.7" y="37" width="0.1" height="15.0" fill="rgb(235,140,33)" rx="2" ry="2" />
+<text  x="953.66" y="47.5" ></text>
 </g>
 <g >
-<title>test:build (2,471,000 Î¼s, 2.45%)</title><rect x="697.1" y="53" width="28.9" height="15.0" fill="rgb(234,133,31)" rx="2" ry="2" />
-<text  x="700.11" y="63.5" >te..</text>
+<title>covertrace_--name_TestBuildFromPipeline_WithSummarize_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithSummarize.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithSummarize.yml&quot; (422,000 samples, 0.36%)</title><rect x="627.5" y="37" width="4.3" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="630.50" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestJobUnmarshalYAML_FullDepthDecoding_-i_&quot;./coverage/model.test/TestJobUnmarshalYAML_FullDepthDecoding.cov&quot;_&gt;_&quot;./coverage/model.test/TestJobUnmarshalYAML_FullDepthDecoding.yml&quot; (129,000 Î¼s, 0.13%)</title><rect x="792.1" y="37" width="1.5" height="15.0" fill="rgb(213,37,8)" rx="2" ry="2" />
+<title>covertrace_--name_TestLoadPipeline_WithIfConditions_-i_&quot;./coverage/runner.test/TestLoadPipeline_WithIfConditions.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_WithIfConditions.yml&quot; (335,000 samples, 0.29%)</title><rect x="776.2" y="37" width="3.4" height="15.0" fill="rgb(242,174,41)" rx="2" ry="2" />
+<text  x="779.15" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestLoadPipeline_WithForLoopsIndexPattern_-i_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoopsIndexPattern.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoopsIndexPattern.yml&quot; (392,000 samples, 0.34%)</title><rect x="768.4" y="37" width="4.0" height="15.0" fill="rgb(249,205,49)" rx="2" ry="2" />
+<text  x="771.36" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestExecuteStepWithForLoop.cov&quot;_-test.run_&quot;^TestExecuteStepWithForLoop$&quot; (19,000 samples, 0.02%)</title><rect x="953.1" y="37" width="0.2" height="15.0" fill="rgb(242,172,41)" rx="2" ry="2" />
+<text  x="956.09" y="47.5" ></text>
+</g>
+<g >
+<title>docker:up (1,740,000 samples, 1.50%)</title><rect x="454.9" y="53" width="17.8" height="15.0" fill="rgb(226,100,24)" rx="2" ry="2" />
+<text  x="457.95" y="63.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestNewLogger_CreatesLogger.cov&quot;_-test.run_&quot;^TestNewLogger_CreatesLogger$&quot; (16,000 samples, 0.01%)</title><rect x="949.6" y="37" width="0.2" height="15.0" fill="rgb(254,226,54)" rx="2" ry="2" />
+<text  x="952.65" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestDiscoverConfig_FallbackToAtkins_-i_&quot;./coverage/runner.test/TestDiscoverConfig_FallbackToAtkins.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_FallbackToAtkins.yml&quot; (381,000 samples, 0.33%)</title><rect x="668.0" y="37" width="3.8" height="15.0" fill="rgb(246,190,45)" rx="2" ry="2" />
+<text  x="670.97" y="47.5" ></text>
+</g>
+<g >
+<title>mkdir_-p_coverage/${{_item_}} (12,000 samples, 0.01%)</title><rect x="961.5" y="37" width="0.1" height="15.0" fill="rgb(211,31,7)" rx="2" ry="2" />
+<text  x="964.52" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestCountSteps.cov&quot;_-test.run_&quot;^TestCountSteps$&quot; (16,000 samples, 0.01%)</title><rect x="947.5" y="37" width="0.2" height="15.0" fill="rgb(238,152,36)" rx="2" ry="2" />
+<text  x="950.54" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestInterpolationInForLoop_-i_&quot;./coverage/runner.test/TestInterpolationInForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestInterpolationInForLoop.yml&quot; (304,000 samples, 0.26%)</title><rect x="739.7" y="37" width="3.1" height="15.0" fill="rgb(249,206,49)" rx="2" ry="2" />
+<text  x="742.74" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestValidateJobRequirements_-i_&quot;./coverage/runner.test/TestValidateJobRequirements.cov&quot;_&gt;_&quot;./coverage/runner.test/TestValidateJobRequirements.yml&quot; (309,000 samples, 0.27%)</title><rect x="944.0" y="37" width="3.2" height="15.0" fill="rgb(214,45,10)" rx="2" ry="2" />
+<text  x="947.00" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNodeFieldInitialization_-i_&quot;./coverage/treeview.test/TestNodeFieldInitialization.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNodeFieldInitialization.yml&quot; (490,000 samples, 0.42%)</title><rect x="836.7" y="37" width="5.0" height="15.0" fill="rgb(210,25,5)" rx="2" ry="2" />
+<text  x="839.73" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNullCoalescingOperator_-i_&quot;./coverage/runner.test/TestNullCoalescingOperator.cov&quot;_&gt;_&quot;./coverage/runner.test/TestNullCoalescingOperator.yml&quot; (329,000 samples, 0.28%)</title><rect x="868.7" y="37" width="3.3" height="15.0" fill="rgb(219,65,15)" rx="2" ry="2" />
+<text  x="871.68" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestSortJobsByDepth_MultiLevel_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_MultiLevel.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_MultiLevel.yml&quot; (491,000 samples, 0.42%)</title><rect x="905.5" y="37" width="5.0" height="15.0" fill="rgb(222,82,19)" rx="2" ry="2" />
+<text  x="908.46" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNewLogger_CreatesLogger_-i_&quot;./coverage/eventlog.test/TestNewLogger_CreatesLogger.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNewLogger_CreatesLogger.yml&quot; (366,000 samples, 0.32%)</title><rect x="820.7" y="37" width="3.7" height="15.0" fill="rgb(209,22,5)" rx="2" ry="2" />
+<text  x="823.70" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_DebugGoroutineID.cov&quot;_-test.run_&quot;^TestLogger_DebugGoroutineID$&quot; (21,000 samples, 0.02%)</title><rect x="948.1" y="37" width="0.2" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="951.11" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestCalculateDuration_-i_&quot;./coverage/eventlog.test/TestCalculateDuration.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCalculateDuration.yml&quot; (323,000 samples, 0.28%)</title><rect x="634.6" y="37" width="3.3" height="15.0" fill="rgb(244,183,43)" rx="2" ry="2" />
+<text  x="637.61" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestDiscoverConfig_DeepNesting_-i_&quot;./coverage/runner.test/TestDiscoverConfig_DeepNesting.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_DeepNesting.yml&quot; (323,000 samples, 0.28%)</title><rect x="664.7" y="37" width="3.3" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="667.68" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNodeToStateNode_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode.yml&quot; (282,000 samples, 0.24%)</title><rect x="855.2" y="37" width="2.8" height="15.0" fill="rgb(233,131,31)" rx="2" ry="2" />
+<text  x="858.18" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestHasChildren_-i_&quot;./coverage/treeview.test/TestHasChildren.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestHasChildren.yml&quot; (505,000 samples, 0.44%)</title><rect x="728.0" y="37" width="5.1" height="15.0" fill="rgb(248,198,47)" rx="2" ry="2" />
+<text  x="730.96" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestDiscoverConfig_NotFound_-i_&quot;./coverage/runner.test/TestDiscoverConfig_NotFound.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_NotFound.yml&quot; (238,000 samples, 0.21%)</title><rect x="671.8" y="37" width="2.5" height="15.0" fill="rgb(240,161,38)" rx="2" ry="2" />
+<text  x="674.85" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestAddJobWithSummary_-i_&quot;./coverage/treeview.test/TestAddJobWithSummary.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJobWithSummary.yml&quot; (387,000 samples, 0.33%)</title><rect x="594.9" y="37" width="4.0" height="15.0" fill="rgb(240,165,39)" rx="2" ry="2" />
+<text  x="597.93" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestAddChildren.cov&quot;_-test.run_&quot;^TestAddChildren$&quot; (12,000 samples, 0.01%)</title><rect x="957.8" y="37" width="0.2" height="15.0" fill="rgb(211,31,7)" rx="2" ry="2" />
+<text  x="960.83" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestLoadPipeline_JobVariablesDecl_-i_&quot;./coverage/runner.test/TestLoadPipeline_JobVariablesDecl.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_JobVariablesDecl.yml&quot; (192,000 samples, 0.17%)</title><rect x="766.4" y="37" width="2.0" height="15.0" fill="rgb(247,195,46)" rx="2" ry="2" />
+<text  x="769.41" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestAddJobWithSummary.cov&quot;_-test.run_&quot;^TestAddJobWithSummary$&quot; (12,000 samples, 0.01%)</title><rect x="958.0" y="37" width="0.1" height="15.0" fill="rgb(244,183,43)" rx="2" ry="2" />
+<text  x="960.96" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalList.cov&quot;_-test.run_&quot;^TestIncludeDecl_UnmarshalList$&quot; (24,000 samples, 0.02%)</title><rect x="953.8" y="37" width="0.3" height="15.0" fill="rgb(250,210,50)" rx="2" ry="2" />
+<text  x="956.81" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestLoadEnvFile_SingleQuote_-i_&quot;./coverage/runner.test/TestLoadEnvFile_SingleQuote.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadEnvFile_SingleQuote.yml&quot; (352,000 samples, 0.30%)</title><rect x="762.8" y="37" width="3.6" height="15.0" fill="rgb(234,136,32)" rx="2" ry="2" />
+<text  x="765.82" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestAddJobWithoutSteps_-i_&quot;./coverage/treeview.test/TestAddJobWithoutSteps.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJobWithoutSteps.yml&quot; (324,000 samples, 0.28%)</title><rect x="598.9" y="37" width="3.3" height="15.0" fill="rgb(246,188,45)" rx="2" ry="2" />
+<text  x="601.87" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_NoGoroutineIDWithoutDebug.cov&quot;_-test.run_&quot;^TestLogger_NoGoroutineIDWithoutDebug$&quot; (21,000 samples, 0.02%)</title><rect x="949.3" y="37" width="0.2" height="15.0" fill="rgb(221,75,17)" rx="2" ry="2" />
+<text  x="952.27" y="47.5" ></text>
+</g>
+<g >
+<title>gofumpt_-w_. (22,000 samples, 0.02%)</title><rect x="516.9" y="37" width="0.2" height="15.0" fill="rgb(205,2,0)" rx="2" ry="2" />
+<text  x="519.88" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestHasChildren.cov&quot;_-test.run_&quot;^TestHasChildren$&quot; (12,000 samples, 0.01%)</title><rect x="959.8" y="37" width="0.2" height="15.0" fill="rgb(216,52,12)" rx="2" ry="2" />
+<text  x="962.85" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestSortJobsByDepth_Consistency_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_Consistency.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_Consistency.yml&quot; (495,000 samples, 0.43%)</title><rect x="896.2" y="37" width="5.0" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
+<text  x="899.19" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestEvaluateIfInContext.cov&quot;_-test.run_&quot;^TestEvaluateIfInContext$&quot; (22,000 samples, 0.02%)</title><rect x="952.9" y="37" width="0.2" height="15.0" fill="rgb(206,4,1)" rx="2" ry="2" />
+<text  x="955.86" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestBuildFromPipeline_DepthSorting_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_DepthSorting.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_DepthSorting.yml&quot; (335,000 samples, 0.29%)</title><rect x="612.6" y="37" width="3.4" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
+<text  x="615.62" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestTreeNodeToStateNode_-i_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode.yml&quot; (334,000 samples, 0.29%)</title><rect x="937.5" y="37" width="3.4" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="940.51" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestCompareByDepthThenName_-i_&quot;./coverage/treeview.test/TestCompareByDepthThenName.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestCompareByDepthThenName.yml&quot; (289,000 samples, 0.25%)</title><rect x="644.4" y="37" width="3.0" height="15.0" fill="rgb(224,89,21)" rx="2" ry="2" />
+<text  x="647.44" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestBuildFromPipeline_WithDependencies_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithDependencies.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithDependencies.yml&quot; (414,000 samples, 0.36%)</title><rect x="623.3" y="37" width="4.2" height="15.0" fill="rgb(231,122,29)" rx="2" ry="2" />
+<text  x="626.28" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_GetElapsed.cov&quot;_-test.run_&quot;^TestLogger_GetElapsed$&quot; (31,000 samples, 0.03%)</title><rect x="948.3" y="37" width="0.3" height="15.0" fill="rgb(254,229,54)" rx="2" ry="2" />
+<text  x="951.32" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestTaskInvocationWithForLoop.cov&quot;_-test.run_&quot;^TestTaskInvocationWithForLoop$&quot; (26,000 samples, 0.02%)</title><rect x="957.3" y="37" width="0.3" height="15.0" fill="rgb(234,133,31)" rx="2" ry="2" />
+<text  x="960.31" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoops.cov&quot;_-test.run_&quot;^TestLoadPipeline_WithForLoops$&quot; (26,000 samples, 0.02%)</title><rect x="955.6" y="37" width="0.2" height="15.0" fill="rgb(212,32,7)" rx="2" ry="2" />
+<text  x="958.57" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestStepUnmarshalYAML_WithVars_-i_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithVars.cov&quot;_&gt;_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithVars.yml&quot; (273,000 samples, 0.24%)</title><rect x="931.1" y="37" width="2.8" height="15.0" fill="rgb(209,18,4)" rx="2" ry="2" />
+<text  x="934.10" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestSortJobsByDepth_RealWorld.cov&quot;_-test.run_&quot;^TestSortJobsByDepth_RealWorld$&quot; (25,000 samples, 0.02%)</title><rect x="961.2" y="37" width="0.2" height="15.0" fill="rgb(220,70,16)" rx="2" ry="2" />
+<text  x="964.17" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestDisplay_Render_-i_&quot;./coverage/treeview.test/TestDisplay_Render.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_Render.yml&quot; (348,000 samples, 0.30%)</title><rect x="688.8" y="37" width="3.5" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="691.77" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestCompareByDepthThenName.cov&quot;_-test.run_&quot;^TestCompareByDepthThenName$&quot; (14,000 samples, 0.01%)</title><rect x="959.0" y="37" width="0.1" height="15.0" fill="rgb(233,132,31)" rx="2" ry="2" />
+<text  x="961.99" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestLogger_NilSafe_-i_&quot;./coverage/eventlog.test/TestLogger_NilSafe.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_NilSafe.yml&quot; (308,000 samples, 0.27%)</title><rect x="794.7" y="37" width="3.1" height="15.0" fill="rgb(234,137,32)" rx="2" ry="2" />
+<text  x="797.69" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestCountSteps_Nil_-i_&quot;./coverage/eventlog.test/TestCountSteps_Nil.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCountSteps_Nil.yml&quot; (298,000 samples, 0.26%)</title><rect x="658.3" y="37" width="3.1" height="15.0" fill="rgb(230,115,27)" rx="2" ry="2" />
+<text  x="661.32" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestEnvDeclPrecedence.cov&quot;_-test.run_&quot;^TestEnvDeclPrecedence$&quot; (15,000 samples, 0.01%)</title><rect x="952.7" y="37" width="0.2" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
+<text  x="955.71" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestCaptureModulePath.cov&quot;_-test.run_&quot;^TestCaptureModulePath$&quot; (11,000 samples, 0.01%)</title><rect x="947.4" y="37" width="0.1" height="15.0" fill="rgb(212,33,7)" rx="2" ry="2" />
+<text  x="950.43" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestInterpolation.cov&quot;_-test.run_&quot;^TestInterpolation$&quot; (56,000 samples, 0.05%)</title><rect x="954.2" y="37" width="0.6" height="15.0" fill="rgb(206,8,2)" rx="2" ry="2" />
+<text  x="957.22" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestNodeThreadSafety.cov&quot;_-test.run_&quot;^TestNodeThreadSafety$&quot; (12,000 samples, 0.01%)</title><rect x="960.5" y="37" width="0.1" height="15.0" fill="rgb(236,146,34)" rx="2" ry="2" />
+<text  x="963.49" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestTaskInvocationWithForLoop_-i_&quot;./coverage/runner.test/TestTaskInvocationWithForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestTaskInvocationWithForLoop.yml&quot; (356,000 samples, 0.31%)</title><rect x="933.9" y="37" width="3.6" height="15.0" fill="rgb(224,90,21)" rx="2" ry="2" />
+<text  x="936.88" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestBuildFromPipeline_SingleJob_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_SingleJob.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_SingleJob.yml&quot; (394,000 samples, 0.34%)</title><rect x="619.3" y="37" width="4.0" height="15.0" fill="rgb(211,28,6)" rx="2" ry="2" />
+<text  x="622.27" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNodeNestedStructure_-i_&quot;./coverage/treeview.test/TestNodeNestedStructure.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNodeNestedStructure.yml&quot; (664,000 samples, 0.57%)</title><rect x="841.7" y="37" width="6.8" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
+<text  x="844.72" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestAddJob_WithSummaryFlag.cov&quot;_-test.run_&quot;^TestAddJob_WithSummaryFlag$&quot; (11,000 samples, 0.01%)</title><rect x="958.3" y="37" width="0.1" height="15.0" fill="rgb(233,132,31)" rx="2" ry="2" />
+<text  x="961.26" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNodeToStateNode_AllStatuses_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_AllStatuses.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_AllStatuses.yml&quot; (168,000 samples, 0.14%)</title><rect x="858.0" y="37" width="1.8" height="15.0" fill="rgb(230,116,27)" rx="2" ry="2" />
+<text  x="861.05" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestSetStatus_-i_&quot;./coverage/treeview.test/TestSetStatus.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSetStatus.yml&quot; (452,000 samples, 0.39%)</title><rect x="891.6" y="37" width="4.6" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
+<text  x="894.59" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestSetStatus.cov&quot;_-test.run_&quot;^TestSetStatus$&quot; (12,000 samples, 0.01%)</title><rect x="960.6" y="37" width="0.1" height="15.0" fill="rgb(241,167,39)" rx="2" ry="2" />
+<text  x="963.61" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNewLogger_NilWhenEmpty_-i_&quot;./coverage/eventlog.test/TestNewLogger_NilWhenEmpty.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNewLogger_NilWhenEmpty.yml&quot; (337,000 samples, 0.29%)</title><rect x="824.4" y="37" width="3.5" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
+<text  x="827.42" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestNodeToStateNode.cov&quot;_-test.run_&quot;^TestNodeToStateNode$&quot; (16,000 samples, 0.01%)</title><rect x="949.9" y="37" width="0.2" height="15.0" fill="rgb(253,222,53)" rx="2" ry="2" />
+<text  x="952.92" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestEnvDeclPrecedence_-i_&quot;./coverage/runner.test/TestEnvDeclPrecedence.cov&quot;_&gt;_&quot;./coverage/runner.test/TestEnvDeclPrecedence.yml&quot; (306,000 samples, 0.26%)</title><rect x="696.7" y="37" width="3.2" height="15.0" fill="rgb(241,169,40)" rx="2" ry="2" />
+<text  x="699.74" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_ParentDir.cov&quot;_-test.run_&quot;^TestDiscoverConfig_ParentDir$&quot; (22,000 samples, 0.02%)</title><rect x="952.2" y="37" width="0.2" height="15.0" fill="rgb(205,3,0)" rx="2" ry="2" />
+<text  x="955.18" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestProcessEnv_VarsOnly.cov&quot;_-test.run_&quot;^TestProcessEnv_VarsOnly$&quot; (13,000 samples, 0.01%)</title><rect x="956.8" y="37" width="0.2" height="15.0" fill="rgb(253,224,53)" rx="2" ry="2" />
+<text  x="959.84" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestNewStepNode_-i_&quot;./coverage/treeview.test/TestNewStepNode.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewStepNode.yml&quot; (498,000 samples, 0.43%)</title><rect x="831.7" y="37" width="5.0" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
+<text  x="834.66" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestBuildFromPipeline_ConsistentOrdering_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_ConsistentOrdering.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_ConsistentOrdering.yml&quot; (351,000 samples, 0.30%)</title><rect x="609.0" y="37" width="3.6" height="15.0" fill="rgb(251,211,50)" rx="2" ry="2" />
+<text  x="612.05" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_CurrentDir.cov&quot;_-test.run_&quot;^TestDiscoverConfig_CurrentDir$&quot; (16,000 samples, 0.01%)</title><rect x="951.5" y="37" width="0.2" height="15.0" fill="rgb(242,172,41)" rx="2" ry="2" />
+<text  x="954.50" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestCountSteps_-i_&quot;./coverage/eventlog.test/TestCountSteps.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCountSteps.yml&quot; (250,000 samples, 0.22%)</title><rect x="655.8" y="37" width="2.5" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
+<text  x="658.78" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestLoadPipeline_WithIfConditions.cov&quot;_-test.run_&quot;^TestLoadPipeline_WithIfConditions$&quot; (16,000 samples, 0.01%)</title><rect x="956.1" y="37" width="0.1" height="15.0" fill="rgb(229,113,27)" rx="2" ry="2" />
+<text  x="959.05" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_DeepNesting.cov&quot;_-test.run_&quot;^TestDiscoverConfig_DeepNesting$&quot; (14,000 samples, 0.01%)</title><rect x="951.7" y="37" width="0.1" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
+<text  x="954.66" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestProcessEnv_NoInterpolationWithoutContext.cov&quot;_-test.run_&quot;^TestProcessEnv_NoInterpolationWithoutContext$&quot; (15,000 samples, 0.01%)</title><rect x="956.7" y="37" width="0.1" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<text  x="959.68" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestAddJob_WithSteps_-i_&quot;./coverage/treeview.test/TestAddJob_WithSteps.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJob_WithSteps.yml&quot; (359,000 samples, 0.31%)</title><rect x="602.2" y="37" width="3.6" height="15.0" fill="rgb(221,76,18)" rx="2" ry="2" />
+<text  x="605.17" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestSortJobsByDepth_MultiLevel.cov&quot;_-test.run_&quot;^TestSortJobsByDepth_MultiLevel$&quot; (15,000 samples, 0.01%)</title><rect x="961.0" y="37" width="0.2" height="15.0" fill="rgb(232,127,30)" rx="2" ry="2" />
+<text  x="964.02" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestNewLogger_NilWhenEmpty.cov&quot;_-test.run_&quot;^TestNewLogger_NilWhenEmpty$&quot; (11,000 samples, 0.01%)</title><rect x="949.8" y="37" width="0.1" height="15.0" fill="rgb(233,129,31)" rx="2" ry="2" />
+<text  x="952.81" y="47.5" ></text>
+</g>
+<g >
+<title>test:simple (1,380,000 samples, 1.19%)</title><rect x="1175.9" y="53" width="14.1" height="15.0" fill="rgb(245,188,45)" rx="2" ry="2" />
+<text  x="1178.95" y="63.5" ></text>
+</g>
+<g >
+<title>test:build (2,325,000 samples, 2.01%)</title><rect x="560.2" y="53" width="23.7" height="15.0" fill="rgb(234,133,31)" rx="2" ry="2" />
+<text  x="563.18" y="63.5" >t..</text>
+</g>
+<g >
+<title>covertrace_--name_TestProcessEnv_WithCommandExecution_-i_&quot;./coverage/runner.test/TestProcessEnv_WithCommandExecution.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_WithCommandExecution.yml&quot; (306,000 samples, 0.26%)</title><rect x="885.0" y="37" width="3.1" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
+<text  x="887.95" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestLogger_LogExec_Skip_-i_&quot;./coverage/eventlog.test/TestLogger_LogExec_Skip.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_LogExec_Skip.yml&quot; (259,000 samples, 0.22%)</title><rect x="792.1" y="37" width="2.6" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
 <text  x="795.05" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestCaptureGitInfo.cov&quot;_-test.run_&quot;^TestCaptureGitInfo$&quot; (9,000 Î¼s, 0.01%)</title><rect x="872.9" y="37" width="0.1" height="15.0" fill="rgb(235,139,33)" rx="2" ry="2" />
-<text  x="875.94" y="47.5" ></text>
+<title>covertrace_--name_TestCaptureModulePath_-i_&quot;./coverage/eventlog.test/TestCaptureModulePath.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCaptureModulePath.yml&quot; (308,000 samples, 0.27%)</title><rect x="641.3" y="37" width="3.1" height="15.0" fill="rgb(246,192,46)" rx="2" ry="2" />
+<text  x="644.31" y="47.5" ></text>
 </g>
 <g >
-<title>fmt (9,802,000 Î¼s, 9.72%)</title><rect x="582.5" y="53" width="114.6" height="15.0" fill="rgb(251,212,50)" rx="2" ry="2" />
-<text  x="585.47" y="63.5" >fmt</text>
+<title>covertrace_--name_TestBuildFromPipeline_WithTasks_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithTasks.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithTasks.yml&quot; (276,000 samples, 0.24%)</title><rect x="631.8" y="37" width="2.8" height="15.0" fill="rgb(244,180,43)" rx="2" ry="2" />
+<text  x="634.80" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLogger_LogExec_Fail_-i_&quot;./coverage/eventlog.test/TestLogger_LogExec_Fail.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_LogExec_Fail.yml&quot; (123,000 Î¼s, 0.12%)</title><rect x="810.1" y="37" width="1.4" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
-<text  x="813.05" y="47.5" ></text>
+<title>covertrace_--name_TestLoadPipeline_WithForLoops_-i_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoops.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoops.yml&quot; (373,000 samples, 0.32%)</title><rect x="772.4" y="37" width="3.8" height="15.0" fill="rgb(241,168,40)" rx="2" ry="2" />
+<text  x="775.36" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestDisplay_Render_-i_&quot;./coverage/treeview.test/TestDisplay_Render.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_Render.yml&quot; (127,000 Î¼s, 0.13%)</title><rect x="767.8" y="37" width="1.5" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
-<text  x="770.78" y="47.5" ></text>
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestCountDepth.cov&quot;_-test.run_&quot;^TestCountDepth$&quot; (13,000 samples, 0.01%)</title><rect x="959.1" y="37" width="0.2" height="15.0" fill="rgb(233,131,31)" rx="2" ry="2" />
+<text  x="962.14" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestTreeNodeToStateNode_-i_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestTreeNodeToStateNode.yml&quot; (130,000 Î¼s, 0.13%)</title><rect x="868.5" y="37" width="1.5" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
-<text  x="871.47" y="47.5" ></text>
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestAddJobWithoutSteps.cov&quot;_-test.run_&quot;^TestAddJobWithoutSteps$&quot; (11,000 samples, 0.01%)</title><rect x="958.1" y="37" width="0.1" height="15.0" fill="rgb(231,121,29)" rx="2" ry="2" />
+<text  x="961.08" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestProcessEnv_VarsOnly_-i_&quot;./coverage/runner.test/TestProcessEnv_VarsOnly.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_VarsOnly.yml&quot; (133,000 Î¼s, 0.13%)</title><rect x="847.6" y="37" width="1.5" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
-<text  x="850.57" y="47.5" ></text>
+<title>covertrace_--name_TestInterpolation_-i_&quot;./coverage/runner.test/TestInterpolation.cov&quot;_&gt;_&quot;./coverage/runner.test/TestInterpolation.yml&quot; (331,000 samples, 0.29%)</title><rect x="742.8" y="37" width="3.4" height="15.0" fill="rgb(208,18,4)" rx="2" ry="2" />
+<text  x="745.83" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_NotFound.cov&quot;_-test.run_&quot;^TestDiscoverConfig_NotFound$&quot; (9,000 Î¼s, 0.01%)</title><rect x="876.0" y="37" width="0.1" height="15.0" fill="rgb(244,180,43)" rx="2" ry="2" />
-<text  x="878.96" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestNodeToStateNode_Nil.cov&quot;_-test.run_&quot;^TestNodeToStateNode_Nil$&quot; (15,000 samples, 0.01%)</title><rect x="950.2" y="37" width="0.1" height="15.0" fill="rgb(216,52,12)" rx="2" ry="2" />
+<text  x="953.17" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestSortJobsByDepth_MultiLevel_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_MultiLevel.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_MultiLevel.yml&quot; (126,000 Î¼s, 0.12%)</title><rect x="857.0" y="37" width="1.4" height="15.0" fill="rgb(222,82,19)" rx="2" ry="2" />
-<text  x="859.98" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_PreferDotFile.cov&quot;_-test.run_&quot;^TestDiscoverConfig_PreferDotFile$&quot; (30,000 samples, 0.03%)</title><rect x="952.4" y="37" width="0.3" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
+<text  x="955.41" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestDisplay_IsTerminal_-i_&quot;./coverage/treeview.test/TestDisplay_IsTerminal.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_IsTerminal.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="765.0" y="37" width="1.3" height="15.0" fill="rgb(229,113,27)" rx="2" ry="2" />
-<text  x="767.97" y="47.5" ></text>
+<title>goimports-reviser_-set-alias_-format_-imports-order_&quot;std,blanked,general,company,project&quot;_-excludes_&quot;scripts/&quot;_./... (4,128,000 samples, 3.56%)</title><rect x="517.1" y="37" width="42.0" height="15.0" fill="rgb(208,17,4)" rx="2" ry="2" />
+<text  x="520.10" y="47.5" >goi..</text>
 </g>
 <g >
-<title>covertrace_--name_TestDiscoverConfig_DeepNesting_-i_&quot;./coverage/runner.test/TestDiscoverConfig_DeepNesting.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_DeepNesting.yml&quot; (124,000 Î¼s, 0.12%)</title><rect x="757.6" y="37" width="1.5" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
-<text  x="760.62" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestCaptureModulePath_-i_&quot;./coverage/eventlog.test/TestCaptureModulePath.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCaptureModulePath.yml&quot; (125,000 Î¼s, 0.12%)</title><rect x="747.7" y="37" width="1.5" height="15.0" fill="rgb(246,192,46)" rx="2" ry="2" />
-<text  x="750.71" y="47.5" ></text>
-</g>
-<g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_LogExec_Fail.cov&quot;_-test.run_&quot;^TestLogger_LogExec_Fail$&quot; (10,000 Î¼s, 0.01%)</title><rect x="873.7" y="37" width="0.1" height="15.0" fill="rgb(236,142,34)" rx="2" ry="2" />
-<text  x="876.71" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestLogger_LogExec_Pass_-i_&quot;./coverage/eventlog.test/TestLogger_LogExec_Pass.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_LogExec_Pass.yml&quot; (118,000 Î¼s, 0.12%)</title><rect x="811.5" y="37" width="1.4" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
-<text  x="814.49" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestNewDisplay_-i_&quot;./coverage/treeview.test/TestNewDisplay.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewDisplay.yml&quot; (122,000 Î¼s, 0.12%)</title><rect x="821.2" y="37" width="1.5" height="15.0" fill="rgb(235,139,33)" rx="2" ry="2" />
-<text  x="824.23" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestSortJobsByDepth_RealWorld_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_RealWorld.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_RealWorld.yml&quot; (121,000 Î¼s, 0.12%)</title><rect x="858.4" y="37" width="1.5" height="15.0" fill="rgb(229,110,26)" rx="2" ry="2" />
-<text  x="861.45" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestLoadPipeline_WithIfConditions_-i_&quot;./coverage/runner.test/TestLoadPipeline_WithIfConditions.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_WithIfConditions.yml&quot; (122,000 Î¼s, 0.12%)</title><rect x="805.8" y="37" width="1.4" height="15.0" fill="rgb(242,174,41)" rx="2" ry="2" />
-<text  x="808.77" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestSortJobsByDepth_Consistency_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_Consistency.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_Consistency.yml&quot; (117,000 Î¼s, 0.12%)</title><rect x="854.2" y="37" width="1.4" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
-<text  x="857.19" y="47.5" ></text>
-</g>
-<g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestLoadEnvFile_SingleQuote.cov&quot;_-test.run_&quot;^TestLoadEnvFile_SingleQuote$&quot; (9,000 Î¼s, 0.01%)</title><rect x="877.6" y="37" width="0.1" height="15.0" fill="rgb(224,87,20)" rx="2" ry="2" />
-<text  x="880.64" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestLoadEnvFile_-i_&quot;./coverage/runner.test/TestLoadEnvFile.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadEnvFile.yml&quot; (133,000 Î¼s, 0.13%)</title><rect x="797.8" y="37" width="1.6" height="15.0" fill="rgb(241,165,39)" rx="2" ry="2" />
-<text  x="800.80" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestNodeToStateNode_WithChildren_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_WithChildren.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_WithChildren.yml&quot; (130,000 Î¼s, 0.13%)</title><rect x="840.1" y="37" width="1.5" height="15.0" fill="rgb(230,115,27)" rx="2" ry="2" />
-<text  x="843.06" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestDiscoverConfig_FallbackToAtkins_-i_&quot;./coverage/runner.test/TestDiscoverConfig_FallbackToAtkins.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_FallbackToAtkins.yml&quot; (121,000 Î¼s, 0.12%)</title><rect x="759.1" y="37" width="1.4" height="15.0" fill="rgb(246,190,45)" rx="2" ry="2" />
-<text  x="762.07" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestDiscoverConfig_ParentDir_-i_&quot;./coverage/runner.test/TestDiscoverConfig_ParentDir.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_ParentDir.yml&quot; (128,000 Î¼s, 0.13%)</title><rect x="762.0" y="37" width="1.5" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
-<text  x="764.96" y="47.5" ></text>
-</g>
-<g >
-<title>docker:up (1,478,000 Î¼s, 1.46%)</title><rect x="565.2" y="53" width="17.3" height="15.0" fill="rgb(226,100,24)" rx="2" ry="2" />
-<text  x="568.19" y="63.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestProcessEnv_IntegerValue_-i_&quot;./coverage/runner.test/TestProcessEnv_IntegerValue.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_IntegerValue.yml&quot; (122,000 Î¼s, 0.12%)</title><rect x="844.5" y="37" width="1.4" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="847.51" y="47.5" ></text>
-</g>
-<g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestInterpolation.cov&quot;_-test.run_&quot;^TestInterpolation$&quot; (22,000 Î¼s, 0.02%)</title><rect x="877.0" y="37" width="0.3" height="15.0" fill="rgb(206,8,2)" rx="2" ry="2" />
-<text  x="880.03" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestCountSteps_Nil_-i_&quot;./coverage/eventlog.test/TestCountSteps_Nil.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCountSteps_Nil.yml&quot; (119,000 Î¼s, 0.12%)</title><rect x="754.9" y="37" width="1.3" height="15.0" fill="rgb(230,115,27)" rx="2" ry="2" />
-<text  x="757.85" y="47.5" ></text>
-</g>
-<g >
-<title>test:simple (1,796,000 Î¼s, 1.78%)</title><rect x="1169.0" y="53" width="21.0" height="15.0" fill="rgb(245,188,45)" rx="2" ry="2" />
-<text  x="1172.00" y="63.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestDiscoverConfig_PreferDotFile_-i_&quot;./coverage/runner.test/TestDiscoverConfig_PreferDotFile.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_PreferDotFile.yml&quot; (129,000 Î¼s, 0.13%)</title><rect x="763.5" y="37" width="1.5" height="15.0" fill="rgb(226,99,23)" rx="2" ry="2" />
-<text  x="766.46" y="47.5" ></text>
-</g>
-<g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestValidateJobRequirements.cov&quot;_-test.run_&quot;^TestValidateJobRequirements$&quot; (9,000 Î¼s, 0.01%)</title><rect x="878.9" y="37" width="0.1" height="15.0" fill="rgb(227,103,24)" rx="2" ry="2" />
-<text  x="881.92" y="47.5" ></text>
-</g>
-<g >
-<title>docker:down (20,746,000 Î¼s, 20.56%)</title><rect x="322.6" y="53" width="242.6" height="15.0" fill="rgb(213,40,9)" rx="2" ry="2" />
-<text  x="325.56" y="63.5" >docker:down</text>
-</g>
-<g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_DebugGoroutineID.cov&quot;_-test.run_&quot;^TestLogger_DebugGoroutineID$&quot; (10,000 Î¼s, 0.01%)</title><rect x="873.4" y="37" width="0.1" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
-<text  x="876.36" y="47.5" ></text>
-</g>
-<g >
-<title>all (100,895,000 Î¼s, 100%)</title><rect x="10.0" y="85" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<title>all (115,877,000 samples, 100%)</title><rect x="10.0" y="85" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
 <text  x="13.00" y="95.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNodeToStateNode_Times_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_Times.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_Times.yml&quot; (136,000 Î¼s, 0.13%)</title><rect x="838.5" y="37" width="1.6" height="15.0" fill="rgb(231,121,29)" rx="2" ry="2" />
-<text  x="841.47" y="47.5" ></text>
+<title>covertrace_--name_TestSortJobsByDepth_DoesNotMutate_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_DoesNotMutate.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_DoesNotMutate.yml&quot; (415,000 samples, 0.36%)</title><rect x="901.2" y="37" width="4.3" height="15.0" fill="rgb(217,55,13)" rx="2" ry="2" />
+<text  x="904.23" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestProcessEnv_WithCommandExecution_-i_&quot;./coverage/runner.test/TestProcessEnv_WithCommandExecution.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_WithCommandExecution.yml&quot; (158,000 Î¼s, 0.16%)</title><rect x="849.1" y="37" width="1.9" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
-<text  x="852.13" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestGenerateStepID.cov&quot;_-test.run_&quot;^TestGenerateStepID$&quot; (23,000 samples, 0.02%)</title><rect x="953.6" y="37" width="0.2" height="15.0" fill="rgb(215,47,11)" rx="2" ry="2" />
+<text  x="956.58" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestCountOutputLines_-i_&quot;./coverage/treeview.test/TestCountOutputLines.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestCountOutputLines.yml&quot; (127,000 Î¼s, 0.13%)</title><rect x="752.0" y="37" width="1.5" height="15.0" fill="rgb(225,94,22)" rx="2" ry="2" />
-<text  x="755.01" y="47.5" ></text>
+<title>covertrace_--name_TestJobVariablesInForLoop_-i_&quot;./coverage/runner.test/TestJobVariablesInForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestJobVariablesInForLoop.yml&quot; (429,000 samples, 0.37%)</title><rect x="755.4" y="37" width="4.4" height="15.0" fill="rgb(238,152,36)" rx="2" ry="2" />
+<text  x="758.42" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNodeFieldInitialization_-i_&quot;./coverage/treeview.test/TestNodeFieldInitialization.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNodeFieldInitialization.yml&quot; (127,000 Î¼s, 0.13%)</title><rect x="829.9" y="37" width="1.5" height="15.0" fill="rgb(210,25,5)" rx="2" ry="2" />
-<text  x="832.89" y="47.5" ></text>
+<title>covertrace_--name_TestJobUnmarshalYAML_FullDepthDecoding_-i_&quot;./coverage/model.test/TestJobUnmarshalYAML_FullDepthDecoding.cov&quot;_&gt;_&quot;./coverage/model.test/TestJobUnmarshalYAML_FullDepthDecoding.yml&quot; (326,000 samples, 0.28%)</title><rect x="746.2" y="37" width="3.3" height="15.0" fill="rgb(213,37,8)" rx="2" ry="2" />
+<text  x="749.21" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_LogExec_Pass.cov&quot;_-test.run_&quot;^TestLogger_LogExec_Pass$&quot; (10,000 Î¼s, 0.01%)</title><rect x="873.8" y="37" width="0.1" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
-<text  x="876.83" y="47.5" ></text>
+<title>covertrace_--name_TestStepUnmarshalYAML_WithEnv_-i_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithEnv.cov&quot;_&gt;_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithEnv.yml&quot; (291,000 samples, 0.25%)</title><rect x="925.3" y="37" width="2.9" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
+<text  x="928.28" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLogger_LogExec_Skip_-i_&quot;./coverage/eventlog.test/TestLogger_LogExec_Skip.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_LogExec_Skip.yml&quot; (117,000 Î¼s, 0.12%)</title><rect x="812.9" y="37" width="1.3" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
-<text  x="815.87" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestJobVariablesInForLoop.cov&quot;_-test.run_&quot;^TestJobVariablesInForLoop$&quot; (13,000 samples, 0.01%)</title><rect x="955.0" y="37" width="0.1" height="15.0" fill="rgb(209,21,5)" rx="2" ry="2" />
+<text  x="957.98" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestSortJobsByDepth_SingleLevel_-i_&quot;./coverage/treeview.test/TestSortJobsByDepth_SingleLevel.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSortJobsByDepth_SingleLevel.yml&quot; (113,000 Î¼s, 0.11%)</title><rect x="859.9" y="37" width="1.3" height="15.0" fill="rgb(236,146,35)" rx="2" ry="2" />
-<text  x="862.86" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestStatusToResult.cov&quot;_-test.run_&quot;^TestStatusToResult$&quot; (13,000 samples, 0.01%)</title><rect x="950.5" y="37" width="0.2" height="15.0" fill="rgb(232,127,30)" rx="2" ry="2" />
+<text  x="953.53" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestSetStatus_-i_&quot;./coverage/treeview.test/TestSetStatus.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestSetStatus.yml&quot; (123,000 Î¼s, 0.12%)</title><rect x="852.8" y="37" width="1.4" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
-<text  x="855.75" y="47.5" ></text>
+<title>docker_compose_up_-d_--wait_--remove-orphans (870,000 samples, 0.75%)</title><rect x="463.8" y="37" width="8.9" height="15.0" fill="rgb(219,67,16)" rx="2" ry="2" />
+<text  x="466.80" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_LogExec_Skip.cov&quot;_-test.run_&quot;^TestLogger_LogExec_Skip$&quot; (15,000 Î¼s, 0.01%)</title><rect x="873.9" y="37" width="0.2" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
-<text  x="876.95" y="47.5" ></text>
+<title>covertrace_--name_TestLogger_LogExec_Pass_-i_&quot;./coverage/eventlog.test/TestLogger_LogExec_Pass.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_LogExec_Pass.yml&quot; (292,000 samples, 0.25%)</title><rect x="789.1" y="37" width="3.0" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
+<text  x="792.08" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_PreferDotFile.cov&quot;_-test.run_&quot;^TestDiscoverConfig_PreferDotFile$&quot; (9,000 Î¼s, 0.01%)</title><rect x="876.2" y="37" width="0.1" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
-<text  x="879.16" y="47.5" ></text>
+<title>covertrace_--name_TestCountOutputLines_-i_&quot;./coverage/treeview.test/TestCountOutputLines.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestCountOutputLines.yml&quot; (332,000 samples, 0.29%)</title><rect x="652.4" y="37" width="3.4" height="15.0" fill="rgb(225,94,22)" rx="2" ry="2" />
+<text  x="655.40" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestDisplay_ThreadSafety_-i_&quot;./coverage/treeview.test/TestDisplay_ThreadSafety.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_ThreadSafety.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="769.3" y="37" width="1.3" height="15.0" fill="rgb(226,97,23)" rx="2" ry="2" />
-<text  x="772.26" y="47.5" ></text>
+<title>covertrace_--name_TestLogger_Write_-i_&quot;./coverage/eventlog.test/TestLogger_Write.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_Write.yml&quot; (332,000 samples, 0.29%)</title><rect x="801.0" y="37" width="3.4" height="15.0" fill="rgb(211,28,6)" rx="2" ry="2" />
+<text  x="804.03" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNodeNestedStructure_-i_&quot;./coverage/treeview.test/TestNodeNestedStructure.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNodeNestedStructure.yml&quot; (119,000 Î¼s, 0.12%)</title><rect x="831.4" y="37" width="1.4" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
-<text  x="834.37" y="47.5" ></text>
+<title>covertrace_--name_TestJobUnmarshalYAML_WithVars_-i_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithVars.cov&quot;_&gt;_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithVars.yml&quot; (324,000 samples, 0.28%)</title><rect x="752.1" y="37" width="3.3" height="15.0" fill="rgb(209,18,4)" rx="2" ry="2" />
+<text  x="755.12" y="47.5" ></text>
 </g>
 <g >
-<title>default (26,725,000 Î¼s, 26.49%)</title><rect x="10.0" y="53" width="312.6" height="15.0" fill="rgb(226,100,23)" rx="2" ry="2" />
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestBuildFromPipeline_DepthSorting.cov&quot;_-test.run_&quot;^TestBuildFromPipeline_DepthSorting$&quot; (12,000 samples, 0.01%)</title><rect x="958.5" y="37" width="0.1" height="15.0" fill="rgb(253,221,52)" rx="2" ry="2" />
+<text  x="961.47" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestAddJob_WithSummaryFlag_-i_&quot;./coverage/treeview.test/TestAddJob_WithSummaryFlag.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJob_WithSummaryFlag.yml&quot; (316,000 samples, 0.27%)</title><rect x="605.8" y="37" width="3.2" height="15.0" fill="rgb(224,89,21)" rx="2" ry="2" />
+<text  x="608.83" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestDisplay_Render.cov&quot;_-test.run_&quot;^TestDisplay_Render$&quot; (12,000 samples, 0.01%)</title><rect x="959.4" y="37" width="0.2" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="962.44" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestBuildFromPipeline_SingleJob.cov&quot;_-test.run_&quot;^TestBuildFromPipeline_SingleJob$&quot; (10,000 samples, 0.01%)</title><rect x="958.7" y="37" width="0.1" height="15.0" fill="rgb(225,92,22)" rx="2" ry="2" />
+<text  x="961.67" y="47.5" ></text>
+</g>
+<g >
+<title>go_test_-cover_-coverpkg=./..._-c_-o_bin/_./... (1,158,000 samples, 1.00%)</title><rect x="572.0" y="37" width="11.8" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
+<text  x="575.02" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestLoadEnvFile_SingleQuote.cov&quot;_-test.run_&quot;^TestLoadEnvFile_SingleQuote$&quot; (19,000 samples, 0.02%)</title><rect x="955.3" y="37" width="0.2" height="15.0" fill="rgb(224,87,20)" rx="2" ry="2" />
+<text  x="958.27" y="47.5" ></text>
+</g>
+<g >
+<title>default (22,892,000 samples, 19.76%)</title><rect x="10.0" y="53" width="233.1" height="15.0" fill="rgb(226,100,23)" rx="2" ry="2" />
 <text  x="13.00" y="63.5" >default</text>
 </g>
 <g >
-<title>covertrace_--name_TestDisplay_RenderStatic_-i_&quot;./coverage/treeview.test/TestDisplay_RenderStatic.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestDisplay_RenderStatic.yml&quot; (124,000 Î¼s, 0.12%)</title><rect x="766.3" y="37" width="1.5" height="15.0" fill="rgb(248,201,48)" rx="2" ry="2" />
-<text  x="769.33" y="47.5" ></text>
+<title>covertrace_--name_TestNodeToStateNode_WithChildren_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_WithChildren.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_WithChildren.yml&quot; (342,000 samples, 0.30%)</title><rect x="865.2" y="37" width="3.5" height="15.0" fill="rgb(230,115,27)" rx="2" ry="2" />
+<text  x="868.20" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestCalculateDuration_-i_&quot;./coverage/eventlog.test/TestCalculateDuration.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCalculateDuration.yml&quot; (122,000 Î¼s, 0.12%)</title><rect x="744.8" y="37" width="1.4" height="15.0" fill="rgb(244,183,43)" rx="2" ry="2" />
-<text  x="747.79" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestDiscoverConfig_NotFound.cov&quot;_-test.run_&quot;^TestDiscoverConfig_NotFound$&quot; (19,000 samples, 0.02%)</title><rect x="952.0" y="37" width="0.2" height="15.0" fill="rgb(244,180,43)" rx="2" ry="2" />
+<text  x="954.99" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestDiscoverConfig_NotFound_-i_&quot;./coverage/runner.test/TestDiscoverConfig_NotFound.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_NotFound.yml&quot; (126,000 Î¼s, 0.12%)</title><rect x="760.5" y="37" width="1.5" height="15.0" fill="rgb(240,161,38)" rx="2" ry="2" />
-<text  x="763.49" y="47.5" ></text>
+<title>covertrace_--name_TestNewJobNode_-i_&quot;./coverage/treeview.test/TestNewJobNode.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewJobNode.yml&quot; (536,000 samples, 0.46%)</title><rect x="815.2" y="37" width="5.5" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
+<text  x="818.24" y="47.5" ></text>
 </g>
 <g >
-<title>goimports_-w_. (71,000 Î¼s, 0.07%)</title><rect x="696.3" y="37" width="0.8" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
-<text  x="699.28" y="47.5" ></text>
+<title>covertrace_--name_TestJobUnmarshalYAML_WithEnv_-i_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithEnv.cov&quot;_&gt;_&quot;./coverage/model.test/TestJobUnmarshalYAML_WithEnv.yml&quot; (255,000 samples, 0.22%)</title><rect x="749.5" y="37" width="2.6" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
+<text  x="752.53" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestGetChildren_-i_&quot;./coverage/treeview.test/TestGetChildren.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestGetChildren.yml&quot; (117,000 Î¼s, 0.12%)</title><rect x="781.3" y="37" width="1.3" height="15.0" fill="rgb(220,72,17)" rx="2" ry="2" />
-<text  x="784.27" y="47.5" ></text>
+<title>covertrace_--name_TestAddChild_-i_&quot;./coverage/treeview.test/TestAddChild.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddChild.yml&quot; (547,000 samples, 0.47%)</title><rect x="583.9" y="37" width="5.5" height="15.0" fill="rgb(214,45,10)" rx="2" ry="2" />
+<text  x="586.85" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestExecuteStepWithForLoop_-i_&quot;./coverage/runner.test/TestExecuteStepWithForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestExecuteStepWithForLoop.yml&quot; (133,000 Î¼s, 0.13%)</title><rect x="773.4" y="37" width="1.6" height="15.0" fill="rgb(237,149,35)" rx="2" ry="2" />
-<text  x="776.45" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestLoadEnvFile.cov&quot;_-test.run_&quot;^TestLoadEnvFile$&quot; (15,000 samples, 0.01%)</title><rect x="955.1" y="37" width="0.2" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
+<text  x="958.11" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestPipelineUnmarshalYAML_WithVars_-i_&quot;./coverage/model.test/TestPipelineUnmarshalYAML_WithVars.cov&quot;_&gt;_&quot;./coverage/model.test/TestPipelineUnmarshalYAML_WithVars.yml&quot; (117,000 Î¼s, 0.12%)</title><rect x="843.1" y="37" width="1.4" height="15.0" fill="rgb(213,38,9)" rx="2" ry="2" />
-<text  x="846.14" y="47.5" ></text>
+<title>gotestsum_./..._--_-count_1 (690,000 samples, 0.60%)</title><rect x="1183.0" y="37" width="7.0" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
+<text  x="1185.97" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLoadPipeline_JobVariablesDecl_-i_&quot;./coverage/runner.test/TestLoadPipeline_JobVariablesDecl.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_JobVariablesDecl.yml&quot; (138,000 Î¼s, 0.14%)</title><rect x="800.9" y="37" width="1.6" height="15.0" fill="rgb(247,195,46)" rx="2" ry="2" />
-<text  x="803.93" y="47.5" ></text>
+<title>covertrace_--name_TestCountDepth_-i_&quot;./coverage/treeview.test/TestCountDepth.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestCountDepth.yml&quot; (492,000 samples, 0.42%)</title><rect x="647.4" y="37" width="5.0" height="15.0" fill="rgb(224,88,21)" rx="2" ry="2" />
+<text  x="650.39" y="47.5" ></text>
 </g>
 <g >
-<title>Atkins_project_tests,_build (100,895,000 Î¼s, 100.00%)</title><rect x="10.0" y="69" width="1180.0" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
+<title>covertrace_--name_TestIncludeDecl_UnmarshalString_-i_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalString.cov&quot;_&gt;_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalString.yml&quot; (323,000 samples, 0.28%)</title><rect x="736.4" y="37" width="3.3" height="15.0" fill="rgb(205,3,0)" rx="2" ry="2" />
+<text  x="739.45" y="47.5" ></text>
+</g>
+<g >
+<title>docker_compose_down (10,401,000 samples, 8.98%)</title><rect x="349.0" y="37" width="105.9" height="15.0" fill="rgb(214,44,10)" rx="2" ry="2" />
+<text  x="352.03" y="47.5" >docker_compo..</text>
+</g>
+<g >
+<title>covertrace_--name_TestNewNode_-i_&quot;./coverage/treeview.test/TestNewNode.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewNode.yml&quot; (374,000 samples, 0.32%)</title><rect x="827.9" y="37" width="3.8" height="15.0" fill="rgb(246,192,46)" rx="2" ry="2" />
+<text  x="830.85" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestNodeNestedStructure.cov&quot;_-test.run_&quot;^TestNodeNestedStructure$&quot; (11,000 samples, 0.01%)</title><rect x="960.4" y="37" width="0.1" height="15.0" fill="rgb(232,125,30)" rx="2" ry="2" />
+<text  x="963.38" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestProcessEnv_VarsOnly_-i_&quot;./coverage/runner.test/TestProcessEnv_VarsOnly.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_VarsOnly.yml&quot; (305,000 samples, 0.26%)</title><rect x="881.8" y="37" width="3.2" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
+<text  x="884.85" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestProcessEnv_IntegerValue.cov&quot;_-test.run_&quot;^TestProcessEnv_IntegerValue$&quot; (12,000 samples, 0.01%)</title><rect x="956.6" y="37" width="0.1" height="15.0" fill="rgb(224,90,21)" rx="2" ry="2" />
+<text  x="959.56" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestLogger_LogExec_Fail_-i_&quot;./coverage/eventlog.test/TestLogger_LogExec_Fail.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_LogExec_Fail.yml&quot; (238,000 samples, 0.21%)</title><rect x="786.7" y="37" width="2.4" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="789.65" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestDisplay_ThreadSafety.cov&quot;_-test.run_&quot;^TestDisplay_ThreadSafety$&quot; (14,000 samples, 0.01%)</title><rect x="959.6" y="37" width="0.2" height="15.0" fill="rgb(218,61,14)" rx="2" ry="2" />
+<text  x="962.63" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestProcessEnv_NoInterpolationWithoutContext_-i_&quot;./coverage/runner.test/TestProcessEnv_NoInterpolationWithoutContext.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_NoInterpolationWithoutContext.yml&quot; (324,000 samples, 0.28%)</title><rect x="878.5" y="37" width="3.3" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<text  x="881.55" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/model.test_-test.coverprofile_&quot;./coverage/model.test/TestPipelineUnmarshalYAML_WithVars.cov&quot;_-test.run_&quot;^TestPipelineUnmarshalYAML_WithVars$&quot; (14,000 samples, 0.01%)</title><rect x="951.2" y="37" width="0.1" height="15.0" fill="rgb(216,52,12)" rx="2" ry="2" />
+<text  x="954.17" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestProcessEnv_WithInterpolation_-i_&quot;./coverage/runner.test/TestProcessEnv_WithInterpolation.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_WithInterpolation.yml&quot; (346,000 samples, 0.30%)</title><rect x="888.1" y="37" width="3.5" height="15.0" fill="rgb(233,131,31)" rx="2" ry="2" />
+<text  x="891.07" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestLogger_GetElapsed_-i_&quot;./coverage/eventlog.test/TestLogger_GetElapsed.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_GetElapsed.yml&quot; (375,000 samples, 0.32%)</title><rect x="782.8" y="37" width="3.9" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
+<text  x="785.83" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithTasks.cov&quot;_-test.run_&quot;^TestBuildFromPipeline_WithTasks$&quot; (10,000 samples, 0.01%)</title><rect x="958.9" y="37" width="0.1" height="15.0" fill="rgb(247,193,46)" rx="2" ry="2" />
+<text  x="961.89" y="47.5" ></text>
+</g>
+<g >
+<title>covertrace_--name_TestEvaluateIfInContext_-i_&quot;./coverage/runner.test/TestEvaluateIfInContext.cov&quot;_&gt;_&quot;./coverage/runner.test/TestEvaluateIfInContext.yml&quot; (321,000 samples, 0.28%)</title><rect x="699.9" y="37" width="3.2" height="15.0" fill="rgb(232,127,30)" rx="2" ry="2" />
+<text  x="702.85" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestForLoopStepExecution.cov&quot;_-test.run_&quot;^TestForLoopStepExecution$&quot; (17,000 samples, 0.01%)</title><rect x="953.4" y="37" width="0.2" height="15.0" fill="rgb(208,16,3)" rx="2" ry="2" />
+<text  x="956.40" y="47.5" ></text>
+</g>
+<g >
+<title>./bin/treeview.test_-test.coverprofile_&quot;./coverage/treeview.test/TestSortJobsByDepth_DoesNotMutate.cov&quot;_-test.run_&quot;^TestSortJobsByDepth_DoesNotMutate$&quot; (20,000 samples, 0.02%)</title><rect x="960.8" y="37" width="0.2" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
+<text  x="963.82" y="47.5" ></text>
+</g>
+<g >
+<title>Atkins_project_tests,_build (115,877,000 samples, 100.00%)</title><rect x="10.0" y="69" width="1180.0" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
 <text  x="13.00" y="79.5" >Atkins_project_tests,_build</text>
 </g>
 <g >
-<title>covertrace_--name_TestAddChildren_-i_&quot;./coverage/treeview.test/TestAddChildren.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddChildren.yml&quot; (128,000 Î¼s, 0.13%)</title><rect x="727.3" y="37" width="1.5" height="15.0" fill="rgb(216,52,12)" rx="2" ry="2" />
-<text  x="730.33" y="47.5" ></text>
+<title>covertrace_--name_TestForLoopStepExecution_-i_&quot;./coverage/runner.test/TestForLoopStepExecution.cov&quot;_&gt;_&quot;./coverage/runner.test/TestForLoopStepExecution.yml&quot; (379,000 samples, 0.33%)</title><rect x="712.9" y="37" width="3.9" height="15.0" fill="rgb(211,29,7)" rx="2" ry="2" />
+<text  x="715.90" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestValidateJobRequirements_-i_&quot;./coverage/runner.test/TestValidateJobRequirements.cov&quot;_&gt;_&quot;./coverage/runner.test/TestValidateJobRequirements.yml&quot; (126,000 Î¼s, 0.12%)</title><rect x="871.4" y="37" width="1.5" height="15.0" fill="rgb(214,45,10)" rx="2" ry="2" />
-<text  x="874.41" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoopsIndexPattern.cov&quot;_-test.run_&quot;^TestLoadPipeline_WithForLoopsIndexPattern$&quot; (21,000 samples, 0.02%)</title><rect x="955.8" y="37" width="0.3" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="958.84" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestNewStepNode_-i_&quot;./coverage/treeview.test/TestNewStepNode.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestNewStepNode.yml&quot; (129,000 Î¼s, 0.13%)</title><rect x="828.4" y="37" width="1.5" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
-<text  x="831.38" y="47.5" ></text>
+<title>covertrace_--name_TestIncludeDecl_UnmarshalList_-i_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalList.cov&quot;_&gt;_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalList.yml&quot; (329,000 samples, 0.28%)</title><rect x="733.1" y="37" width="3.3" height="15.0" fill="rgb(249,206,49)" rx="2" ry="2" />
+<text  x="736.10" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestIncludeDecl_UnmarshalList_-i_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalList.cov&quot;_&gt;_&quot;./coverage/runner.test/TestIncludeDecl_UnmarshalList.yml&quot; (148,000 Î¼s, 0.15%)</title><rect x="785.5" y="37" width="1.8" height="15.0" fill="rgb(249,206,49)" rx="2" ry="2" />
-<text  x="788.53" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestCalculateDuration.cov&quot;_-test.run_&quot;^TestCalculateDuration$&quot; (10,000 samples, 0.01%)</title><rect x="947.2" y="37" width="0.1" height="15.0" fill="rgb(244,180,43)" rx="2" ry="2" />
+<text  x="950.15" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestHasChildren_-i_&quot;./coverage/treeview.test/TestHasChildren.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestHasChildren.yml&quot; (123,000 Î¼s, 0.12%)</title><rect x="784.1" y="37" width="1.4" height="15.0" fill="rgb(248,198,47)" rx="2" ry="2" />
-<text  x="787.09" y="47.5" ></text>
+<title>covertrace_--name_TestDiscoverConfig_PreferDotFile_-i_&quot;./coverage/runner.test/TestDiscoverConfig_PreferDotFile.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_PreferDotFile.yml&quot; (327,000 samples, 0.28%)</title><rect x="678.3" y="37" width="3.3" height="15.0" fill="rgb(226,99,23)" rx="2" ry="2" />
+<text  x="681.30" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestInterpolation_-i_&quot;./coverage/runner.test/TestInterpolation.cov&quot;_&gt;_&quot;./coverage/runner.test/TestInterpolation.yml&quot; (138,000 Î¼s, 0.14%)</title><rect x="790.4" y="37" width="1.7" height="15.0" fill="rgb(208,18,4)" rx="2" ry="2" />
-<text  x="793.44" y="47.5" ></text>
+<title>go_mod_tidy (44,000 samples, 0.04%)</title><rect x="516.4" y="37" width="0.5" height="15.0" fill="rgb(231,121,28)" rx="2" ry="2" />
+<text  x="519.43" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestBuildFromPipeline_EmptyPipeline_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_EmptyPipeline.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_EmptyPipeline.yml&quot; (120,000 Î¼s, 0.12%)</title><rect x="737.7" y="37" width="1.4" height="15.0" fill="rgb(224,88,21)" rx="2" ry="2" />
-<text  x="740.67" y="47.5" ></text>
+<title>covertrace_--name_TestNodeToStateNode_Nil_-i_&quot;./coverage/eventlog.test/TestNodeToStateNode_Nil.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNodeToStateNode_Nil.yml&quot; (311,000 samples, 0.27%)</title><rect x="859.8" y="37" width="3.1" height="15.0" fill="rgb(253,221,52)" rx="2" ry="2" />
+<text  x="862.76" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestTaskInvocationWithForLoop_-i_&quot;./coverage/runner.test/TestTaskInvocationWithForLoop.cov&quot;_&gt;_&quot;./coverage/runner.test/TestTaskInvocationWithForLoop.yml&quot; (134,000 Î¼s, 0.13%)</title><rect x="866.9" y="37" width="1.6" height="15.0" fill="rgb(224,90,21)" rx="2" ry="2" />
-<text  x="869.90" y="47.5" ></text>
+<title>covertrace_--name_TestMergeEnv_-i_&quot;./coverage/runner.test/TestMergeEnv.cov&quot;_&gt;_&quot;./coverage/runner.test/TestMergeEnv.yml&quot; (366,000 samples, 0.32%)</title><rect x="804.4" y="37" width="3.7" height="15.0" fill="rgb(212,33,8)" rx="2" ry="2" />
+<text  x="807.41" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_Write.cov&quot;_-test.run_&quot;^TestLogger_Write$&quot; (13,000 Î¼s, 0.01%)</title><rect x="874.3" y="37" width="0.2" height="15.0" fill="rgb(238,153,36)" rx="2" ry="2" />
-<text  x="877.32" y="47.5" ></text>
+<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestExtractRepoFromURL.cov&quot;_-test.run_&quot;^TestExtractRepoFromURL$&quot; (11,000 samples, 0.01%)</title><rect x="947.9" y="37" width="0.1" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="950.92" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestStatusToResult_-i_&quot;./coverage/eventlog.test/TestStatusToResult.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestStatusToResult.yml&quot; (117,000 Î¼s, 0.12%)</title><rect x="861.2" y="37" width="1.4" height="15.0" fill="rgb(227,103,24)" rx="2" ry="2" />
-<text  x="864.19" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestProcessEnv_WithCommandExecution.cov&quot;_-test.run_&quot;^TestProcessEnv_WithCommandExecution$&quot; (19,000 samples, 0.02%)</title><rect x="957.0" y="37" width="0.2" height="15.0" fill="rgb(223,86,20)" rx="2" ry="2" />
+<text  x="959.97" y="47.5" ></text>
 </g>
 <g >
-<title>go_mod_tidy (46,000 Î¼s, 0.05%)</title><rect x="639.8" y="37" width="0.5" height="15.0" fill="rgb(231,121,28)" rx="2" ry="2" />
-<text  x="642.81" y="47.5" ></text>
+<title>covertrace_--name_TestAddChildren_-i_&quot;./coverage/treeview.test/TestAddChildren.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddChildren.yml&quot; (541,000 samples, 0.47%)</title><rect x="589.4" y="37" width="5.5" height="15.0" fill="rgb(216,52,12)" rx="2" ry="2" />
+<text  x="592.42" y="47.5" ></text>
 </g>
 <g >
-<title>covertrace_--name_TestLogger_GetElapsed_-i_&quot;./coverage/eventlog.test/TestLogger_GetElapsed.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_GetElapsed.yml&quot; (120,000 Î¼s, 0.12%)</title><rect x="808.7" y="37" width="1.4" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="811.65" y="47.5" ></text>
+<title>./bin/runner.test_-test.coverprofile_&quot;./coverage/runner.test/TestExpandForWithVariables.cov&quot;_-test.run_&quot;^TestExpandForWithVariables$&quot; (12,000 samples, 0.01%)</title><rect x="953.3" y="37" width="0.1" height="15.0" fill="rgb(249,203,48)" rx="2" ry="2" />
+<text  x="956.28" y="47.5" ></text>
 </g>
 <g >
-<title>./bin/eventlog.test_-test.coverprofile_&quot;./coverage/eventlog.test/TestLogger_GetElapsed.cov&quot;_-test.run_&quot;^TestLogger_GetElapsed$&quot; (20,000 Î¼s, 0.02%)</title><rect x="873.5" y="37" width="0.2" height="15.0" fill="rgb(254,229,54)" rx="2" ry="2" />
-<text  x="876.48" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestForLoopStepExecution_-i_&quot;./coverage/runner.test/TestForLoopStepExecution.cov&quot;_&gt;_&quot;./coverage/runner.test/TestForLoopStepExecution.yml&quot; (126,000 Î¼s, 0.12%)</title><rect x="778.0" y="37" width="1.4" height="15.0" fill="rgb(211,29,7)" rx="2" ry="2" />
-<text  x="780.97" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestLogger_NoGoroutineIDWithoutDebug_-i_&quot;./coverage/eventlog.test/TestLogger_NoGoroutineIDWithoutDebug.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_NoGoroutineIDWithoutDebug.yml&quot; (114,000 Î¼s, 0.11%)</title><rect x="815.7" y="37" width="1.3" height="15.0" fill="rgb(235,140,33)" rx="2" ry="2" />
-<text  x="818.70" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestDiscoverConfig_CurrentDir_-i_&quot;./coverage/runner.test/TestDiscoverConfig_CurrentDir.cov&quot;_&gt;_&quot;./coverage/runner.test/TestDiscoverConfig_CurrentDir.yml&quot; (118,000 Î¼s, 0.12%)</title><rect x="756.2" y="37" width="1.4" height="15.0" fill="rgb(212,33,7)" rx="2" ry="2" />
-<text  x="759.24" y="47.5" ></text>
-</g>
-<g >
-<title>mkdir_-p_coverage/${{_item_}} (13,000 Î¼s, 0.01%)</title><rect x="881.2" y="37" width="0.1" height="15.0" fill="rgb(211,31,7)" rx="2" ry="2" />
-<text  x="884.17" y="47.5" ></text>
-</g>
-<g >
-<title>test:run (24,597,000 Î¼s, 24.38%)</title><rect x="881.3" y="53" width="287.7" height="15.0" fill="rgb(242,170,40)" rx="2" ry="2" />
-<text  x="884.33" y="63.5" >test:run</text>
-</g>
-<g >
-<title>covertrace_--name_TestExpandForWithVariables_-i_&quot;./coverage/runner.test/TestExpandForWithVariables.cov&quot;_&gt;_&quot;./coverage/runner.test/TestExpandForWithVariables.yml&quot; (138,000 Î¼s, 0.14%)</title><rect x="775.0" y="37" width="1.6" height="15.0" fill="rgb(247,195,46)" rx="2" ry="2" />
-<text  x="778.00" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestNullCoalescingOperator_-i_&quot;./coverage/runner.test/TestNullCoalescingOperator.cov&quot;_&gt;_&quot;./coverage/runner.test/TestNullCoalescingOperator.yml&quot; (133,000 Î¼s, 0.13%)</title><rect x="841.6" y="37" width="1.5" height="15.0" fill="rgb(219,65,15)" rx="2" ry="2" />
-<text  x="844.58" y="47.5" ></text>
-</g>
-<g >
-<title>gofumpt_-w_. (40,000 Î¼s, 0.04%)</title><rect x="640.3" y="37" width="0.5" height="15.0" fill="rgb(205,2,0)" rx="2" ry="2" />
-<text  x="643.34" y="47.5" ></text>
-</g>
-<g >
-<title>test:coverage (12,558,000 Î¼s, 12.45%)</title><rect x="726.0" y="53" width="146.9" height="15.0" fill="rgb(242,173,41)" rx="2" ry="2" />
-<text  x="729.01" y="63.5" >test:coverage</text>
-</g>
-<g >
-<title>covertrace_--name_TestLogger_DebugGoroutineID_-i_&quot;./coverage/eventlog.test/TestLogger_DebugGoroutineID.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestLogger_DebugGoroutineID.yml&quot; (124,000 Î¼s, 0.12%)</title><rect x="807.2" y="37" width="1.5" height="15.0" fill="rgb(249,203,48)" rx="2" ry="2" />
-<text  x="810.20" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestCaptureGitInfo_-i_&quot;./coverage/eventlog.test/TestCaptureGitInfo.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestCaptureGitInfo.yml&quot; (127,000 Î¼s, 0.13%)</title><rect x="746.2" y="37" width="1.5" height="15.0" fill="rgb(206,7,1)" rx="2" ry="2" />
-<text  x="749.22" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestEvaluateIfInContext_-i_&quot;./coverage/runner.test/TestEvaluateIfInContext.cov&quot;_&gt;_&quot;./coverage/runner.test/TestEvaluateIfInContext.yml&quot; (116,000 Î¼s, 0.11%)</title><rect x="772.1" y="37" width="1.3" height="15.0" fill="rgb(232,127,30)" rx="2" ry="2" />
-<text  x="775.09" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestProcessEnv_NoInterpolationWithoutContext_-i_&quot;./coverage/runner.test/TestProcessEnv_NoInterpolationWithoutContext.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_NoInterpolationWithoutContext.yml&quot; (140,000 Î¼s, 0.14%)</title><rect x="845.9" y="37" width="1.7" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
-<text  x="848.94" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestBuildFromPipeline_WithSummarize_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithSummarize.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_WithSummarize.yml&quot; (122,000 Î¼s, 0.12%)</title><rect x="742.0" y="37" width="1.4" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
-<text  x="744.99" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestBuildFromPipeline_ConsistentOrdering_-i_&quot;./coverage/treeview.test/TestBuildFromPipeline_ConsistentOrdering.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestBuildFromPipeline_ConsistentOrdering.yml&quot; (124,000 Î¼s, 0.12%)</title><rect x="734.8" y="37" width="1.4" height="15.0" fill="rgb(251,211,50)" rx="2" ry="2" />
-<text  x="737.78" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestLoadPipeline_WithForLoops_-i_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoops.cov&quot;_&gt;_&quot;./coverage/runner.test/TestLoadPipeline_WithForLoops.yml&quot; (134,000 Î¼s, 0.13%)</title><rect x="804.2" y="37" width="1.6" height="15.0" fill="rgb(241,168,40)" rx="2" ry="2" />
-<text  x="807.21" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestProcessEnv_WithInterpolation_-i_&quot;./coverage/runner.test/TestProcessEnv_WithInterpolation.cov&quot;_&gt;_&quot;./coverage/runner.test/TestProcessEnv_WithInterpolation.yml&quot; (152,000 Î¼s, 0.15%)</title><rect x="851.0" y="37" width="1.8" height="15.0" fill="rgb(233,131,31)" rx="2" ry="2" />
-<text  x="853.98" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestAddJob_WithSummaryFlag_-i_&quot;./coverage/treeview.test/TestAddJob_WithSummaryFlag.cov&quot;_&gt;_&quot;./coverage/treeview.test/TestAddJob_WithSummaryFlag.yml&quot; (112,000 Î¼s, 0.11%)</title><rect x="733.5" y="37" width="1.3" height="15.0" fill="rgb(224,89,21)" rx="2" ry="2" />
-<text  x="736.47" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestGetGoroutineID_-i_&quot;./coverage/eventlog.test/TestGetGoroutineID.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestGetGoroutineID.yml&quot; (124,000 Î¼s, 0.12%)</title><rect x="782.6" y="37" width="1.5" height="15.0" fill="rgb(229,113,27)" rx="2" ry="2" />
-<text  x="785.64" y="47.5" ></text>
-</g>
-<g >
-<title>covertrace_--name_TestNewLogger_NilWhenEmpty_-i_&quot;./coverage/eventlog.test/TestNewLogger_NilWhenEmpty.cov&quot;_&gt;_&quot;./coverage/eventlog.test/TestNewLogger_NilWhenEmpty.yml&quot; (125,000 Î¼s, 0.12%)</title><rect x="825.5" y="37" width="1.4" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
-<text  x="828.47" y="47.5" ></text>
+<title>covertrace_--name_TestStepUnmarshalYAML_WithInclude_-i_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithInclude.cov&quot;_&gt;_&quot;./coverage/model.test/TestStepUnmarshalYAML_WithInclude.yml&quot; (281,000 samples, 0.24%)</title><rect x="928.2" y="37" width="2.9" height="15.0" fill="rgb(222,81,19)" rx="2" ry="2" />
+<text  x="931.24" y="47.5" ></text>
 </g>
 </g>
 </svg>
