@@ -25,19 +25,21 @@ func NewCommand() *cli.Command {
 	var debug bool
 	var logFile string
 	var versionFlag bool
+	var fileFlag *pflag.Flag
 
 	return &cli.Command{
 		Name:    "run",
 		Title:   "Pipeline automation tool",
 		Default: true,
 		Bind: func(fs *pflag.FlagSet) {
-			fs.StringVarP(&pipelineFile, "file", "f", "atkins.yml", "Path to pipeline file")
+			fs.StringVarP(&pipelineFile, "file", "f", "", "Path to pipeline file (auto-discovers .atkins.yml)")
 			fs.StringVar(&job, "job", "", "Specific job to run")
 			fs.BoolVarP(&listFlag, "list", "l", false, "List pipeline jobs and dependencies")
 			fs.BoolVar(&lintFlag, "lint", false, "Lint pipeline for errors")
 			fs.BoolVar(&debug, "debug", false, "Print debug data")
 			fs.BoolVarP(&versionFlag, "version", "v", false, "Print version and build information")
 			fs.StringVar(&logFile, "log", "", "Log file path for command execution")
+			fileFlag = fs.Lookup("file")
 		},
 		Run: func(ctx context.Context, args []string) error {
 			// Handle version flag
@@ -46,11 +48,15 @@ func NewCommand() *cli.Command {
 				return nil
 			}
 
+			// Track if file was explicitly provided
+			fileExplicitlySet := fileFlag != nil && fileFlag.Changed
+
 			// Handle positional arguments
 			for _, arg := range args {
 				// Check if arg is a file that exists (shebang invocation)
 				if _, err := os.Stat(arg); err == nil {
 					pipelineFile = arg
+					fileExplicitlySet = true
 				} else if arg == "-l" {
 					listFlag = true
 				} else if job == "" {
@@ -59,10 +65,28 @@ func NewCommand() *cli.Command {
 				}
 			}
 
-			// Resolve absolute path
-			absPath, err := filepath.Abs(pipelineFile)
-			if err != nil {
-				return fmt.Errorf("%s %v", colors.BrightRed("ERROR:"), err)
+			var absPath string
+			var err error
+
+			if fileExplicitlySet {
+				// If -f/--file was explicitly provided, use it directly without changing workdir
+				absPath, err = filepath.Abs(pipelineFile)
+				if err != nil {
+					return fmt.Errorf("%s %v", colors.BrightRed("ERROR:"), err)
+				}
+			} else {
+				// Discover config file by traversing parent directories
+				configPath, configDir, err := runner.DiscoverConfigFromCwd()
+				if err != nil {
+					return fmt.Errorf("%s %v", colors.BrightRed("ERROR:"), err)
+				}
+				absPath = configPath
+				pipelineFile = configPath
+
+				// Change to the directory containing the config file
+				if err := os.Chdir(configDir); err != nil {
+					return fmt.Errorf("%s failed to change directory to %s: %v", colors.BrightRed("ERROR:"), configDir, err)
+				}
 			}
 
 			// Load and parse pipeline
