@@ -1,0 +1,81 @@
+@startuml
+title Atkins project tests, build
+
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+left to right direction
+
+component "task: test:simple" as default___Run_everything_needed_task_test_simple #Khaki
+component "gotestsum ./... -- -count 1" as test_simple___Simple_go_test_with_gotestsum_passth_step_0 #WhiteSmoke
+component "go test -cover -coverpkg=./..." as test_build___Build_tests_step_1 #WhiteSmoke
+component "./bin/${{ item }} -test.cov... (100 execs)" as test_detail_step_1 #WhiteSmoke
+component "task: docker:down" as test_run___Run_built_tests_task_docker_down #Khaki
+component "goimports-reviser -set-alia..." as fmt___Format_the_code_step_1 #WhiteSmoke
+component "go mod tidy" as fmt___Format_the_code_step_3 #WhiteSmoke
+component "test:build - Build tests" as test_build___Build_tests #LightGreen
+component "fmt - Format the code" as fmt___Format_the_code #LightGreen
+component "test:run - Run built tests" as test_run___Run_built_tests #LightGreen
+component "docker:down - Bring down docker env" as docker_down___Bring_down_docker_env #LightGreen
+component "docker compose down" as docker_down___Bring_down_docker_env_step_0 #WhiteSmoke
+component "task: test:build" as default___Run_everything_needed_task_test_build #Khaki
+component "rm bin/*.test -f" as test_build___Build_tests_step_0 #WhiteSmoke
+component "task: docker:up" as test_run___Run_built_tests_task_docker_up #Khaki
+component "docker compose up -d --wait..." as docker_up___Bring_up_docker_env_step_0 #WhiteSmoke
+component "test:simple - Simple go test with gotestsum (passthru)" as test_simple___Simple_go_test_with_gotestsum_passth #LightGreen
+component "docker:up - Bring up docker env" as docker_up___Bring_up_docker_env #LightGreen
+component "rm -rf coverage" as test_run___Run_built_tests_step_1 #WhiteSmoke
+component "test:detail" as test_detail #LightGreen
+component "test:coverage" as test_coverage #LightGreen
+component "covertrace --name ${{ funcN... (100 execs)" as test_coverage_step_0 #WhiteSmoke
+component "gofumpt -w ." as fmt___Format_the_code_step_2 #WhiteSmoke
+component "task: test:run" as default___Run_everything_needed_task_test_run #Khaki
+component "goimports -w ." as fmt___Format_the_code_step_0 #WhiteSmoke
+component "default - Run everything needed" as default___Run_everything_needed #LightGreen
+component "task: test:coverage" as test_run___Run_built_tests_task_test_coverage #Khaki
+component "task: test:detail" as test_run___Run_built_tests_task_test_detail #Khaki
+component "mkdir -p coverage/${{ item }}" as test_detail_step_0 #WhiteSmoke
+component "Atkins project tests, build" as Atkins_project_tests__build #LightBlue
+
+' Relationships
+Atkins_project_tests__build --> fmt___Format_the_code
+fmt___Format_the_code --> fmt___Format_the_code_step_0
+fmt___Format_the_code_step_0 --> fmt___Format_the_code_step_1
+fmt___Format_the_code_step_1 --> fmt___Format_the_code_step_2
+fmt___Format_the_code_step_2 --> fmt___Format_the_code_step_3
+Atkins_project_tests__build --> default___Run_everything_needed
+fmt___Format_the_code --> default___Run_everything_needed
+default___Run_everything_needed --> default___Run_everything_needed_task_test_simple
+default___Run_everything_needed_task_test_simple ..> test_simple___Simple_go_test_with_gotestsum_passth
+test_simple___Simple_go_test_with_gotestsum_passth --> test_simple___Simple_go_test_with_gotestsum_passth_step_0
+default___Run_everything_needed_task_test_simple --> default___Run_everything_needed_task_test_build
+test_simple___Simple_go_test_with_gotestsum_passth --> default___Run_everything_needed_task_test_build
+test_simple___Simple_go_test_with_gotestsum_passth_step_0 --> default___Run_everything_needed_task_test_build
+default___Run_everything_needed_task_test_build ..> test_build___Build_tests
+test_build___Build_tests --> test_build___Build_tests_step_0
+test_build___Build_tests_step_0 --> test_build___Build_tests_step_1
+default___Run_everything_needed_task_test_build --> default___Run_everything_needed_task_test_run
+test_build___Build_tests --> default___Run_everything_needed_task_test_run
+test_build___Build_tests_step_1 --> default___Run_everything_needed_task_test_run
+default___Run_everything_needed_task_test_run ..> test_run___Run_built_tests
+test_run___Run_built_tests --> test_run___Run_built_tests_task_docker_up
+test_run___Run_built_tests_task_docker_up ..> docker_up___Bring_up_docker_env
+docker_up___Bring_up_docker_env --> docker_up___Bring_up_docker_env_step_0
+test_run___Run_built_tests_task_docker_up --> test_run___Run_built_tests_step_1
+docker_up___Bring_up_docker_env --> test_run___Run_built_tests_step_1
+docker_up___Bring_up_docker_env_step_0 --> test_run___Run_built_tests_step_1
+test_run___Run_built_tests_step_1 --> test_run___Run_built_tests_task_test_detail
+test_run___Run_built_tests_task_test_detail ..> test_detail
+test_detail --> test_detail_step_0
+test_detail_step_0 --> test_detail_step_1
+test_run___Run_built_tests_task_test_detail --> test_run___Run_built_tests_task_test_coverage
+test_detail --> test_run___Run_built_tests_task_test_coverage
+test_detail_step_1 --> test_run___Run_built_tests_task_test_coverage
+test_run___Run_built_tests_task_test_coverage ..> test_coverage
+test_coverage --> test_coverage_step_0
+test_run___Run_built_tests_task_test_coverage --> test_run___Run_built_tests_task_docker_down
+test_coverage --> test_run___Run_built_tests_task_docker_down
+test_coverage_step_0 --> test_run___Run_built_tests_task_docker_down
+test_run___Run_built_tests_task_docker_down ..> docker_down___Bring_down_docker_env
+docker_down___Bring_down_docker_env --> docker_down___Bring_down_docker_env_step_0
+
+@enduml

@@ -37,6 +37,7 @@ tasks:
 
   record:gif:
     cmds:
+      - asciinema rec --cols 100 --rows 25 -t "$(yq .name .atkins.yml)" -c "atkins" atkins.cast
       - $HOME/.cargo/bin/agg atkins.cast atkins.gif
 
   test:fixtures:

@@ -8,7 +8,11 @@ see which jobs are running, and run jobs and steps in parallel.
 
 Flamegraphs can be generated out of Atkins execution:
 
-![](./atkins.svg)
+![](./docs/flamegraph.svg)
+
+Or UML flow charts:
+
+![](./docs/treeview.svg)
 
 To install the tool, see the [installation guide](./docs/install.md).
 
