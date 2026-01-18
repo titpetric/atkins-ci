@@ -192,6 +192,40 @@ func TestExpandForWithVariables(t *testing.T) {
 				1: {"i": 1, "item": "test2"},
 			},
 		},
+		{
+			name:      "inline array literal",
+			forSpec:   `test in ["detach", "depends_on", "root_jobs", "nested"]`,
+			vars:      map[string]any{},
+			wantCount: 4,
+			wantVars: map[int]map[string]any{
+				0: {"test": "detach"},
+				1: {"test": "depends_on"},
+				2: {"test": "root_jobs"},
+				3: {"test": "nested"},
+			},
+		},
+		{
+			name:      "inline integer array literal",
+			forSpec:   `num in [1, 2, 3]`,
+			vars:      map[string]any{},
+			wantCount: 3,
+			wantVars: map[int]map[string]any{
+				0: {"num": 1},
+				1: {"num": 2},
+				2: {"num": 3},
+			},
+		},
+		{
+			name:      "inline mixed array literal",
+			forSpec:   `item in ["hello", 42, "world"]`,
+			vars:      map[string]any{},
+			wantCount: 3,
+			wantVars: map[int]map[string]any{
+				0: {"item": "hello"},
+				1: {"item": 42},
+				2: {"item": "world"},
+			},
+		},
 	}
 
 	for _, tt := range tests {

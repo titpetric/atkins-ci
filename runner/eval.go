@@ -165,6 +165,7 @@ func parseForPattern(forSpec string) (string, string, string, string, error) {
 // itemsSpec can be:
 //   - A variable name: "items"
 //   - A bash command: "$(ls ./bin/*.test)"
+//   - An expr-lang expression: `["a", "b", "c"]` or any valid expr returning []any
 func getForItems(ctx *ExecutionContext, itemsSpec string, executeCommand func(string) (string, error)) ([]any, error) {
 	itemsSpec = strings.TrimSpace(itemsSpec)
 
@@ -204,74 +205,59 @@ func getForItems(ctx *ExecutionContext, itemsSpec string, executeCommand func(st
 		// Evaluate expression (supports dot notation, operators, etc)
 		val, err := evaluateExpression(exprStr, ctx)
 		if err == nil && val != nil {
-			// Convert to []any
-			switch v := val.(type) {
-			case []any:
-				return v, nil
-			case []string:
-				items := make([]any, len(v))
-				for i, s := range v {
-					items[i] = s
-				}
-				return items, nil
-			case string:
-				// Split by newlines to support multi-line variables
-				lines := strings.Split(strings.TrimSpace(v), "\n")
-				items := make([]any, 0, len(lines))
-				for _, line := range lines {
-					line = strings.TrimSpace(line)
-					if line != "" {
-						items = append(items, line)
-					}
-				}
-				if len(items) > 0 {
-					return items, nil
-				}
-				return []any{v}, nil
-			case map[string]any:
-				return []any{v}, nil
-			default:
-				return []any{v}, nil
-			}
+			return convertToAnySlice(val)
+		}
+	}
+
+	// Try evaluating as an expr-lang expression (e.g., array literals like ["a", "b"])
+	// This supports inline arrays and other expr constructs
+	if val, err := evaluateExpression(itemsSpec, ctx); err == nil && val != nil {
+		if items, err := convertToAnySlice(val); err == nil {
+			return items, nil
 		}
 	}
 
 	// Look up in variables
 	if val, ok := ctx.Variables[itemsSpec]; ok {
-		// Convert to []any
-		switch v := val.(type) {
-		case []any:
-			return v, nil
-		case []string:
-			items := make([]any, len(v))
-			for i, s := range v {
-				items[i] = s
-			}
-			return items, nil
-		case string:
-			// Split by newlines to support multi-line variables (e.g., from $(command) output)
-			lines := strings.Split(strings.TrimSpace(v), "\n")
-			items := make([]any, 0, len(lines))
-			for _, line := range lines {
-				line = strings.TrimSpace(line)
-				if line != "" {
-					items = append(items, line)
-				}
-			}
-			if len(items) > 0 {
-				return items, nil
-			}
-			// If no non-empty lines, return the original string as a single item
-			return []any{v}, nil
-		case map[string]any:
-			// For key-value, return the map as a single item
-			return []any{v}, nil
-		default:
-			return []any{v}, nil
-		}
+		return convertToAnySlice(val)
 	}
 
 	return nil, fmt.Errorf("variable %q not found in context", itemsSpec)
+}
+
+// convertToAnySlice converts various types to []any for iteration.
+// Supports []any, []string, string (split by newlines), and map[string]any.
+func convertToAnySlice(val any) ([]any, error) {
+	switch v := val.(type) {
+	case []any:
+		return v, nil
+	case []string:
+		items := make([]any, len(v))
+		for i, s := range v {
+			items[i] = s
+		}
+		return items, nil
+	case string:
+		// Split by newlines to support multi-line variables (e.g., from $(command) output)
+		lines := strings.Split(strings.TrimSpace(v), "\n")
+		items := make([]any, 0, len(lines))
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if line != "" {
+				items = append(items, line)
+			}
+		}
+		if len(items) > 0 {
+			return items, nil
+		}
+		// If no non-empty lines, return the original string as a single item
+		return []any{v}, nil
+	case map[string]any:
+		// For key-value, return the map as a single item
+		return []any{v}, nil
+	default:
+		return []any{v}, nil
+	}
 }
 
 // copyMap creates a shallow copy of a map
