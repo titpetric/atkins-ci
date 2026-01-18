@@ -10,5 +10,6 @@ vars:
 jobs:
   default:
     steps:
+      - cmd: termshot --filename examples/atkins.png -- atkins
       - for: test in ["detach", "depends_on", "root_jobs", "nested"]
         cmd: termshot --filename examples/${{test}}.png -- atkins -l --file tests/${{test}}.yml
