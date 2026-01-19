@@ -26,6 +26,7 @@ type Step struct {
 	Verbose   bool                   `yaml:"verbose,omitempty"`
 	Summarize bool                   `yaml:"summarize,omitempty"`
 	Passthru  bool                   `yaml:"passthru,omitempty"` // If true, output is printed with tree indentation
+	TTY       bool                   `yaml:"tty,omitempty"`      // If true, allocate a PTY for the command (enables color output)
 }
 
 // DeferredStep represents a deferred step wrapper.

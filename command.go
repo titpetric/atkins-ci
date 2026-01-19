@@ -25,6 +25,7 @@ func NewCommand() *cli.Command {
 	var debug bool
 	var logFile string
 	var versionFlag bool
+	var finalOutputOnly bool
 	var fileFlag *pflag.Flag
 
 	return &cli.Command{
@@ -39,6 +40,7 @@ func NewCommand() *cli.Command {
 			fs.BoolVar(&debug, "debug", false, "Print debug data")
 			fs.BoolVarP(&versionFlag, "version", "v", false, "Print version and build information")
 			fs.StringVar(&logFile, "log", "", "Log file path for command execution")
+			fs.BoolVar(&finalOutputOnly, "final", false, "Only render final output without redrawing (no interactive tree)")
 			fileFlag = fs.Lookup("file")
 		},
 		Run: func(ctx context.Context, args []string) error {
@@ -147,7 +149,13 @@ func NewCommand() *cli.Command {
 			var failedPipeline string
 
 			for _, pipeline := range pipelines {
-				err := runner.RunPipelineWithLogAndFile(ctx, pipeline, job, logFile, pipelineFile, debug)
+				err := runner.RunPipeline(ctx, pipeline, runner.PipelineOptions{
+					Job:          job,
+					LogFile:      logFile,
+					PipelineFile: pipelineFile,
+					Debug:        debug,
+					FinalOnly:    finalOutputOnly,
+				})
 				if err != nil {
 					exitCode = 1
 					failedPipeline = pipeline.Name

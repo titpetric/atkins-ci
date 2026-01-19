@@ -16,27 +16,29 @@ import (
 	"github.com/titpetric/atkins/treeview"
 )
 
-// RunPipelineWithLog runs a pipeline with optional logging to a file.
-func RunPipelineWithLog(ctx context.Context, pipeline *model.Pipeline, job string, logFile string) error {
-	return RunPipelineWithLogAndFile(ctx, pipeline, job, logFile, "", false)
+// PipelineOptions contains options for running a pipeline.
+type PipelineOptions struct {
+	Job          string
+	LogFile      string
+	PipelineFile string
+	Debug        bool
+	FinalOnly    bool
 }
 
-// RunPipelineWithLogAndFile runs a pipeline with optional logging to a file and pipeline filename.
-func RunPipelineWithLogAndFile(ctx context.Context, pipeline *model.Pipeline, job string, logFile string, pipelineFile string, debug bool) error {
-	logger := eventlog.NewLogger(logFile, pipeline.Name, pipelineFile, debug)
-	return runPipeline(ctx, pipeline, job, logger)
+// RunPipeline runs a pipeline with the given options.
+func RunPipeline(ctx context.Context, pipeline *model.Pipeline, opts PipelineOptions) error {
+	var logger *eventlog.Logger
+	if opts.LogFile != "" || opts.PipelineFile != "" {
+		logger = eventlog.NewLogger(opts.LogFile, pipeline.Name, opts.PipelineFile, opts.Debug)
+	}
+	return runPipeline(ctx, pipeline, opts.Job, logger, opts.FinalOnly)
 }
 
-// RunPipeline runs a pipeline without logging.
-func RunPipeline(ctx context.Context, pipeline *model.Pipeline, job string) error {
-	return runPipeline(ctx, pipeline, job, nil)
-}
-
-func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logger *eventlog.Logger) error {
+func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logger *eventlog.Logger, finalOnly bool) error {
 	tree := treeview.NewBuilder(pipeline.Name)
 	root := tree.Root()
 
-	display := treeview.NewDisplay()
+	display := treeview.NewDisplayWithFinal(finalOnly)
 	pipelineCtx := &ExecutionContext{
 		Variables:   make(map[string]any),
 		Env:         make(map[string]string),

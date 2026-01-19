@@ -1024,7 +1024,7 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 	var writer *LineCapturingWriter
 	if shouldPassthru && execCtx.CurrentStep != nil {
 		writer = NewLineCapturingWriter()
-		_, err = exec.ExecuteCommandWithWriter(interpolated, writer)
+		_, err = exec.ExecuteCommandWithWriter(interpolated, writer, step.TTY)
 	} else {
 		_, err = exec.ExecuteCommandWithQuiet(interpolated, execCtx.Verbose)
 	}

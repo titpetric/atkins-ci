@@ -67,7 +67,8 @@ jobs:
     desc: "Simple go test with gotestsum (passthru)"
     passthru: true
     steps:
-      - gotestsum ./... -- -count 1
+      - tty: true
+        cmd: gotestsum ./... -- -count 1
 
   test:build:
     desc: "Build tests"

@@ -100,10 +100,10 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 	return stdout.String(), nil
 }
 
-// ExecuteCommandWithWriter executes a command with PTY allocation and writes output to the provided writer.
-// PTY allocation ensures commands like gotestsum produce colored output.
+// ExecuteCommandWithWriter executes a command and writes output to the provided writer.
+// If usePTY is true, allocates a PTY for the command (enables colored output for tools like gotestsum).
 // Also returns the full stdout string for the caller.
-func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string, error) {
+func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer, usePTY bool) (string, error) {
 	if cmdStr == "" {
 		return "", nil
 	}
@@ -119,25 +119,51 @@ func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string
 	}
 	cmd.Env = cmdEnv
 
-	// Allocate a PTY for the command to enable color output
-	ptmx, err := pty.Start(cmd)
-	if err != nil {
-		return "", ExecError{
-			Message:      "failed to start command with pty: " + err.Error(),
-			LastExitCode: 1,
-			Output:       "",
-			Trace:        "",
+	if usePTY {
+		// Allocate a PTY for the command to enable color output
+		ptmx, err := pty.Start(cmd)
+		if err != nil {
+			return "", ExecError{
+				Message:      "failed to start command with pty: " + err.Error(),
+				LastExitCode: 1,
+				Output:       "",
+				Trace:        "",
+			}
 		}
-	}
-	defer ptmx.Close()
+		defer ptmx.Close()
 
-	// Copy PTY output to both the buffer and provided writer
+		// Copy PTY output to both the buffer and provided writer
+		var stdout bytes.Buffer
+		multiWriter := io.MultiWriter(&stdout, writer)
+		_, _ = io.Copy(multiWriter, ptmx)
+
+		// Wait for command to complete
+		err = cmd.Wait()
+		if err != nil {
+			// Extract exit code
+			exitCode := 1
+			if exitErr, ok := err.(*exec.ExitError); ok {
+				exitCode = exitErr.ExitCode()
+			}
+
+			return "", ExecError{
+				Message:      "failed to run command: " + err.Error(),
+				LastExitCode: exitCode,
+				Output:       stdout.String(),
+				Trace:        "",
+			}
+		}
+
+		return stdout.String(), nil
+	}
+
+	// Non-PTY execution: use pipes for stdout/stderr
 	var stdout bytes.Buffer
 	multiWriter := io.MultiWriter(&stdout, writer)
-	_, _ = io.Copy(multiWriter, ptmx)
+	cmd.Stdout = multiWriter
+	cmd.Stderr = multiWriter
 
-	// Wait for command to complete
-	err = cmd.Wait()
+	err := cmd.Run()
 	if err != nil {
 		// Extract exit code
 		exitCode := 1
@@ -145,14 +171,12 @@ func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string
 			exitCode = exitErr.ExitCode()
 		}
 
-		resErr := ExecError{
+		return "", ExecError{
 			Message:      "failed to run command: " + err.Error(),
 			LastExitCode: exitCode,
 			Output:       stdout.String(),
 			Trace:        "",
 		}
-
-		return "", resErr
 	}
 
 	return stdout.String(), nil

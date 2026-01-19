@@ -14,6 +14,7 @@ type Display struct {
 	mu            sync.Mutex
 	isTerminal    bool
 	renderer      *Renderer
+	finalOnly     bool
 }
 
 // NewDisplay creates a new display manager.
@@ -23,6 +24,18 @@ func NewDisplay() *Display {
 		lastLineCount: 0,
 		isTerminal:    isTerminal,
 		renderer:      NewRenderer(),
+		finalOnly:     false,
+	}
+}
+
+// NewDisplayWithFinal creates a new display manager with final-only mode.
+func NewDisplayWithFinal(finalOnly bool) *Display {
+	isTerminal := term.IsTerminal(int(os.Stdout.Fd()))
+	return &Display{
+		lastLineCount: 0,
+		isTerminal:    isTerminal && !finalOnly,
+		renderer:      NewRenderer(),
+		finalOnly:     finalOnly,
 	}
 }
 

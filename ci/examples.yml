@@ -7,12 +7,24 @@ vars:
   build:
     goarch: [arm64, amd64]
 
+env:
+  vars:
+    CI: "true"
+
 jobs:
   default:
     steps:
-      - cmd: termshot --filename examples/atkins.run.png -- atkins
-      - cmd: termshot --filename examples/atkins.list.png -- atkins -l
+      - passthru: true
+        cmd: env | grep CI
+      - tty: true
+        passthru: true
+        cmd: termshot --filename examples/atkins.run.png -- atkins --final
+      - tty: true
+        passthru: true
+        cmd: termshot --filename examples/atkins.list.png -- atkins -l --final
       - for: test in ["detach", "depends_on", "root_jobs", "nested"]
+        tty: true
+        passthru: true
         cmds:
-          - termshot --filename examples/${{test}}.run.png -- atkins --file tests/${{test}}.yml
-          - termshot --filename examples/${{test}}.list.png -- atkins -l --file tests/${{test}}.yml
+          - termshot --filename examples/${{test}}.run.png -- atkins --file tests/${{test}}.yml --final
+          - termshot --filename examples/${{test}}.list.png -- atkins -l --file tests/${{test}}.yml --final
