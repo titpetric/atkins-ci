@@ -65,10 +65,12 @@ type Log struct {
 
 // RunSummary provides aggregate statistics for the run.
 type RunSummary struct {
-	Duration     float64 `yaml:"duration"`      // Total duration in seconds
-	TotalSteps   int     `yaml:"total_steps"`   // Total steps executed
-	PassedSteps  int     `yaml:"passed_steps"`  // Steps that passed
-	FailedSteps  int     `yaml:"failed_steps"`  // Steps that failed
-	SkippedSteps int     `yaml:"skipped_steps"` // Steps that were skipped
-	Result       Result  `yaml:"result"`        // Overall result
+	Duration     float64 `yaml:"duration"`               // Total duration in seconds
+	TotalSteps   int     `yaml:"total_steps"`            // Total steps executed
+	PassedSteps  int     `yaml:"passed_steps"`           // Steps that passed
+	FailedSteps  int     `yaml:"failed_steps"`           // Steps that failed
+	SkippedSteps int     `yaml:"skipped_steps"`          // Steps that were skipped
+	Result       Result  `yaml:"result"`                 // Overall result
+	MemoryAlloc  uint64  `yaml:"memory_alloc,omitempty"` // Memory allocated in bytes
+	Goroutines   int     `yaml:"goroutines,omitempty"`   // Number of goroutines running
 }

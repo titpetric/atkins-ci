@@ -53,6 +53,13 @@ func (w *LineCapturingWriter) GetLines() []string {
 	return lines
 }
 
+// String returns the raw captured output.
+func (w *LineCapturingWriter) String() string {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	return w.buffer.String()
+}
+
 // Options provides configuration for the executor.
 type Options struct {
 	DefaultTimeout time.Duration
@@ -1032,7 +1039,11 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 
 	// Set output on node only after command completes successfully
 	if writer != nil && execCtx.CurrentStep != nil {
-		lines := writer.GetLines()
+		rawOutput := writer.String()
+		lines, sanitizeErr := Sanitize(rawOutput)
+		if sanitizeErr != nil {
+			return fmt.Errorf("failed to sanitize output: %w", sanitizeErr)
+		}
 		if len(lines) > 0 {
 			execCtx.CurrentStep.SetOutput(lines)
 		}

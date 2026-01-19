@@ -338,6 +338,7 @@ func writeEventLog(logger *eventlog.Logger, root *treeview.Node, runErr error) {
 		result = eventlog.ResultFail
 	}
 
+	stats := eventlog.CaptureRuntimeStats()
 	summary := &eventlog.RunSummary{
 		Duration:     logger.GetElapsed(),
 		TotalSteps:   total,
@@ -345,6 +346,8 @@ func writeEventLog(logger *eventlog.Logger, root *treeview.Node, runErr error) {
 		FailedSteps:  failed,
 		SkippedSteps: skipped,
 		Result:       result,
+		MemoryAlloc:  stats.MemoryAlloc,
+		Goroutines:   stats.Goroutines,
 	}
 
 	logger.Write(state, summary)

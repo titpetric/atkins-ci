@@ -3,6 +3,7 @@ module github.com/titpetric/atkins
 go 1.25.5
 
 require (
+	github.com/creack/pty v1.1.24
 	github.com/expr-lang/expr v1.17.7
 	github.com/oklog/ulid/v2 v2.1.1
 	github.com/spf13/pflag v1.0.10

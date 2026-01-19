@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/creack/pty"
 )
 
 // ExecError represents an error from command execution.
@@ -98,7 +100,8 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 	return stdout.String(), nil
 }
 
-// ExecuteCommandWithWriter executes a command and writes stdout to the provided writer.
+// ExecuteCommandWithWriter executes a command with PTY allocation and writes output to the provided writer.
+// PTY allocation ensures commands like gotestsum produce colored output.
 // Also returns the full stdout string for the caller.
 func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string, error) {
 	if cmdStr == "" {
@@ -116,15 +119,25 @@ func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string
 	}
 	cmd.Env = cmdEnv
 
-	// Write to both the provided writer and a buffer for the return value
+	// Allocate a PTY for the command to enable color output
+	ptmx, err := pty.Start(cmd)
+	if err != nil {
+		return "", ExecError{
+			Message:      "failed to start command with pty: " + err.Error(),
+			LastExitCode: 1,
+			Output:       "",
+			Trace:        "",
+		}
+	}
+	defer ptmx.Close()
+
+	// Copy PTY output to both the buffer and provided writer
 	var stdout bytes.Buffer
 	multiWriter := io.MultiWriter(&stdout, writer)
-	cmd.Stdout = multiWriter
+	_, _ = io.Copy(multiWriter, ptmx)
 
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
+	// Wait for command to complete
+	err = cmd.Wait()
 	if err != nil {
 		// Extract exit code
 		exitCode := 1
@@ -135,8 +148,8 @@ func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer) (string
 		resErr := ExecError{
 			Message:      "failed to run command: " + err.Error(),
 			LastExitCode: exitCode,
-			Output:       stderr.String(),
-			Trace:        "", // Stack traces disabled by default
+			Output:       stdout.String(),
+			Trace:        "",
 		}
 
 		return "", resErr

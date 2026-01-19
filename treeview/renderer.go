@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/titpetric/atkins/colors"
 )
@@ -130,10 +129,10 @@ func (r *Renderer) renderStaticNode(node *Node, prefix string, isLast bool) stri
 			continuation = "   "
 		}
 
-		// Calculate max width of output lines for border (in runes)
+		// Calculate max width of output lines for border (visual width, excluding ANSI)
 		maxWidth := 0
 		for _, outputLine := range node.Output {
-			width := utf8.RuneCountInString(outputLine)
+			width := colors.VisualLength(outputLine)
 			if width > maxWidth {
 				maxWidth = width
 			}
@@ -147,8 +146,8 @@ func (r *Renderer) renderStaticNode(node *Node, prefix string, isLast bool) stri
 
 		// Add each output line with left/right borders
 		for _, outputLine := range node.Output {
-			// Pad line to max width for consistent border
-			currentWidth := utf8.RuneCountInString(outputLine)
+			// Pad line to max width for consistent border (using visual width)
+			currentWidth := colors.VisualLength(outputLine)
 			padding := strings.Repeat(" ", maxWidth-currentWidth)
 			paddedLine := " " + outputLine + padding + " "
 			if len(node.Output) >= 2 {

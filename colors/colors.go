@@ -1,6 +1,23 @@
 package colors
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
+
+// csiPattern matches ANSI CSI escape sequences.
+var csiPattern = regexp.MustCompile(`\x1b\[[?>]?[0-9;]*[A-Za-z]`)
+
+// StripANSI removes all ANSI escape sequences from a string.
+func StripANSI(in string) string {
+	return csiPattern.ReplaceAllString(in, "")
+}
+
+// VisualLength returns the visual length of a string (excluding ANSI sequences).
+func VisualLength(s string) int {
+	stripped := StripANSI(s)
+	return len([]rune(stripped))
+}
 
 // ANSI color codes
 const (
