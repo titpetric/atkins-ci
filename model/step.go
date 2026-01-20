@@ -48,7 +48,7 @@ func (s *Step) String() string {
 	case s.Cmd != "":
 		return "cmd: " + s.Cmd
 	case len(s.Cmds) > 0:
-		return fmt.Sprintf("cmds: [%s,...] (%d)", s.Cmds[0], len(s.Cmds))
+		return fmt.Sprintf("cmds: <%d commands>", len(s.Cmds))
 	}
 	return s.Name
 }

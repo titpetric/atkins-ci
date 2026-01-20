@@ -6,6 +6,7 @@ vars:
   image: titpetric/atkins
   build:
     goarch: [arm64, amd64]
+  tests: ["detach", "depends_on", "root_jobs", "nested"]
 
 env:
   vars:
@@ -13,13 +14,19 @@ env:
 
 jobs:
   default:
+    tty: true
     steps:
-      - tty: true
-        cmd: termshot --filename examples/atkins.run.png -- atkins --final
-      - tty: true
-        cmd: termshot --filename examples/atkins.list.png -- atkins -l
-      - for: test in ["detach", "depends_on", "root_jobs", "nested"]
-        tty: true
-        cmds:
-          - termshot --filename examples/${{test}}.run.png -- atkins --file tests/${{test}}.yml --final
-          - termshot --filename examples/${{test}}.list.png -- atkins -l --file tests/${{test}}.yml
+      - termshot --filename examples/atkins.run.png -- atkins --final
+      - termshot --filename examples/atkins.list.png -- atkins -l
+
+  test:run:
+    tty: true
+    steps:
+      - for: test in tests
+        cmd: termshot --filename examples/${{test}}.run.png -- atkins --file tests/${{test}}.yml --final
+
+  test:list:
+    tty: true
+    steps:
+      - for: test in tests
+        cmd: termshot --filename examples/${{test}}.list.png -- atkins -l --file tests/${{test}}.yml

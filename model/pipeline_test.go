@@ -236,3 +236,118 @@ steps:
 	assert.Equal(t, "linux", job.Decl.Env.Vars["GOOS"])
 	assert.Equal(t, "amd64", job.Decl.Env.Vars["GOARCH"])
 }
+
+// TestStepString_WithRun tests Step.String() for run field
+func TestStepString_WithRun(t *testing.T) {
+	step := &model.Step{
+		Run: "echo hello",
+	}
+	assert.Equal(t, "run: echo hello", step.String())
+}
+
+// TestStepString_WithCmd tests Step.String() for cmd field
+func TestStepString_WithCmd(t *testing.T) {
+	step := &model.Step{
+		Cmd: "make build",
+	}
+	assert.Equal(t, "cmd: make build", step.String())
+}
+
+// TestStepString_WithCmds tests Step.String() for cmds field
+func TestStepString_WithCmds(t *testing.T) {
+	tests := []struct {
+		name     string
+		cmds     []string
+		expected string
+	}{
+		{
+			name:     "single command in cmds",
+			cmds:     []string{"echo test"},
+			expected: "cmds: <1 commands>",
+		},
+		{
+			name:     "multiple commands in cmds",
+			cmds:     []string{"echo hello", "echo world"},
+			expected: "cmds: <2 commands>",
+		},
+		{
+			name:     "three commands in cmds",
+			cmds:     []string{"cmd1", "cmd2", "cmd3"},
+			expected: "cmds: <3 commands>",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			step := &model.Step{
+				Cmds: tt.cmds,
+			}
+			assert.Equal(t, tt.expected, step.String())
+		})
+	}
+}
+
+// TestStepString_WithTask tests Step.String() for task field
+func TestStepString_WithTask(t *testing.T) {
+	step := &model.Step{
+		Task: "build",
+	}
+	assert.Equal(t, "task: build", step.String())
+}
+
+// TestStepString_Priority tests Step.String() field priority
+func TestStepString_Priority(t *testing.T) {
+	// Task has highest priority
+	step := &model.Step{
+		Task: "build",
+		Run:  "echo hello",
+		Cmd:  "make",
+		Cmds: []string{"cmd1", "cmd2"},
+	}
+	assert.Equal(t, "task: build", step.String())
+
+	// Then Run
+	step = &model.Step{
+		Run:  "echo hello",
+		Cmd:  "make",
+		Cmds: []string{"cmd1", "cmd2"},
+	}
+	assert.Equal(t, "run: echo hello", step.String())
+
+	// Then Cmd
+	step = &model.Step{
+		Cmd:  "make",
+		Cmds: []string{"cmd1", "cmd2"},
+	}
+	assert.Equal(t, "cmd: make", step.String())
+
+	// Finally Cmds
+	step = &model.Step{
+		Cmds: []string{"cmd1", "cmd2"},
+	}
+	assert.Equal(t, "cmds: <2 commands>", step.String())
+}
+
+// TestStepUnmarshalYAML_WithCmds tests that Step.Cmds are properly decoded
+func TestStepUnmarshalYAML_WithCmds(t *testing.T) {
+	yamlContent := `
+name: multi-command step
+cmds:
+  - echo "step 1"
+  - echo "step 2"
+  - echo "step 3"
+`
+
+	var step model.Step
+	err := yaml.Unmarshal([]byte(yamlContent), &step)
+	assert.NoError(t, err)
+
+	// Check that Cmds are loaded
+	assert.Equal(t, 3, len(step.Cmds))
+	assert.Equal(t, "echo \"step 1\"", step.Cmds[0])
+	assert.Equal(t, "echo \"step 2\"", step.Cmds[1])
+	assert.Equal(t, "echo \"step 3\"", step.Cmds[2])
+
+	// Check String() representation
+	assert.Equal(t, "cmds: <3 commands>", step.String())
+}

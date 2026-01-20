@@ -103,7 +103,7 @@ func (e *Exec) ExecuteCommandWithQuietAndCapture(cmdStr string, verbose bool) (s
 }
 
 // getTerminalSize returns the terminal size for PTY allocation.
-// Tries to get the size from stdout, falls back to environment variables, then defaults.
+// Tries to get the size from stdout, falls back to environment variables, then defaults to 80x120.
 func getTerminalSize() *pty.Winsize {
 	// Try to get size from stdout
 	if width, height, err := term.GetSize(int(os.Stdout.Fd())); err == nil {
@@ -114,8 +114,8 @@ func getTerminalSize() *pty.Winsize {
 	}
 
 	// Try to get from environment variables (LINES and COLUMNS)
-	lines := 24
-	cols := 80
+	lines := 80
+	cols := 120
 	if l, err := strconv.Atoi(os.Getenv("LINES")); err == nil && l > 0 {
 		lines = l
 	}

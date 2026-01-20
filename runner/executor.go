@@ -332,7 +332,12 @@ func (e *Executor) executeStepWithNode(ctx context.Context, execCtx *ExecutionCo
 	} else if step.Cmd != "" {
 		cmd = step.Cmd
 	} else if len(step.Cmds) > 0 {
-		cmd = strings.Join(step.Cmds, " && ")
+		// For multiple commands, execute them individually via executeCmdsStep
+		if stepNode != nil && stepNode.HasChildren() {
+			return e.executeCmdsStep(ctx, stepCtx, step, stepNode)
+		}
+		// Fallback: if no child nodes, execute first command only (shouldn't happen normally)
+		cmd = step.Cmds[0]
 	} else {
 		return nil
 	}
@@ -447,7 +452,12 @@ func (e *Executor) executeStep(ctx context.Context, execCtx *ExecutionContext, s
 	} else if step.Cmd != "" {
 		cmd = step.Cmd
 	} else if len(step.Cmds) > 0 {
-		cmd = strings.Join(step.Cmds, " && ")
+		// For multiple commands, execute them individually via executeCmdsStep
+		if stepNode != nil && stepNode.HasChildren() {
+			return e.executeCmdsStep(ctx, stepCtx, step, stepNode)
+		}
+		// Fallback: if no child nodes, execute first command only (shouldn't happen normally)
+		cmd = step.Cmds[0]
 	} else {
 		return nil
 	}
@@ -492,7 +502,7 @@ func (e *Executor) executeStepWithForLoop(ctx context.Context, execCtx *Executio
 			} else if step.Cmd != "" {
 				cmdTemplate = step.Cmd
 			} else if len(step.Cmds) > 0 {
-				cmdTemplate = strings.Join(step.Cmds, " && ")
+				cmdTemplate = fmt.Sprintf("cmds: <%d commands>", len(step.Cmds))
 			}
 		}
 
@@ -608,24 +618,25 @@ func (e *Executor) executeStepWithForLoop(ctx context.Context, execCtx *Executio
 					return err
 				}
 			} else {
-				// Determine which command to run
-				var cmd string
-				if step.Run != "" {
-					cmd = step.Run
-				} else if step.Cmd != "" {
-					cmd = step.Cmd
-				} else if len(step.Cmds) > 0 {
-					cmd = strings.Join(step.Cmds, " && ")
-				} else {
-					return nil // Skip if no command
-				}
-
 				// If the iteration node has children (from cmds expansion), execute them separately
 				if len(step.Cmds) > 0 && iterNode != nil && iterNode.HasChildren() {
 					if err := e.executeCmdsStep(ctx, iterCtx, step, iterNode); err != nil {
 						return err
 					}
 				} else {
+					// Determine which command to run
+					var cmd string
+					if step.Run != "" {
+						cmd = step.Run
+					} else if step.Cmd != "" {
+						cmd = step.Cmd
+					} else if len(step.Cmds) > 0 {
+						// Fallback: if no child nodes, execute first command only (shouldn't happen normally)
+						cmd = step.Cmds[0]
+					} else {
+						return nil // Skip if no command
+					}
+
 					// Execute this iteration with the iteration sub-node
 					if err := e.executeStepIteration(ctx, iterCtx, step, iterNode, cmd, stepIndex); err != nil {
 						return err
@@ -1020,10 +1031,21 @@ func (e *Executor) executeCmdsStep(ctx context.Context, execCtx *ExecutionContex
 	return lastErr
 }
 
-// isEchoCommand checks if a command is a bare echo command
-func isEchoCommand(cmd string) bool {
+// IsEchoCommand checks if a command is a bare echo command
+func IsEchoCommand(cmd string) bool {
 	trimmed := strings.TrimSpace(cmd)
-	return strings.HasPrefix(trimmed, "echo ")
+	return strings.HasPrefix(trimmed, "echo ") && !strings.Contains(trimmed, "\n")
+}
+
+// evaluateEchoCommand executes an echo command and returns its output for use as a label
+func evaluateEchoCommand(ctx context.Context, cmd string, env map[string]string) (string, error) {
+	exec := NewExecWithEnv(env)
+	output, err := exec.ExecuteCommandWithQuiet(cmd, false)
+	if err != nil {
+		return "", err
+	}
+	// Trim output and return
+	return strings.TrimSpace(output), nil
 }
 
 // executeCommand runs a single command with interpolation and respects context timeout
@@ -1050,11 +1072,17 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 	// Check step passthru flag first, then job passthru flag
 	shouldPassthru := step.Passthru || (execCtx.Job != nil && execCtx.Job.Passthru)
 
+	// Determine TTY allocation: Job.TTY is authoritative, otherwise use Step.TTY
+	useTTY := step.TTY
+	if execCtx.Job != nil && execCtx.Job.TTY {
+		useTTY = true
+	}
+
 	// If passthru is enabled, capture output to the node for display with tree indentation
 	var writer *LineCapturingWriter
 	if shouldPassthru && execCtx.CurrentStep != nil {
 		writer = NewLineCapturingWriter()
-		_, err = exec.ExecuteCommandWithWriter(interpolated, writer, step.TTY)
+		_, err = exec.ExecuteCommandWithWriter(interpolated, writer, useTTY)
 	} else {
 		_, err = exec.ExecuteCommandWithQuiet(interpolated, execCtx.Verbose)
 	}
@@ -1065,6 +1093,14 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 			return execErr
 		}
 		return fmt.Errorf("command execution %s failed: %w", execCtx.CurrentStep.ID, err)
+	}
+
+	// For echo commands, update the step node label with the output
+	if IsEchoCommand(interpolated) && execCtx.CurrentStep != nil {
+		output, err := evaluateEchoCommand(ctx, interpolated, execCtx.Env)
+		if err == nil && output != "" {
+			execCtx.CurrentStep.Name = output
+		}
 	}
 
 	// Set output on node only after command completes successfully

@@ -274,6 +274,72 @@ func TestValidateJobRequirements(t *testing.T) {
 	}
 }
 
+func TestStepWithMultipleCmds(t *testing.T) {
+	t.Run("step with multiple cmds should display count", func(t *testing.T) {
+		step := &model.Step{
+			Name: "test multiple commands",
+			Cmds: []string{"echo cmd1", "echo cmd2", "echo cmd3"},
+		}
+
+		// String() should show count, not expanded commands
+		result := step.String()
+		assert.Equal(t, "cmds: <3 commands>", result)
+		assert.NotContains(t, result, "&&")
+		assert.NotContains(t, result, "echo cmd1")
+	})
+}
+
+func TestIsEchoCommand(t *testing.T) {
+	tests := []struct {
+		name     string
+		cmd      string
+		expected bool
+	}{
+		{
+			name:     "simple echo command",
+			cmd:      "echo hello",
+			expected: true,
+		},
+		{
+			name:     "echo with quoted string",
+			cmd:      "echo 'hello world'",
+			expected: true,
+		},
+		{
+			name:     "echo with variable",
+			cmd:      "echo ${{ name }}",
+			expected: true,
+		},
+		{
+			name:     "echo with leading spaces",
+			cmd:      "   echo test",
+			expected: true,
+		},
+		{
+			name:     "echo with multiline",
+			cmd:      "echo hello\necho world",
+			expected: false,
+		},
+		{
+			name:     "non-echo command",
+			cmd:      "make build",
+			expected: false,
+		},
+		{
+			name:     "command with echo in middle",
+			cmd:      "cmd | echo test",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := runner.IsEchoCommand(tt.cmd)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
 func TestTaskInvocationWithForLoop(t *testing.T) {
 	t.Run("expand for loop with task variables", func(t *testing.T) {
 		// Create a step that invokes a task with a for loop
