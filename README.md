@@ -4,7 +4,7 @@ Atkins is a minimal runner focused on usage in local testing and
 CI/CD environments. It features a nice CLI status tree, where you can
 see which jobs are running, and run jobs and steps in parallel.
 
-![](./examples/atkins.list.gif)
+![](./examples/atkins.list.png)
 
 The log of Atkins executions can be used for further processing, like rendering UML flow charts.
 A few examples are given in the [./scripts folder](./scripts).
