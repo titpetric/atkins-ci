@@ -59,7 +59,8 @@ func (j *Job) UnmarshalYAML(node *yaml.Node) error {
 	if node.Kind == yaml.ScalarNode {
 		// Simple string job - treat as a job with a single step
 		cmd := strings.TrimSpace(node.Value)
-		j.Steps = []*Step{{Run: cmd, Name: cmd}}
+		j.Desc = cmd // Use command as description for simple tasks
+		j.Steps = []*Step{{Run: cmd, Name: cmd, HidePrefix: true}}
 		j.Passthru = true
 		return nil
 	}
