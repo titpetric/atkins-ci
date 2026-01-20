@@ -22,6 +22,7 @@ jobs:
     steps:
       - task: test:simple
       - task: test:build
+      - task: test:docs
       - task: test:run
 
   release:
@@ -54,6 +55,11 @@ jobs:
           - cp -f ./bin/atkins-linux-$(dpkg --print-architecture) /usr/local/bin/atkins.new
           - mv -f /usr/local/bin/atkins /usr/local/bin/atkins.old
           - mv -f /usr/local/bin/atkins.new /usr/local/bin/atkins
+
+  test:docs:
+    desc: "Generate docs"
+    steps:
+      - go-fsck docs --split --out=docs --strip=github.com/titpetric ./...
 
   fmt:
     desc: "Format the code"
