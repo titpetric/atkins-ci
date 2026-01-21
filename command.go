@@ -26,6 +26,7 @@ func NewCommand() *cli.Command {
 	var logFile string
 	var versionFlag bool
 	var finalOutputOnly bool
+	var workingDirectory string
 	var fileFlag *pflag.Flag
 
 	return &cli.Command{
@@ -41,9 +42,17 @@ func NewCommand() *cli.Command {
 			fs.BoolVarP(&versionFlag, "version", "v", false, "Print version and build information")
 			fs.StringVar(&logFile, "log", "", "Log file path for command execution")
 			fs.BoolVar(&finalOutputOnly, "final", false, "Only render final output without redrawing (no interactive tree)")
+			fs.StringVarP(&workingDirectory, "working-directory", "w", "", "Change to this directory before running")
 			fileFlag = fs.Lookup("file")
 		},
 		Run: func(ctx context.Context, args []string) error {
+			// Handle working directory first, before anything else
+			if workingDirectory != "" {
+				if err := os.Chdir(workingDirectory); err != nil {
+					return fmt.Errorf("%s failed to change directory to %s: %v", colors.BrightRed("ERROR:"), workingDirectory, err)
+				}
+			}
+
 			// Handle version flag
 			if versionFlag {
 				printVersionInfo()

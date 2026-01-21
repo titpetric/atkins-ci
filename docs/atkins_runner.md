@@ -153,7 +153,7 @@ var ConfigNames = []string{".atkins.yml", ".atkins.yaml", "atkins.yml", "atkins.
 - `func (*Exec) ExecuteCommand (cmdStr string) (string, error)`
 - `func (*Exec) ExecuteCommandWithQuiet (cmdStr string, verbose bool) (string, error)`
 - `func (*Exec) ExecuteCommandWithQuietAndCapture (cmdStr string, verbose bool) (string, error)`
-- `func (*Exec) ExecuteCommandWithWriter (cmdStr string, writer io.Writer, usePTY bool) (string, error)`
+- `func (*Exec) ExecuteCommandWithWriter (writer io.Writer, cmdStr string, usePTY bool) (string, error)`
 - `func (*ExecutionContext) Copy () *ExecutionContext`
 - `func (*ExecutionContext) NextStepIndex () int`
 - `func (*ExecutionContext) Render ()`
@@ -247,7 +247,7 @@ func InterpolateString (s string, ctx *ExecutionContext) (string, error)
 
 ### IsEchoCommand
 
-IsEchoCommand checks if a command is a bare echo command
+IsEchoCommand checks if a command is a bare echo command.
 
 ```go
 func IsEchoCommand (cmd string) bool
@@ -427,7 +427,7 @@ If usePTY is true, allocates a PTY for the command (enables colored output for t
 Also returns the full stdout string for the caller.
 
 ```go
-func (*Exec) ExecuteCommandWithWriter (cmdStr string, writer io.Writer, usePTY bool) (string, error)
+func (*Exec) ExecuteCommandWithWriter (writer io.Writer, cmdStr string, usePTY bool) (string, error)
 ```
 
 ### Copy

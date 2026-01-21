@@ -112,6 +112,7 @@ type StateNode struct {
 ## Consts
 
 ```go
+// Result constants for execution outcomes.
 const (
 	ResultPass	Result	= "pass"
 	ResultFail	Result	= "fail"
@@ -132,7 +133,7 @@ const (
 - `func (*Logger) GetElapsed () float64`
 - `func (*Logger) GetEvents () []*Event`
 - `func (*Logger) GetStartTime () time.Time`
-- `func (*Logger) LogExec (id,run string, result Result, start float64, durationMs int64, err error)`
+- `func (*Logger) LogExec (result Result, id,run string, start float64, durationMs int64, err error)`
 - `func (*Logger) Write (state *StateNode, summary *RunSummary) error`
 
 ### CalculateDuration
@@ -229,7 +230,7 @@ func (*Logger) GetStartTime () time.Time
 LogExec logs a single execution event (one per exec).
 
 ```go
-func (*Logger) LogExec (id,run string, result Result, start float64, durationMs int64, err error)
+func (*Logger) LogExec (result Result, id,run string, start float64, durationMs int64, err error)
 ```
 
 ### Write

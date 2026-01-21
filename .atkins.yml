@@ -68,6 +68,7 @@ jobs:
       - goimports-reviser -set-alias -format -imports-order "std,blanked,general,company,project" -excludes "scripts/" ./...
       - gofumpt -w .
       - go mod tidy
+      - go-fsck lint ./...
 
   test:simple:
     desc: "Simple go test with gotestsum (passthru)"

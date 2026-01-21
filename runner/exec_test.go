@@ -88,7 +88,7 @@ func TestExecuteCommandWithWriter_NonPTY(t *testing.T) {
 		exec := runner.NewExec()
 		var buf bytes.Buffer
 
-		output, err := exec.ExecuteCommandWithWriter("echo 'hello world'", &buf, false)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "echo 'hello world'", false)
 
 		assert.NoError(t, err)
 		assert.Contains(t, output, "hello world")
@@ -99,7 +99,7 @@ func TestExecuteCommandWithWriter_NonPTY(t *testing.T) {
 		exec := runner.NewExec()
 		var buf bytes.Buffer
 
-		_, err := exec.ExecuteCommandWithWriter("echo 'error' >&2 && exit 1", &buf, false)
+		_, err := exec.ExecuteCommandWithWriter(&buf, "echo 'error' >&2 && exit 1", false)
 
 		assert.Error(t, err)
 		assert.Contains(t, buf.String(), "error")
@@ -109,7 +109,7 @@ func TestExecuteCommandWithWriter_NonPTY(t *testing.T) {
 		exec := runner.NewExec()
 		var buf bytes.Buffer
 
-		output, err := exec.ExecuteCommandWithWriter("", &buf, false)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "", false)
 
 		assert.NoError(t, err)
 		assert.Empty(t, output)
@@ -125,7 +125,7 @@ func TestExecuteCommandWithWriter_PTY(t *testing.T) {
 		exec := runner.NewExec()
 		var buf bytes.Buffer
 
-		output, err := exec.ExecuteCommandWithWriter("echo 'tty test'", &buf, true)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "echo 'tty test'", true)
 
 		assert.NoError(t, err)
 		assert.Contains(t, output, "tty test")
@@ -140,7 +140,7 @@ func TestExecuteCommandWithWriter_PTY(t *testing.T) {
 		var buf bytes.Buffer
 
 		// Use ls with color to test ANSI preservation
-		output, err := exec.ExecuteCommandWithWriter("ls --color=always -la /tmp | head -1", &buf, true)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "ls --color=always -la /tmp | head -1", true)
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, output)
@@ -156,7 +156,7 @@ func TestExecuteCommandWithWriter_StdinPassthrough(t *testing.T) {
 		var buf bytes.Buffer
 
 		// Create a simple command that reads from stdin
-		output, err := exec.ExecuteCommandWithWriter("cat /etc/hostname", &buf, false)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "cat /etc/hostname", false)
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, output)
@@ -226,7 +226,7 @@ func TestExecuteCommandWithWriter_OutputCapture(t *testing.T) {
 		exec := runner.NewExec()
 		var buf bytes.Buffer
 
-		output, err := exec.ExecuteCommandWithWriter("printf 'line1\\nline2\\nline3\\n'", &buf, false)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "printf 'line1\\nline2\\nline3\\n'", false)
 
 		assert.NoError(t, err)
 		lines := strings.Split(strings.TrimSpace(output), "\n")
@@ -241,7 +241,7 @@ func TestExecuteCommandWithWriter_OutputCapture(t *testing.T) {
 		var buf bytes.Buffer
 
 		// Generate 1000 lines of output
-		output, err := exec.ExecuteCommandWithWriter("seq 1 1000", &buf, false)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "seq 1 1000", false)
 
 		assert.NoError(t, err)
 		lines := strings.Split(strings.TrimSpace(output), "\n")
@@ -255,7 +255,7 @@ func TestExecuteCommandWithWriter_WriterIntegration(t *testing.T) {
 		var buf bytes.Buffer
 
 		// For non-PTY, we can verify output is written
-		output, err := exec.ExecuteCommandWithWriter("echo 'test message'", &buf, false)
+		output, err := exec.ExecuteCommandWithWriter(&buf, "echo 'test message'", false)
 
 		assert.NoError(t, err)
 		// Both output return value and buffer should have the content
@@ -266,7 +266,7 @@ func TestExecuteCommandWithWriter_WriterIntegration(t *testing.T) {
 	t.Run("discardAll writer", func(t *testing.T) {
 		exec := runner.NewExec()
 
-		output, err := exec.ExecuteCommandWithWriter("echo 'discarded'", io.Discard, false)
+		output, err := exec.ExecuteCommandWithWriter(io.Discard, "echo 'discarded'", false)
 
 		assert.NoError(t, err)
 		assert.Contains(t, output, "discarded")

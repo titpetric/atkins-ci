@@ -71,7 +71,7 @@ func NewLogger(filePath, pipelineName, pipelineFile string, debug bool) *Logger 
 }
 
 // LogExec logs a single execution event (one per exec).
-func (l *Logger) LogExec(id, run string, result Result, start float64, durationMs int64, err error) {
+func (l *Logger) LogExec(result Result, id, run string, start float64, durationMs int64, err error) {
 	if l == nil {
 		return
 	}

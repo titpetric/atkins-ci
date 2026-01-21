@@ -33,7 +33,7 @@ func TestLogger_LogExec_Pass(t *testing.T) {
 	logger := NewLogger(tmpFile, "test-pipeline", "test.yml", false)
 	require.NotNil(t, logger)
 
-	logger.LogExec("jobs.test-job.steps.0", "echo hello", ResultPass, 0.5, 100, nil)
+	logger.LogExec(ResultPass, "jobs.test-job.steps.0", "echo hello", 0.5, 100, nil)
 
 	events := logger.GetEvents()
 	require.Len(t, events, 1)
@@ -53,7 +53,7 @@ func TestLogger_LogExec_Fail(t *testing.T) {
 	require.NotNil(t, logger)
 
 	testErr := assert.AnError
-	logger.LogExec("jobs.test-job.steps.0", "bad command", ResultFail, 1.0, 150, testErr)
+	logger.LogExec(ResultFail, "jobs.test-job.steps.0", "bad command", 1.0, 150, testErr)
 
 	events := logger.GetEvents()
 	require.Len(t, events, 1)
@@ -72,7 +72,7 @@ func TestLogger_LogExec_Skip(t *testing.T) {
 	logger := NewLogger(tmpFile, "test-pipeline", "test.yml", false)
 	require.NotNil(t, logger)
 
-	logger.LogExec("jobs.test-job.steps.0", "skipped step", ResultSkipped, 2.0, 0, nil)
+	logger.LogExec(ResultSkipped, "jobs.test-job.steps.0", "skipped step", 2.0, 0, nil)
 
 	events := logger.GetEvents()
 	require.Len(t, events, 1)
@@ -87,7 +87,7 @@ func TestLogger_NilSafe(t *testing.T) {
 	var logger *Logger
 
 	// All methods should be safe to call on nil
-	logger.LogExec("id", "run", ResultPass, 0, 100, nil)
+	logger.LogExec(ResultPass, "id", "run", 0, 100, nil)
 	assert.Nil(t, logger.GetEvents())
 	assert.Equal(t, float64(0), logger.GetElapsed())
 	assert.Equal(t, time.Time{}, logger.GetStartTime())
@@ -101,7 +101,7 @@ func TestLogger_Write(t *testing.T) {
 	logger := NewLogger(tmpFile, "test-pipeline", "test.yml", false)
 	require.NotNil(t, logger)
 
-	logger.LogExec("jobs.test-job.steps.0", "echo hello", ResultPass, 0.1, 100, nil)
+	logger.LogExec(ResultPass, "jobs.test-job.steps.0", "echo hello", 0.1, 100, nil)
 
 	state := &StateNode{
 		Name:      "test-pipeline",
@@ -158,7 +158,7 @@ func TestLogger_DebugGoroutineID(t *testing.T) {
 	logger := NewLogger(tmpFile, "test-pipeline", "test.yml", true)
 	require.NotNil(t, logger)
 
-	logger.LogExec("jobs.test-job.steps.0", "echo hello", ResultPass, 0.1, 100, nil)
+	logger.LogExec(ResultPass, "jobs.test-job.steps.0", "echo hello", 0.1, 100, nil)
 
 	events := logger.GetEvents()
 	require.Len(t, events, 1)
@@ -174,7 +174,7 @@ func TestLogger_NoGoroutineIDWithoutDebug(t *testing.T) {
 	logger := NewLogger(tmpFile, "test-pipeline", "test.yml", false)
 	require.NotNil(t, logger)
 
-	logger.LogExec("jobs.test-job.steps.0", "echo hello", ResultPass, 0.1, 100, nil)
+	logger.LogExec(ResultPass, "jobs.test-job.steps.0", "echo hello", 0.1, 100, nil)
 
 	events := logger.GetEvents()
 	require.Len(t, events, 1)

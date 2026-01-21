@@ -132,7 +132,7 @@ func getTerminalSize() *pty.Winsize {
 // ExecuteCommandWithWriter executes a command and writes output to the provided writer.
 // If usePTY is true, allocates a PTY for the command (enables colored output for tools like gotestsum).
 // Also returns the full stdout string for the caller.
-func (e *Exec) ExecuteCommandWithWriter(cmdStr string, writer io.Writer, usePTY bool) (string, error) {
+func (e *Exec) ExecuteCommandWithWriter(writer io.Writer, cmdStr string, usePTY bool) (string, error) {
 	if cmdStr == "" {
 		return "", nil
 	}

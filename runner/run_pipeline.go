@@ -246,7 +246,7 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 			if execErr != nil {
 				result = eventlog.ResultFail
 			}
-			logger.LogExec(jobID, jobName, result, jobStartOffset, jobDuration.Milliseconds(), execErr)
+			logger.LogExec(result, jobID, jobName, jobStartOffset, jobDuration.Milliseconds(), execErr)
 		}
 
 		if execErr != nil {

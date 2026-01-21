@@ -307,7 +307,7 @@ func (e *Executor) executeStepWithNode(ctx context.Context, execCtx *ExecutionCo
 		stepID := generateStepID(jobName, seqIndex)
 		if execCtx.EventLogger != nil {
 			startOffset := execCtx.EventLogger.GetElapsed()
-			execCtx.EventLogger.LogExec(stepID, stepName, eventlog.ResultSkipped, startOffset, 0, nil)
+			execCtx.EventLogger.LogExec(eventlog.ResultSkipped, stepID, stepName, startOffset, 0, nil)
 		}
 		return nil
 	}
@@ -414,7 +414,7 @@ func (e *Executor) executeStep(ctx context.Context, execCtx *ExecutionContext, s
 		stepID := generateStepID(jobName, seqIndex)
 		if execCtx.EventLogger != nil {
 			startOffset := execCtx.EventLogger.GetElapsed()
-			execCtx.EventLogger.LogExec(stepID, stepName, eventlog.ResultSkipped, startOffset, 0, nil)
+			execCtx.EventLogger.LogExec(eventlog.ResultSkipped, stepID, stepName, startOffset, 0, nil)
 		}
 		return nil
 	}
@@ -724,7 +724,7 @@ func (e *Executor) executeStepIteration(ctx context.Context, stepCtx *ExecutionC
 		if err != nil {
 			result = eventlog.ResultFail
 		}
-		stepCtx.EventLogger.LogExec(stepID, stepName, result, startOffset, durationMs, err)
+		stepCtx.EventLogger.LogExec(result, stepID, stepName, startOffset, durationMs, err)
 	}
 
 	stepCtx.Render()
@@ -824,7 +824,7 @@ func (e *Executor) executeTaskStep(ctx context.Context, execCtx *ExecutionContex
 		if err != nil {
 			result = eventlog.ResultFail
 		}
-		execCtx.EventLogger.LogExec(taskID, taskName, result, taskStartOffset, taskDuration.Milliseconds(), err)
+		execCtx.EventLogger.LogExec(result, taskID, taskName, taskStartOffset, taskDuration.Milliseconds(), err)
 	}
 
 	if err != nil {
@@ -925,6 +925,7 @@ func (e *Executor) executeTaskStepWithLoop(ctx context.Context, execCtx *Executi
 
 // interpolateVariables interpolates all string variables in a map using $(exec) and ${{ var }} syntax.
 // Non-string values are passed through unchanged.
+// Variables are evaluated in dependency order using topological sort.
 // Returns the interpolated map or an error if interpolation fails.
 func interpolateVariables(ctx *ExecutionContext, vars map[string]any) (map[string]any, error) {
 	if vars == nil {
@@ -932,21 +933,47 @@ func interpolateVariables(ctx *ExecutionContext, vars map[string]any) (map[strin
 	}
 
 	if ctx == nil {
-		// If no context, return vars as-is (no interpolation possible)
 		return vars, nil
 	}
 
-	result := make(map[string]any)
+	// Build dependency graph
+	deps := make(map[string][]string)
 	for k, v := range vars {
-		// Only interpolate string values
 		if strVal, ok := v.(string); ok {
-			interpolated, err := InterpolateString(strVal, ctx)
+			deps[k] = extractVariableDependencies(strVal, vars)
+		} else {
+			deps[k] = nil
+		}
+	}
+
+	// Topological sort
+	order, err := topologicalSort(deps)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a working context that accumulates resolved variables
+	workCtx := &ExecutionContext{
+		Variables: make(map[string]any),
+		Env:       ctx.Env,
+	}
+	for k, v := range ctx.Variables {
+		workCtx.Variables[k] = v
+	}
+
+	result := make(map[string]any)
+	for _, k := range order {
+		v := vars[k]
+		if strVal, ok := v.(string); ok {
+			interpolated, err := InterpolateString(strVal, workCtx)
 			if err != nil {
 				return nil, fmt.Errorf("failed to interpolate variable %q: %w", k, err)
 			}
 			result[k] = interpolated
+			workCtx.Variables[k] = interpolated
 		} else {
 			result[k] = v
+			workCtx.Variables[k] = v
 		}
 	}
 	return result, nil
@@ -1008,7 +1035,7 @@ func (e *Executor) executeCmdsStep(ctx context.Context, execCtx *ExecutionContex
 	return lastErr
 }
 
-// IsEchoCommand checks if a command is a bare echo command
+// IsEchoCommand checks if a command is a bare echo command.
 func IsEchoCommand(cmd string) bool {
 	trimmed := strings.TrimSpace(cmd)
 	return strings.HasPrefix(trimmed, "echo ") && !strings.Contains(trimmed, "\n")
@@ -1056,7 +1083,7 @@ func (e *Executor) executeCommand(ctx context.Context, execCtx *ExecutionContext
 	var writer *LineCapturingWriter
 	if shouldPassthru && execCtx.CurrentStep != nil {
 		writer = NewLineCapturingWriter()
-		_, err = exec.ExecuteCommandWithWriter(interpolated, writer, useTTY)
+		_, err = exec.ExecuteCommandWithWriter(writer, interpolated, useTTY)
 	} else {
 		_, err = exec.ExecuteCommandWithQuiet(interpolated, execCtx.Verbose)
 	}

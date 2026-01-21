@@ -5,6 +5,7 @@ import "time"
 // Result represents the final outcome of an execution.
 type Result string
 
+// Result constants for execution outcomes.
 const (
 	ResultPass    Result = "pass"
 	ResultFail    Result = "fail"
