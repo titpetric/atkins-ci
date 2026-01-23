@@ -25,16 +25,39 @@ type PipelineOptions struct {
 	FinalOnly    bool
 }
 
+// Pipeline holds pipeline execution logic.
+type Pipeline struct {
+	opts PipelineOptions
+	data *model.Pipeline
+}
+
+// NewPipeline allocates a new *Pipeline with dependencies.
+func NewPipeline(data *model.Pipeline, opts PipelineOptions) *Pipeline {
+	return &Pipeline{
+		data: data,
+		opts: opts,
+	}
+}
+
 // RunPipeline runs a pipeline with the given options.
 func RunPipeline(ctx context.Context, pipeline *model.Pipeline, opts PipelineOptions) error {
 	var logger *eventlog.Logger
 	if opts.LogFile != "" || opts.PipelineFile != "" {
 		logger = eventlog.NewLogger(opts.LogFile, pipeline.Name, opts.PipelineFile, opts.Debug)
 	}
-	return runPipeline(ctx, pipeline, opts.Job, logger, opts.FinalOnly)
+
+	service := NewPipeline(pipeline, opts)
+
+	return service.runPipeline(ctx, logger)
 }
 
-func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logger *eventlog.Logger, finalOnly bool) error {
+func (p *Pipeline) runPipeline(ctx context.Context, logger *eventlog.Logger) error {
+	var (
+		pipeline  = p.data
+		job       = p.opts.Job
+		finalOnly = p.opts.FinalOnly
+	)
+
 	tree := treeview.NewBuilder(pipeline.Name)
 	root := tree.Root()
 
@@ -106,7 +129,7 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 		}
 
 		// Recursively find all task references
-		for _, step := range job.Steps {
+		for _, step := range job.Children() {
 			if step.Task != "" {
 				if err := findInvokedJobs(step.Task, jobName); err != nil {
 					return err
@@ -146,21 +169,22 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 			}
 		}
 
+		steps := job.Children()
+		isSimpleTask := len(steps) == 1 && len(steps[0].Cmds) > 0 && steps[0].HidePrefix
+
 		// Only add to tree if it's in jobOrder (root-level execution)
 		if isRootJob {
 			jobNode := tree.AddJobWithoutSteps(deps, jobLabel, job.Nested)
 			jobNode.Summarize = job.Summarize
 
-			// Populate children (skip for simple single-step tasks where command is in job name)
-			// Simple tasks have a single step with HidePrefix=true
-			isSimpleTask := len(job.Steps) == 1 && len(job.Steps[0].Commands()) > 0 && job.Steps[0].HidePrefix
 			if !isSimpleTask {
-				for _, step := range job.Steps {
+				for _, step := range steps {
 					stepNode := treeview.NewPendingStepNode(step.DisplayLabel(), step.IsDeferred(), step.Summarize)
 
 					// If step has multiple commands, create child nodes for each command
-					if len(step.Cmds) > 0 {
-						for _, cmd := range step.Cmds {
+					stepchildren := step.Cmds
+					if len(stepchildren) > 0 {
+						for _, cmd := range stepchildren {
 							stepNode.AddChild(treeview.NewCmdNode(cmd))
 						}
 					}
@@ -175,16 +199,14 @@ func runPipeline(ctx context.Context, pipeline *model.Pipeline, job string, logg
 			jobNode := treeview.NewNode(jobLabel)
 			jobNode.Summarize = job.Summarize
 
-			// Populate children (skip for simple single-step tasks where command is in job name)
-			// Simple tasks have a single step with HidePrefix=true
-			isSimpleTask := len(job.Steps) == 1 && len(job.Steps[0].Commands()) > 0 && job.Steps[0].HidePrefix
 			if !isSimpleTask {
-				for _, step := range job.Steps {
+				for _, step := range steps {
 					stepNode := treeview.NewPendingStepNode(step.DisplayLabel(), step.IsDeferred(), step.Summarize)
 
 					// If step has multiple commands, create child nodes for each command
-					if len(step.Cmds) > 0 {
-						for _, cmd := range step.Cmds {
+					stepchildren := step.Cmds
+					if len(stepchildren) > 0 {
+						for _, cmd := range stepchildren {
 							stepNode.AddChild(treeview.NewCmdNode(cmd))
 						}
 					}

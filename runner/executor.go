@@ -134,30 +134,8 @@ func (e *Executor) ExecuteJob(parentCtx context.Context, execCtx *ExecutionConte
 	}
 
 	// Execute steps
-	if len(job.Steps) > 0 {
-		return e.executeSteps(ctx, execCtx, job.Steps)
-	}
-
-	// Execute legacy cmd/cmds format
-	emptyStep := &model.Step{}
-	if job.Run != "" {
-		return e.executeCommand(ctx, execCtx, emptyStep, job.Run)
-	}
-
-	if job.Cmd != "" {
-		return e.executeCommand(ctx, execCtx, emptyStep, job.Cmd)
-	}
-
-	if len(job.Cmds) > 0 {
-		for _, cmd := range job.Cmds {
-			if err := e.executeCommand(ctx, execCtx, emptyStep, cmd); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-
-	return nil
+	steps := job.Children()
+	return e.executeSteps(ctx, execCtx, steps)
 }
 
 // executeSteps runs a sequence of steps (deferred steps are already at the end of the list)
@@ -487,13 +465,7 @@ func (e *Executor) executeStepWithForLoop(ctx context.Context, execCtx *Executio
 		// Get the command template
 		var cmdTemplate string
 		if step.Task == "" {
-			if step.Run != "" {
-				cmdTemplate = step.Run
-			} else if step.Cmd != "" {
-				cmdTemplate = step.Cmd
-			} else if len(step.Cmds) > 0 {
-				cmdTemplate = fmt.Sprintf("cmds: <%d commands>", len(step.Cmds))
-			}
+			cmdTemplate = step.String()
 		}
 
 		// Create node for each iteration with interpolated command
@@ -697,12 +669,7 @@ func (e *Executor) executeStepIteration(ctx context.Context, stepCtx *ExecutionC
 	}
 
 	// Handle cmds: if step has multiple commands and child nodes exist, execute each command individually
-	var err error
-	if len(step.Cmds) > 0 && stepNode != nil && stepNode.HasChildren() {
-		err = e.executeCmdsStep(ctx, stepCtx, step, stepNode)
-	} else {
-		err = e.executeCommand(ctx, stepCtx, step, cmd)
-	}
+	err := e.executeCommand(ctx, stepCtx, step, cmd)
 
 	// Calculate duration
 	duration := time.Since(startTime)

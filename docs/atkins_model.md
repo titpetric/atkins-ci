@@ -54,7 +54,7 @@ type Job struct {
 	Container	string		`yaml:"container,omitempty"`
 	If		string		`yaml:"if,omitempty"`
 	Cmd		string		`yaml:"cmd,omitempty"`
-	Cmds		[]string	`yaml:"cmds,omitempty"`
+	Cmds		[]*Step		`yaml:"cmds,omitempty"`
 	Run		string		`yaml:"run,omitempty"`
 	Steps		[]*Step		`yaml:"steps,omitempty"`
 	Detach		bool		`yaml:"detach,omitempty"`
@@ -123,6 +123,7 @@ type Step struct {
 - `func NewLabel (text,labelType string) *Label`
 - `func (*Dependencies) UnmarshalYAML (node *yaml.Node) error`
 - `func (*IncludeDecl) UnmarshalYAML (node *yaml.Node) error`
+- `func (*Job) Children () []*Step`
 - `func (*Job) IsRootLevel () bool`
 - `func (*Job) ShouldShow () bool`
 - `func (*Job) UnmarshalYAML (node *yaml.Node) error`
@@ -163,6 +164,14 @@ UnmarshalYAML implements custom unmarshalling for IncludeDecl to support string 
 
 ```go
 func (*IncludeDecl) UnmarshalYAML (node *yaml.Node) error
+```
+
+### Children
+
+Children returns job steps for execution.
+
+```go
+func (*Job) Children () []*Step
 ```
 
 ### IsRootLevel

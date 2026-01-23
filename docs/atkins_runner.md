@@ -109,6 +109,14 @@ type Options struct {
 ```
 
 ```go
+// Pipeline holds pipeline execution logic.
+type Pipeline struct {
+	opts	PipelineOptions
+	data	*model.Pipeline
+}
+```
+
+```go
 // PipelineOptions contains options for running a pipeline.
 type PipelineOptions struct {
 	Job		string
@@ -147,6 +155,7 @@ var ConfigNames = []string{".atkins.yml", ".atkins.yaml", "atkins.yml", "atkins.
 - `func NewExecutorWithOptions (opts *Options) *Executor`
 - `func NewLineCapturingWriter () *LineCapturingWriter`
 - `func NewLinter (pipeline *model.Pipeline) *Linter`
+- `func NewPipeline (data *model.Pipeline, opts PipelineOptions) *Pipeline`
 - `func ProcessDecl (decl *model.Decl, ctx *ExecutionContext) (map[string]any, error)`
 - `func ResolveJobDependencies (jobs map[string]*model.Job, startingJob string) ([]string, error)`
 - `func RunPipeline (ctx context.Context, pipeline *model.Pipeline, opts PipelineOptions) error`
@@ -330,6 +339,14 @@ NewLinter creates a new linter.
 
 ```go
 func NewLinter (pipeline *model.Pipeline) *Linter
+```
+
+### NewPipeline
+
+NewPipeline allocates a new *Pipeline with dependencies.
+
+```go
+func NewPipeline (data *model.Pipeline, opts PipelineOptions) *Pipeline
 ```
 
 ### ProcessDecl

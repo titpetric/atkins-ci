@@ -15,7 +15,7 @@ type Job struct {
 	Container string       `yaml:"container,omitempty"`
 	If        string       `yaml:"if,omitempty"`
 	Cmd       string       `yaml:"cmd,omitempty"`
-	Cmds      []string     `yaml:"cmds,omitempty"`
+	Cmds      []*Step      `yaml:"cmds,omitempty"`
 	Run       string       `yaml:"run,omitempty"`
 	Steps     []*Step      `yaml:"steps,omitempty"`
 	Detach    bool         `yaml:"detach,omitempty"`
@@ -29,6 +29,17 @@ type Job struct {
 
 	Name   string `yaml:"-"`
 	Nested bool   `yaml:"-"`
+}
+
+// Children returns job steps for execution.
+func (j *Job) Children() []*Step {
+	if j.Steps != nil {
+		return j.Steps
+	}
+	if j.Cmds != nil {
+		return j.Cmds
+	}
+	return nil
 }
 
 // IsRootLevel returns true if the job is a root-level job (no ':' in name).
@@ -78,9 +89,6 @@ func (j *Job) UnmarshalYAML(node *yaml.Node) error {
 	// Trim spaces from Run, Cmd, and Cmds after decoding
 	j.Run = strings.TrimSpace(j.Run)
 	j.Cmd = strings.TrimSpace(j.Cmd)
-	for i, cmd := range j.Cmds {
-		j.Cmds[i] = strings.TrimSpace(cmd)
-	}
 
 	return nil
 }
