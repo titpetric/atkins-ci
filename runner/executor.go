@@ -94,6 +94,44 @@ func NewExecutorWithOptions(opts *Options) *Executor {
 	}
 }
 
+// executeCommands executes a list of commands, updating child nodes if available.
+// Returns the last error encountered (continues on errors to collect all failures).
+func (e *Executor) executeCommands(ctx context.Context, stepCtx *ExecutionContext, step *model.Step, stepNode *treeview.Node, commands []string, stepIndex int) error {
+	if len(commands) == 0 {
+		return nil
+	}
+
+	// If step has multiple commands, update child nodes individually
+	var cmdNodes []*treeview.Node
+	if stepNode != nil {
+		cmdNodes = stepNode.GetChildren()
+	}
+
+	var lastErr error
+	for i, cmd := range commands {
+		var cmdNode *treeview.Node
+		if i < len(cmdNodes) {
+			cmdNode = cmdNodes[i]
+		} else if stepNode != nil {
+			cmdNode = stepNode // Fallback to parent if no child nodes
+		}
+		if err := e.executeStepIteration(ctx, stepCtx, step, cmdNode, cmd, stepIndex+i); err != nil {
+			lastErr = err
+		}
+	}
+
+	// Update parent node status if we used child nodes
+	if len(cmdNodes) > 0 && stepNode != nil {
+		if lastErr != nil {
+			stepNode.SetStatus(treeview.StatusFailed)
+		} else {
+			stepNode.SetStatus(treeview.StatusPassed)
+		}
+	}
+
+	return lastErr
+}
+
 // parseTimeout parses a timeout string into a duration, using default if empty
 func parseTimeout(timeoutStr string, defaultTimeout time.Duration) time.Duration {
 	if timeoutStr == "" {
@@ -303,20 +341,8 @@ func (e *Executor) executeStepWithNode(ctx context.Context, execCtx *ExecutionCo
 		}
 	}
 
-	// Determine which command to run
-	commands := step.Commands()
-	if len(commands) == 0 {
-		return nil
-	}
-
-	// Execute all commands (whether single or multiple)
-	var lastErr error
-	for i, cmd := range commands {
-		if err := e.executeStepIteration(ctx, stepCtx, step, stepNode, cmd, i); err != nil {
-			lastErr = err
-		}
-	}
-	return lastErr
+	// Execute all commands
+	return e.executeCommands(ctx, stepCtx, step, stepNode, step.Commands(), 0)
 }
 
 // executeStep runs a single step
@@ -418,20 +444,8 @@ func (e *Executor) executeStep(ctx context.Context, execCtx *ExecutionContext, s
 		return nil
 	}
 
-	// Determine which command to run
-	commands := step.Commands()
-	if len(commands) == 0 {
-		return nil
-	}
-
-	// Execute all commands (whether single or multiple)
-	var lastErr error
-	for i, cmd := range commands {
-		if err := e.executeStepIteration(ctx, stepCtx, step, stepNode, cmd, stepIndex+i); err != nil {
-			lastErr = err
-		}
-	}
-	return lastErr
+	// Execute all commands
+	return e.executeCommands(ctx, stepCtx, step, stepNode, step.Commands(), stepIndex)
 }
 
 // executeStepWithForLoop handles for loop expansion and execution
@@ -581,15 +595,8 @@ func (e *Executor) executeStepWithForLoop(ctx context.Context, execCtx *Executio
 				}
 			} else {
 				// Execute all commands for this iteration
-				commands := step.Commands()
-				var lastErr error
-				for i, cmd := range commands {
-					if err := e.executeStepIteration(ctx, iterCtx, step, iterNode, cmd, stepIndex+i); err != nil {
-						lastErr = err
-					}
-				}
-				if lastErr != nil {
-					return lastErr
+				if err := e.executeCommands(ctx, iterCtx, step, iterNode, step.Commands(), stepIndex); err != nil {
+					return err
 				}
 			}
 			return nil
