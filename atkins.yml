@@ -79,15 +79,14 @@ jobs:
   fmt:
     desc: "Format the code"
     steps:
-      # Generation comes first so the Go formatters below normalise its
-      # output too: templ emits two single-line import statements that
-      # goimports-reviser merges, and generating afterwards would leave
-      # the committed files permanently one `fmt` behind.
+      # Generation comes first so the formatting below normalises its output
+      # too: templ emits two single-line import statements that are merged
+      # into one block, and generating afterwards would leave the committed
+      # files permanently one format behind.
       - task: templ
-      # go:fmt is goimports, gofumpt and go mod tidy. go:fmt:revise has to run
-      # after it and not before: goimports would re-sort the import groups the
-      # reviser just arranged back into its own three-group layout.
-      - task: go:fmt go:fmt:revise
+      # go:fmt is splint fix and go mod tidy. One pass, so there is no order
+      # to get wrong.
+      - task: go:fmt
       - splint ./... || true
 
   test:simple:

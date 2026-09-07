@@ -46,22 +46,16 @@ jobs:
     cmds:
       - go install github.com/titpetric/tools/splint/cmd/splint@main
       - go install github.com/titpetric/exp/cmd/go-fsck@main
-      - go install github.com/incu6us/goimports-reviser/v3@latest
-      - go install mvdan.cc/gofumpt@latest
-      - go install golang.org/x/tools/cmd/goimports@latest
       - go install gotest.tools/gotestsum@latest
 
   fmt:
     desc: "Format the code"
     steps:
-      - goimports -w .
-      - gofumpt -w .
+      # One pass over a data model of the source: every import block grouped
+      # and ordered, an import nothing reaches taken out, and an import a
+      # name needs put in.
+      - splint fix ./...
       - go mod tidy
-
-  fmt:revise:
-    desc: "Revise goimports formatting"
-    steps:
-      - goimports-reviser -set-alias -format -imports-order "std,blanked,general,company,project" -excludes ".git/,scripts/" ./...
 
   lint:
     desc: "Lint the code"
